@@ -1,0 +1,25 @@
+{
+  "name": "Stack Overflow Watchman",
+
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "This plugin is used to notify users about new answers,comments,votes on a watched question",
+
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  
+  "browser_action": {
+    "default_icon": "images/icon_disabled_19.png",
+    "default_title": "Keep watching your favorite questions"
+  },
+  
+  "permissions": [
+    "storage",
+    "tabs",
+    "http://*/*",
+    "https://*/*"
+  ]
+}
