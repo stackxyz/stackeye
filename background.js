@@ -26,6 +26,8 @@ SW.methods.startWatchingActiveTabPage = function() {
 
       if (SW.vars.isUrlValid) {
         SW.methods.initWatchingProcess();
+      } else {
+        alert('Not a valid stackoverflow or stackexchange url');
       }
     } else {
       console.error('Unable to get the url of current tab.Please file a bug');
@@ -48,7 +50,8 @@ SW.methods.initWatchingProcess = function() {
   var urlInfo = SW.methods.extractUrlInfo(SW.vars.activeTabUrl);
   SW.vars = $.extend(SW.vars, urlInfo);
 
-  alert(urlInfo.domain + '' + urlInfo.questionId);
+  var answerList = SW.methods.getAllAnswers(SW.vars.questionId, SW.vars.domain);
+  alert(answerList.length);
 }
 
 /** Example
@@ -63,4 +66,27 @@ SW.methods.extractUrlInfo = function(url) {
     domain: urlData[2],
     questionId: urlData[4]
   };
+}
+
+SW.methods.getUrlForAllAnswers = function(questionId, domain) {
+  return 'https://api.stackexchange.com/questions/' + questionId + '/answers?site=' + domain;
+}
+
+SW.methods.getAllAnswers = function(questionId, domain) {
+  var url = SW.methods.getUrlForAllAnswers(questionId, domain);
+  var answerList = null;
+
+  $.ajax({
+    method: 'GET',
+    url: url,
+    async: false,
+    success: function(response) {
+      answerList = response.items;
+    },
+    error: function(e) {
+      console.error('Error in fetching asnwer list');
+    }
+  });
+
+  return answerList;
 }
