@@ -47,11 +47,21 @@ SW.methods.isCurrentTabUrlAllowed = function(url) {
 }
 
 SW.methods.initWatchingProcess = function() {
-  var urlInfo = SW.methods.extractUrlInfo(SW.vars.activeTabUrl);
+  var answerList,
+      answerIds,
+      commentList,
+      urlInfo;
+
+  urlInfo = SW.methods.extractUrlInfo(SW.vars.activeTabUrl);
   SW.vars = $.extend(SW.vars, urlInfo);
 
-  var answerList = SW.methods.getAllAnswers(SW.vars.questionId, SW.vars.domain);
-  alert(answerList.length);
+  answerList = SW.methods.getAllAnswers(SW.vars.questionId, SW.vars.domain);
+  answerIds = SW.methods.getAllAnswerIds(answerList);
+
+  commentList = SW.methods.getAllComments(answerIds, SW.vars.domain);
+  alert(JSON.stringify(commentList));
+
+  // Save the questionInfo on the disk
 }
 
 /** Example
@@ -89,4 +99,43 @@ SW.methods.getAllAnswers = function(questionId, domain) {
   });
 
   return answerList;
+}
+
+SW.methods.getAllAnswerIds = function(answerList) {
+  var answerIds = [];
+  $.each(answerList, function(index, answerObject) {
+    answerIds.push(answerObject.answer_id);
+  });
+
+  // Add question id to the list as well because want to fetch comments for the question too
+  answerIds.push(SW.vars.questionId);
+  return answerIds;
+}
+
+SW.methods.getUrlForAllComments = function(idString, domain) {
+  // e.g. https://api.stackexchange.com/posts/18829971;18830520;18830230/comments?site=stackoverflow
+  return 'https://api.stackexchange.com/posts/' + idString + '/comments?site=' + domain;
+}
+
+SW.methods.getAllComments = function(ids, domain) {
+  var idString,
+      url,
+      commentList;
+
+  idString = ids.join(';');
+  url = SW.methods.getUrlForAllComments(idString, domain);
+
+  $.ajax({
+    method: 'GET',
+    url: url,
+    async: false,
+    success: function(response) {
+      commentList = response.items;
+    },
+    error: function(e) {
+      console.error('Error in fetching asnwer list');
+    }
+  });
+
+  return commentList;
 }
