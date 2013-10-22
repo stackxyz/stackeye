@@ -11,6 +11,14 @@ SW.vars.ALLOWED_PAGES = [
   'stackexchange.com/questions/'
 ];
 
+SW.messages = {
+  WARN_INVALID_URL: 'Please navigate to a stackoverflow question page',
+
+  ERROR_UNABLE_TO_GET_URL_CURRENT_TAB: 'Unable to get the url of current tab.Please file a bug',
+  ERROR_FETCH_ANSWER_LIST: 'Error in fetching answer list',
+  ERROR_FETCH_COMMENT_LIST: 'Error in fetching comment list'
+};
+
 SW.methods.startWatchingActiveTabPage = function() {
   // Check if active tab url belongs to allowed pages
   SW.vars.isUrlValid = false;
@@ -27,10 +35,10 @@ SW.methods.startWatchingActiveTabPage = function() {
       if (SW.vars.isUrlValid) {
         SW.methods.initWatchingProcess();
       } else {
-        alert('Not a valid stackoverflow or stackexchange url');
+        alert(SW.messages.WARN_INVALID_URL);
       }
     } else {
-      console.error('Unable to get the url of current tab.Please file a bug');
+      console.error(SW.messages.ERROR_UNABLE_TO_GET_URL_CURRENT_TAB);
     }
   });
 }
@@ -94,7 +102,7 @@ SW.methods.getAllAnswers = function(questionId, domain) {
       answerList = response.items;
     },
     error: function(e) {
-      console.error('Error in fetching asnwer list');
+      console.error(SW.messages.ERROR_FETCH_ANSWER_LIST);
     }
   });
 
@@ -133,7 +141,7 @@ SW.methods.getAllComments = function(ids, domain) {
       commentList = response.items;
     },
     error: function(e) {
-      console.error('Error in fetching asnwer list');
+      console.error(SW.messages.ERROR_FETCH_COMMENT_LIST);
     }
   });
 

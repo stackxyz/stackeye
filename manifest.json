@@ -3,7 +3,7 @@
 
   "version": "1.0",
   "manifest_version": 2,
-  "description": "This plugin is used to notify users about new answers,comments,votes on a watched question",
+  "description": "This plugin is used to notify users about new answers & comments on a watched question",
 
   "background": {
     "scripts": [
