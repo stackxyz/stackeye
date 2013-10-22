@@ -1,6 +1,7 @@
 var SW = SW || {};
 SW.methods = SW.methods || {};
 SW.vars = SW.vars || {};
+SW.stores = SW.stores || {};
 
 /*-----------------------------------------------------------*/
 SW.vars.isUrlValid = false;
@@ -16,7 +17,45 @@ SW.messages = {
 
   ERROR_UNABLE_TO_GET_URL_CURRENT_TAB: 'Unable to get the url of current tab.Please file a bug',
   ERROR_FETCH_ANSWER_LIST: 'Error in fetching answer list',
-  ERROR_FETCH_COMMENT_LIST: 'Error in fetching comment list'
+  ERROR_FETCH_COMMENT_LIST: 'Error in fetching comment list',
+
+  INFO_DATA_SAVED: 'Data has been saved',
+};
+
+SW.methods.saveNotificationStore = function() {
+  chrome.storage.sync.save({'notificationStore': SW.stores.notificationStore}, function() {
+    console.log(SW.messages.INFO_DATA_SAVED);
+  });
+};
+
+SW.methods.loadNotificationStore = function() {
+  SW.stores.notificationStore = [];
+
+  chrome.storage.sync.get('notificationStore', function(notificationsObject) {
+    var notifications = notificationsObject.notifications; 
+
+    if (notifications && !notifications.length) {
+      SW.stores.notificationStore = notifications;
+    }
+  });
+};
+
+SW.methods.saveQuestionsFeedStore = function() {
+  chrome.storage.sync.save({'questionFeedStore': SW.stores.questionFeedStore}, function() {
+    console.log(SW.messages.INFO_DATA_SAVED);
+  });
+};
+
+SW.methods.loadQuestionFeedStore = function() {
+  SW.stores.questionFeedStore = [];
+
+  chrome.storage.sync.get('questionFeedStore', function(questionFeed) {
+    var questions = questionFeed.questions; 
+
+    if (questions && !questions.length) {
+      SW.stores.questionFeedStore = questions;
+    }
+  });
 };
 
 SW.methods.startWatchingActiveTabPage = function() {
@@ -147,3 +186,10 @@ SW.methods.getAllComments = function(ids, domain) {
 
   return commentList;
 }
+
+SW.methods.init = function() {
+  SW.methods.loadNotificationStore();
+  SW.methods.loadQuestionFeedStore();
+}
+
+SW.methods.init();
