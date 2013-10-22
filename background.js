@@ -12,6 +12,17 @@ SW.vars.ALLOWED_PAGES = [
   'stackexchange.com/questions/'
 ];
 
+SW.vars.TIME = {
+  T_15_MIN: 60*15,
+  T_30_MIN: 60*30,
+  T_1_HOUR: 60*60,
+  T_2_HOUR: 60*60*2,
+  T_5_HOUR: 60*60*5,
+  T_1_DAY:  60*60*24,
+  T_2_DAY:  60*60*24*2,
+  T_5_DAY:  60*60*24*5
+};
+
 SW.messages = {
   WARN_INVALID_URL: 'Please navigate to a stackoverflow question page',
 
@@ -23,7 +34,7 @@ SW.messages = {
 };
 
 SW.methods.saveNotificationStore = function() {
-  chrome.storage.sync.save({'notificationStore': SW.stores.notificationStore}, function() {
+  chrome.storage.sync.set({'notificationStore': SW.stores.notificationStore}, function() {
     console.log(SW.messages.INFO_DATA_SAVED);
   });
 };
@@ -41,7 +52,7 @@ SW.methods.loadNotificationStore = function() {
 };
 
 SW.methods.saveQuestionsFeedStore = function() {
-  chrome.storage.sync.save({'questionFeedStore': SW.stores.questionFeedStore}, function() {
+  chrome.storage.sync.set({'questionFeedStore': SW.stores.questionFeedStore}, function() {
     console.log(SW.messages.INFO_DATA_SAVED);
   });
 };
@@ -94,6 +105,21 @@ SW.methods.isCurrentTabUrlAllowed = function(url) {
 }
 
 SW.methods.initWatchingProcess = function() {
+  var urlInfo,
+      questionName,
+      questionData;
+
+  urlInfo = SW.methods.extractUrlInfo(SW.vars.activeTabUrl);
+  SW.vars = $.extend(SW.vars, urlInfo);
+
+  questionData = SW.methods.getQuestionData(SW.vars.questionId, SW.vars.domain);
+  SW.methods.addQuestionToStore(questionData);
+
+  // Call the callback which changes the button in popover
+};
+
+/** TODO: @sacjain Will be used later on
+SW.methods.initWatchingProcess = function() {
   var answerList,
       answerIds,
       commentList,
@@ -110,6 +136,75 @@ SW.methods.initWatchingProcess = function() {
 
   // Save the questionInfo on the disk
 }
+**/
+
+SW.methods.getUrlForQuestionData = function(questionId, domain) {
+  // https://api.stackexchange.com/questions/18829971?site=stackoverflow
+  return 'https://api.stackexchange.com/questions/' + questionId + '?site=' + domain;
+};
+
+SW.methods.getQuestionData = function(questionId, domain) {
+  var url = SW.methods.getUrlForQuestionData(questionId, domain),
+      questionData = {};
+
+  questionData['domain'] = domain;
+  questionData['question_id'] = questionId;
+
+  $.ajax({
+    method: 'GET',
+    url: url,
+    async: false,
+    success: function(response) {
+      var qInfo = response.items[0];
+
+      questionData['last_edit_date'] = qInfo.last_edit_date;
+      questionData['creation_date'] = qInfo.creation_date;
+      questionData['title'] = qInfo.title;
+      questionData['link'] = qInfo.link;
+      questionData['owner'] = {};
+      questionData['owner']['display_name'] = qInfo.owner.display_name;
+      questionData['owner']['link'] = qInfo.owner.link;
+    },
+    error: function(e) {
+      console.error(SW.messages.ERROR_FETCH_QUESTION_DATA);
+      questionData = null;
+    }
+  });
+
+  return questionData;
+};
+
+SW.methods.addQuestionToStore = function(questionData) {
+  var currentTime = new Date().getTime();
+  currentTime = parseInt(currentTime/1000);
+
+  questionData['lastFetchDate'] = currentTime;
+  questionData['nextFetchDate'] = SW.methods.getNextFetchDate(questionData.lastFetchDate, questionData.creation_date);
+
+  SW.stores.questionFeedStore.push(questionData);
+  SW.stores.questionFeedStore.sort(function(a,b) {
+    return a.nextFetchDate - b.nextFetchDate;
+  });
+
+  SW.methods.saveQuestionsFeedStore();
+}
+
+SW.methods.getNextFetchDate = function(lastFetchDate, creation_date) {
+  var difference = lastFetchDate - creation_date,
+      nextFetchInterval = SW.vars.TIME.T_30_MIN;
+
+  if (difference >= SW.vars.TIME.T_5_DAY) {
+    nextFetchInterval = SW.vars.TIME.T_5_HOUR;
+  } else if (difference >= SW.vars.TIME.T_2_DAY) {
+    nextFetchInterval = SW.vars.TIME.T_2_HOUR;
+  } else if (difference >= SW.vars.TIME.T_1_DAY) {
+    nextFetchInterval = SW.vars.TIME.T_1_HOUR;
+  } else {
+    nextFetchInterval = SW.vars.TIME.T_30_MIN;
+  }
+
+  return lastFetchDate + nextFetchInterval;
+};
 
 /** Example
 var url = "http://math.stackexchange.com/questions/521071/combinatorics-dividing-into-smaller-groups";
