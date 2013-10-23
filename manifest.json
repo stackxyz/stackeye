@@ -13,7 +13,7 @@
   },
   
   "browser_action": {
-    "default_icon"    : "images/icon_grey_19.png",
+    "default_icon"    : "images/icon_color_19.png",
     "default_title"   : "Keep watching your favorite questions",
     "default_popup"   : "popup.html"
   },
