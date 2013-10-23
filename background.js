@@ -2,6 +2,7 @@ var SW = SW || {};
 SW.methods = SW.methods || {};
 SW.vars = SW.vars || {};
 SW.stores = SW.stores || {};
+SW.callbacks = SW.callbacks || {};
 
 /*-----------------------------------------------------------*/
 SW.vars.isUrlValid = false;
@@ -30,7 +31,7 @@ SW.messages = {
   ERROR_FETCH_ANSWER_LIST: 'Error in fetching answer list',
   ERROR_FETCH_COMMENT_LIST: 'Error in fetching comment list',
 
-  INFO_DATA_SAVED: 'Data has been saved',
+  INFO_DATA_SAVED: 'Question has been added to watch list'
 };
 
 SW.methods.saveNotificationStore = function() {
@@ -52,8 +53,13 @@ SW.methods.loadNotificationStore = function() {
 };
 
 SW.methods.saveQuestionsFeedStore = function() {
-  chrome.storage.sync.set({'questionFeedStore': SW.stores.questionFeedStore}, function() {
-    console.log(SW.messages.INFO_DATA_SAVED);
+  chrome.storage.sync.set({
+    'questionFeedStore': SW.stores.questionFeedStore
+  }, function() {
+    if (SW.callbacks.watchProcessSuccessCallback) {
+      SW.callbacks.watchProcessSuccessCallback(SW.messages.INFO_DATA_SAVED);
+      SW.callbacks.watchProcessSuccessCallback = null;
+    }
   });
 };
 
@@ -69,29 +75,44 @@ SW.methods.loadQuestionFeedStore = function() {
   });
 };
 
-SW.methods.startWatchingActiveTabPage = function() {
-  // Check if active tab url belongs to allowed pages
+/* First method being called whenever popover is opened
+** So we extract all the page info here
+*/
+SW.methods.isPagebeingWatched = function(watchSuccessCallback) {
   SW.vars.isUrlValid = false;
 
   chrome.tabs.query({active: true, currentWindow: true}, function(arrayOfTabs) {
     // Since only one tab should be active and in the current window at once
     // the return variable should only have one entry
     var activeTab = arrayOfTabs[0];
+    var urlInfo;
 
     if (activeTab) {
       SW.vars.activeTabUrl = activeTab.url;
+
       SW.vars.isUrlValid = SW.methods.isCurrentTabUrlAllowed(SW.vars.activeTabUrl);
 
-      if (SW.vars.isUrlValid) {
-        SW.methods.initWatchingProcess();
-      } else {
-        alert(SW.messages.WARN_INVALID_URL);
+      urlInfo = SW.methods.extractUrlInfo(SW.vars.activeTabUrl);
+      SW.vars = $.extend(SW.vars, urlInfo);
+
+      if (SW.vars.isUrlValid && SW.methods.questionStoreContainCurrentPage()) {
+        watchSuccessCallback('');
       }
     } else {
       console.error(SW.messages.ERROR_UNABLE_TO_GET_URL_CURRENT_TAB);
     }
   });
-}
+};
+
+SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
+  SW.callbacks.watchProcessSuccessCallback = watchProcessSuccessCallback;
+
+  if (SW.vars.isUrlValid) {
+    SW.methods.initWatchingProcess();
+  } else {
+    alert(SW.messages.WARN_INVALID_URL);
+  }
+};
 
 SW.methods.isCurrentTabUrlAllowed = function(url) {
   var isUrlValid = false;
@@ -102,20 +123,27 @@ SW.methods.isCurrentTabUrlAllowed = function(url) {
   });
 
   return isUrlValid;
-}
+};
 
 SW.methods.initWatchingProcess = function() {
-  var urlInfo,
-      questionName,
-      questionData;
-
-  urlInfo = SW.methods.extractUrlInfo(SW.vars.activeTabUrl);
-  SW.vars = $.extend(SW.vars, urlInfo);
+  var questionData;
 
   questionData = SW.methods.getQuestionData(SW.vars.questionId, SW.vars.domain);
   SW.methods.addQuestionToStore(questionData);
 
   // Call the callback which changes the button in popover
+};
+
+SW.methods.questionStoreContainCurrentPage = function() {
+
+  for (var i=0; i < SW.stores.questionFeedStore.length; i++) {
+    if (SW.stores.questionFeedStore[i].domain == SW.vars.domain &&
+      SW.stores.questionFeedStore[i].questionId == SW.vars.questionId) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 /** TODO: @sacjain Will be used later on
@@ -148,7 +176,7 @@ SW.methods.getQuestionData = function(questionId, domain) {
       questionData = {};
 
   questionData['domain'] = domain;
-  questionData['question_id'] = questionId;
+  questionData['questionId'] = questionId;
 
   $.ajax({
     method: 'GET',
