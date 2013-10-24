@@ -43,10 +43,10 @@ SW.methods.saveNotificationStore = function() {
 SW.methods.loadNotificationStore = function() {
   SW.stores.notificationStore = [];
 
-  chrome.storage.sync.get('notificationStore', function(notificationsObject) {
-    var notifications = notificationsObject.notifications; 
+  chrome.storage.sync.get('notificationStore', function(items) {
+    var notifications = items.notificationStore;
 
-    if (notifications && !notifications.length) {
+    if (notifications && notifications.length) {
       SW.stores.notificationStore = notifications;
     }
   });
@@ -66,10 +66,10 @@ SW.methods.saveQuestionsFeedStore = function() {
 SW.methods.loadQuestionFeedStore = function() {
   SW.stores.questionFeedStore = [];
 
-  chrome.storage.sync.get('questionFeedStore', function(questionFeed) {
-    var questions = questionFeed.questions; 
+  chrome.storage.sync.get('questionFeedStore', function(items) {
+    var questions = items.questionFeedStore;
 
-    if (questions && !questions.length) {
+    if (questions && questions.length) {
       SW.stores.questionFeedStore = questions;
     }
   });
