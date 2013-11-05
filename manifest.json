@@ -8,14 +8,14 @@
   "background": {
     "scripts": [
       "libs/jquery-1.9.1.js",
-      "StackExachangeAPI_Impl.js",
+      "api_methods.js",
       "background.js"
     ]
   },
   
   "browser_action": {
     "default_icon"    : "images/icon_color_19.png",
-    "default_title"   : "Keep watching your favorite questions",
+    "default_title"   : "Get latest notifications on your favorite questions",
     "default_popup"   : "popup.html"
   },
   

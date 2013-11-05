@@ -1,8 +1,10 @@
-var SW = SW || {};
+window.SW = window.SW || {};
 SW.methods = SW.methods || {};
 SW.vars = SW.vars || {};
 SW.stores = SW.stores || {};
 SW.callbacks = SW.callbacks || {};
+SW.modes = SW.modes || {};
+SW.constants = SW.constants || {};
 
 /*-----------------------------------------------------------*/
 SW.vars.isUrlValid = false;
@@ -13,6 +15,10 @@ SW.vars.ALLOWED_PAGES = [
   'stackexchange.com/questions/'
 ];
 
+SW.modes.inDebugMode = true;
+
+// Conversion to seconds
+// TODO: Store as a computed value later on to improve performance
 SW.vars.TIME = {
   T_15_MIN: 60*15,
   T_30_MIN: 60*30,
@@ -24,6 +30,9 @@ SW.vars.TIME = {
   T_5_DAY:  60*60*24*5
 };
 
+// SW.vars.FETCH_NOTIFICATION_TIME = SW.vars.TIME.T_30_MIN * 1000;
+ SW.vars.FETCH_NOTIFICATION_TIME =  2000 * 60; //setinterval takes time in miliseconds
+
 SW.messages = {
   WARN_INVALID_URL: 'Please navigate to a stackoverflow question page',
 
@@ -32,6 +41,12 @@ SW.messages = {
   ERROR_FETCH_COMMENT_LIST: 'Error in fetching comment list',
 
   INFO_DATA_SAVED: 'Question has been added to watch list'
+};
+
+SW.constants = {
+  ACCEPTED_ANSWER: 'accepted_answer',
+  NEW_COMMENT: 'comment',
+  ANSWER: 'answer'
 };
 
 SW.methods.saveNotificationStore = function() {
@@ -146,26 +161,6 @@ SW.methods.questionStoreContainCurrentPage = function() {
   return false;
 };
 
-/** TODO: @sacjain Will be used later on
-SW.methods.initWatchingProcess = function() {
-  var answerList,
-      answerIds,
-      commentList,
-      urlInfo;
-
-  urlInfo = SW.methods.extractUrlInfo(SW.vars.activeTabUrl);
-  SW.vars = $.extend(SW.vars, urlInfo);
-
-  answerList = SW.methods.getAllAnswers(SW.vars.questionId, SW.vars.domain);
-  answerIds = SW.methods.getAllAnswerIds(answerList);
-
-  commentList = SW.methods.getAllComments(answerIds, SW.vars.domain);
-  alert(JSON.stringify(commentList));
-
-  // Save the questionInfo on the disk
-}
-**/
-
 SW.methods.getUrlForQuestionData = function(questionId, domain) {
   // https://api.stackexchange.com/questions/18829971?site=stackoverflow
   return 'https://api.stackexchange.com/questions/' + questionId + '?site=' + domain;
@@ -215,7 +210,7 @@ SW.methods.addQuestionToStore = function(questionData) {
   });
 
   SW.methods.saveQuestionsFeedStore();
-}
+};
 
 SW.methods.getNextFetchDate = function(lastFetchDate, creation_date) {
   var difference = lastFetchDate - creation_date,
@@ -308,11 +303,71 @@ SW.methods.getAllComments = function(ids, domain) {
   });
 
   return commentList;
-}
+};
+
+SW.methods.filterUpdates = function(updates) {
+  var updatesLength = updates.length,
+      update = null,
+      acceptedTimelineTypes = [
+        SW.constants.ACCEPTED_ANSWER,
+        SW.constants.NEW_COMMENT,
+        SW.constants.NEW_ANSWER
+      ];
+
+  for (var i = updatesLength - 1; i >= 0; i--) {
+    update = updates[i];
+
+    if (acceptedTimelineTypes.indexOf(update.timeline_type) < 0) {
+      updates.splice(i, 1);
+    }
+  }
+
+  return updates;
+};
+
+SW.methods.updateNotificationStore = function(questionUpdates) {
+  questionUpdates = SW.methods.filterUpdates(questionUpdates);
+
+  SW.stores.notificationStore = questionUpdates.concat(SW.stores.notificationStore);
+};
+
+SW.methods.fetchNewNotifications = function() {
+  var currentTime = parseInt(Date.now()/1000),
+      i = 0,
+      questionFeedStoreLength = SW.stores.questionFeedStore.length,
+      question,
+      questionUpdates;
+
+  for (i = 0; i < questionFeedStoreLength; i++) {
+    question = SW.stores.questionFeedStore[i];
+
+    if (currentTime >= question.nextFetchDate) {
+      questionUpdates = SW.methods.getQuestionUpdates(
+                    question.questionId, question.domain, question.lastFetchDate);
+
+      // Parse the question updates and store relevant info into Notification Store
+      SW.methods.updateNotificationStore(questionUpdates);
+
+      question.lastFetchDate = currentTime;
+      question.nextFetchDate = SW.methods.getNextFetchDate(
+                    question.lastFetchDate, question.creation_date);
+    }
+  }
+
+  SW.stores.questionFeedStore.sort(function(a,b) {
+    return a.nextFetchDate - b.nextFetchDate;
+  });
+
+  SW.methods.saveQuestionsFeedStore();
+
+  SW.methods.saveNotificationStore();
+};
 
 SW.methods.init = function() {
   SW.methods.loadNotificationStore();
   SW.methods.loadQuestionFeedStore();
+
+  setInterval(SW.methods.fetchNewNotifications, SW.vars.FETCH_NOTIFICATION_TIME);
 }
 
 SW.methods.init();
