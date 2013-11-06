@@ -31,7 +31,7 @@ SW.vars.TIME = {
 };
 
 // SW.vars.FETCH_NOTIFICATION_TIME = SW.vars.TIME.T_30_MIN * 1000;
- SW.vars.FETCH_NOTIFICATION_TIME =  2000 * 60; //setinterval takes time in miliseconds
+SW.vars.FETCH_NOTIFICATION_TIME =  2000 * 60; //setinterval takes time in miliseconds
 
 SW.messages = {
   WARN_INVALID_URL: 'Please navigate to a stackoverflow question page',
@@ -305,7 +305,7 @@ SW.methods.getAllComments = function(ids, domain) {
   return commentList;
 };
 
-SW.methods.filterUpdates = function(updates) {
+SW.methods.filterUpdates = function(updates, questionInfo) {
   var updatesLength = updates.length,
       update = null,
       acceptedTimelineTypes = [
@@ -319,14 +319,17 @@ SW.methods.filterUpdates = function(updates) {
 
     if (acceptedTimelineTypes.indexOf(update.timeline_type) < 0) {
       updates.splice(i, 1);
+    } else {
+      update.link = questionInfo.link;
+      update.title = questionInfo.title;
     }
   }
 
   return updates;
 };
 
-SW.methods.updateNotificationStore = function(questionUpdates) {
-  questionUpdates = SW.methods.filterUpdates(questionUpdates);
+SW.methods.updateNotificationStore = function(questionUpdates, questionInfo) {
+  questionUpdates = SW.methods.filterUpdates(questionUpdates, questionInfo);
 
   SW.stores.notificationStore = questionUpdates.concat(SW.stores.notificationStore);
 };
@@ -346,7 +349,7 @@ SW.methods.fetchNewNotifications = function() {
                     question.questionId, question.domain, question.lastFetchDate);
 
       // Parse the question updates and store relevant info into Notification Store
-      SW.methods.updateNotificationStore(questionUpdates);
+      SW.methods.updateNotificationStore(questionUpdates, question);
 
       question.lastFetchDate = currentTime;
       question.nextFetchDate = SW.methods.getNextFetchDate(
