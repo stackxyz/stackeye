@@ -331,7 +331,9 @@ SW.methods.filterUpdates = function(updates, questionInfo) {
 SW.methods.updateNotificationStore = function(questionUpdates, questionInfo) {
   questionUpdates = SW.methods.filterUpdates(questionUpdates, questionInfo);
 
-  SW.stores.notificationStore = questionUpdates.concat(SW.stores.notificationStore);
+  if (questionUpdates.length) {
+    SW.stores.notificationStore = questionUpdates.concat(SW.stores.notificationStore);
+  }
 };
 
 SW.methods.fetchNewNotifications = function() {
