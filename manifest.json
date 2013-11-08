@@ -14,7 +14,7 @@
   },
   
   "browser_action": {
-    "default_icon"    : "images/icon_color_19.png",
+    "default_icon"    : "images/icon_so_48.png",
     "default_title"   : "Get latest notifications on your favorite questions",
     "default_popup"   : "popup.html"
   },
