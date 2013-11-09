@@ -185,10 +185,11 @@ SW.methods.updateNotificationStore = function(questionUpdates, questionInfo) {
 
 SW.methods.fetchNewNotifications = function() {
   var currentTime = parseInt(Date.now()/1000),
-      i = 0,
-      questionFeedStoreLength = SW.stores.questionFeedStore.length,
-      question,
-      questionUpdates;
+    i = 0,
+    questionFeedStoreLength = SW.stores.questionFeedStore.length,
+    question,
+    questionUpdates,
+    isQuestionUpdated = false;
 
   for (i = 0; i < questionFeedStoreLength; i++) {
     question = SW.stores.questionFeedStore[i];
@@ -197,12 +198,19 @@ SW.methods.fetchNewNotifications = function() {
       questionUpdates = SW.methods.getQuestionUpdates(
                     question.questionId, question.domain, question.lastFetchDate);
 
-      // Parse the question updates and store relevant info into Notification Store
-      SW.methods.updateNotificationStore(questionUpdates, question);
+      if (questionUpdates.length > 0) {
+        // Parse the question updates and store relevant info into Notification Store
+        SW.methods.updateNotificationStore(questionUpdates, question);
+        isQuestionUpdated = true;
+      }
 
       question.lastFetchDate = currentTime;
       question.nextFetchDate = SW.methods.getNextFetchDate(
                     question.lastFetchDate, question.creation_date);
+    } else {
+      //Since questionFeedStore is sorted by nextFetchDate So we can safely exit the loop
+      // when we encounter a question having nextFecthDate greater than currentTime
+      break;
     }
   }
 
@@ -212,7 +220,10 @@ SW.methods.fetchNewNotifications = function() {
 
   SW.methods.saveQuestionsFeedStore();
 
-  SW.methods.saveNotificationStore();
+  // Save final updatedNotificationStore after loop
+  if (isQuestionUpdated) {
+    SW.methods.saveNotificationStore();
+  }
 };
 
 SW.methods.init = function() {
