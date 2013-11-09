@@ -8,8 +8,8 @@ SW.constants = SW.constants || {};
 
 /*-----------------------------------------------------------*/
 SW.methods.getUrlForQuestionUpdates = function(id, domain, lastFetchDate) {
-  // https://api.stackexchange.com/questions/19570820/timeline?fromdate=1382486400&site=stackoverflow
-  return 'https://api.stackexchange.com/questions/' + id + '/timeline?fromdate=' + 
+  // https://api.stackexchange.com/questions/19570820/timeline?fromtime=1382486400&site=stackoverflow
+  return 'https://api.stackexchange.com/questions/' + id + '/timeline?fromtime=' + 
           lastFetchDate + '&site=' + domain;
 }
 
