@@ -185,11 +185,11 @@ SW.methods.updateNotificationStore = function(updates, questionInfo) {
       if (entryForSameQuestion) {
         // Update previous entry instead of creating new one
         if (update.timeline_type == SW.constants.NEW_COMMENT) {
-          entryForSameQuestion.commentlist.push(update.comment_id);
+          entryForSameQuestion.numComments++;
         }
 
-        if (update.timeline_type == SW.constants.NEW_ANSWER) {
-          entryForSameQuestion.answerlist.push(update.answer_id);
+        if (update.timeline_type == SW.constants.ANSWER) {
+          entryForSameQuestion.numAnswers++;
         }
 
         // We want to have latest date on notification entry
@@ -202,13 +202,8 @@ SW.methods.updateNotificationStore = function(updates, questionInfo) {
         notificationEntry.link = questionInfo.link;
         notificationEntry.title = questionInfo.title;
         notificationEntry.questionId = questionInfo.questionId;
-        notificationEntry.commentlist = (update.timeline_type == SW.constants.NEW_COMMENT) 
-                                        ? [update.comment_id] 
-                                        : [];
-
-        notificationEntry.answerlist = (update.timeline_type == SW.constants.NEW_ANSWER) 
-                                        ? [update.answer_id] 
-                                        : [];
+        notificationEntry.numComments = (update.timeline_type == SW.constants.NEW_COMMENT) ? 1 : 0;
+        notificationEntry.numAnswers = (update.timeline_type == SW.constants.ANSWER) ? 1 : 0;
 
         // Push new entry into notification list
         SW.stores.notificationStore.push(notificationEntry);
