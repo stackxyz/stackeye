@@ -152,11 +152,24 @@ SW.methods.extractUrlInfo = function(url) {
   };
 }
 
-SW.methods.filterUpdates = function(updates, questionInfo) {
+SW.methods.getNotificationEntryForQuestion = function(question) {
+  var notifications = SW.stores.notificationStore;
+
+  for (var i = notifications.length - 1; i>=0; i--) {
+    if (question.link && notifications[i].link === question.link) {
+      return notifications[i];
+    }
+  }
+
+  return null;
+};
+
+SW.methods.updateNotificationStore = function(updates, questionInfo) {
   var updatesLength = updates.length,
       update = null,
+      entryForSameQuestion = null,
+      notificationEntry = {},
       acceptedTimelineTypes = [
-        SW.constants.ACCEPTED_ANSWER,
         SW.constants.NEW_COMMENT,
         SW.constants.NEW_ANSWER
       ];
@@ -164,23 +177,46 @@ SW.methods.filterUpdates = function(updates, questionInfo) {
   for (var i = updatesLength - 1; i >= 0; i--) {
     update = updates[i];
 
-    if (acceptedTimelineTypes.indexOf(update.timeline_type) < 0) {
-      updates.splice(i, 1);
-    } else {
-      update.link = questionInfo.link;
-      update.title = questionInfo.title;
+    // We only show notifications for new answers and new comments
+    if (acceptedTimelineTypes.indexOf(update.timeline_type) >= 0) {
+      // If notification store already contains an entry for same question just update it
+      entryForSameQuestion = SW.methods.getNotificationEntryForQuestion(questionInfo);
+
+      if (entryForSameQuestion) {
+        // Update previous entry instead of creating new one
+        if (update.timeline_type == SW.constants.NEW_COMMENT) {
+          entryForSameQuestion.commentlist.push(update.comment_id);
+        }
+
+        if (update.timeline_type == SW.constants.NEW_ANSWER) {
+          entryForSameQuestion.answerlist.push(update.answer_id);
+        }
+
+        // We want to have latest date on notification entry
+        // So that we can have newest notification on top
+        if (update.creation_date > entryForSameQuestion.creation_date) {
+          entryForSameQuestion.creation_date = update.creation_date;
+        }
+      } else {
+        // Create a new notification entry
+        notificationEntry.link = questionInfo.link;
+        notificationEntry.title = questionInfo.title;
+        notificationEntry.questionId = questionInfo.questionId;
+        notificationEntry.commentlist = (update.timeline_type == SW.constants.NEW_COMMENT) 
+                                        ? [update.comment_id] 
+                                        : [];
+
+        notificationEntry.answerlist = (update.timeline_type == SW.constants.NEW_ANSWER) 
+                                        ? [update.answer_id] 
+                                        : [];
+
+        // Push new entry into notification list
+        SW.stores.notificationStore.push(notificationEntry);
+      }
     }
   }
 
   return updates;
-};
-
-SW.methods.updateNotificationStore = function(questionUpdates, questionInfo) {
-  questionUpdates = SW.methods.filterUpdates(questionUpdates, questionInfo);
-
-  if (questionUpdates.length) {
-    SW.stores.notificationStore = questionUpdates.concat(SW.stores.notificationStore);
-  }
 };
 
 SW.methods.fetchNewNotifications = function() {
@@ -220,7 +256,7 @@ SW.methods.fetchNewNotifications = function() {
 
   SW.methods.saveQuestionsFeedStore();
 
-  // Save final updatedNotificationStore after loop
+  // Save final updatedNotificationStore
   if (isQuestionUpdated) {
     SW.methods.saveNotificationStore();
   }
