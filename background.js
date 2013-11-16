@@ -171,7 +171,7 @@ SW.methods.updateNotificationStore = function(updates, questionInfo) {
       notificationEntry = {},
       acceptedTimelineTypes = [
         SW.constants.NEW_COMMENT,
-        SW.constants.NEW_ANSWER
+        SW.constants.ANSWER
       ];
 
   for (var i = updatesLength - 1; i >= 0; i--) {
