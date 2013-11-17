@@ -147,6 +147,11 @@ SW.methods.getNextFetchDate = function(lastFetchDate, creation_date) {
     nextFetchInterval = SW.vars.TIME.T_30_MIN;
   }
 
+  // If app is in debug mode, we wlays want to fetch notification after 2 minutes
+  if (SW.modes.inDebugMode) {
+    nextFetchInterval = SW.vars.TIME.T_2_MIN;
+  }
+
   return lastFetchDate + nextFetchInterval;
 };
 
@@ -222,8 +227,6 @@ SW.methods.updateNotificationStore = function(updates, questionInfo) {
       }
     }
   }
-
-  return updates;
 };
 
 SW.methods.fetchNewNotifications = function() {
@@ -240,6 +243,9 @@ SW.methods.fetchNewNotifications = function() {
     if (currentTime >= question.nextFetchDate) {
       questionUpdates = SW.methods.getQuestionUpdates(
                     question.questionId, question.domain, question.lastFetchDate);
+
+      SW.methods.log(question.title, 'log', false);
+      SW.methods.log(questionUpdates, 'log', false);
 
       if (questionUpdates.length > 0) {
         // Parse the question updates and store relevant info into Notification Store

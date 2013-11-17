@@ -15,19 +15,20 @@ SW.vars.ALLOWED_PAGES = [
   'stackexchange.com/questions/'
 ];
 
-SW.modes.inDebugMode = true;
+SW.modes.inDebugMode = false;
 
 // Conversion to seconds
 // TODO: Store as a computed value later on to improve performance
 SW.vars.TIME = {
-  T_15_MIN: 60*15,
-  T_30_MIN: 60*30,
-  T_1_HOUR: 60*60,
-  T_2_HOUR: 60*60*2,
-  T_5_HOUR: 60*60*5,
-  T_1_DAY:  60*60*24,
-  T_2_DAY:  60*60*24*2,
-  T_5_DAY:  60*60*24*5
+  T_2_MIN   : 60*2,
+  T_15_MIN  : 60*15,
+  T_30_MIN  : 60*30,
+  T_1_HOUR  : 60*60,
+  T_2_HOUR  : 60*60*2,
+  T_5_HOUR  : 60*60*5,
+  T_1_DAY   : 60*60*24,
+  T_2_DAY   : 60*60*24*2,
+  T_5_DAY   : 60*60*24*5
 };
 
 // SW.vars.FETCH_NOTIFICATION_TIME = SW.vars.TIME.T_30_MIN * 1000;

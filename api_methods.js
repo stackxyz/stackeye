@@ -4,8 +4,8 @@ SW.methods.getUrlForAllComments = function(idString, domain) {
 };
 
 SW.methods.getUrlForQuestionUpdates = function(id, domain, lastFetchDate) {
-  // https://api.stackexchange.com/questions/19570820/timeline?fromtime=1382486400&site=stackoverflow
-  return 'https://api.stackexchange.com/questions/' + id + '/timeline?fromtime=' + 
+  // https://api.stackexchange.com/questions/19570820/timeline?fromdate =1382486400&site=stackoverflow
+  return 'https://api.stackexchange.com/questions/' + id + '/timeline?fromdate=' + 
           lastFetchDate + '&site=' + domain;
 };
 
