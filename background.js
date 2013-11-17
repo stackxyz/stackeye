@@ -1,6 +1,18 @@
+SW.methods.log = function(message, type, always_log) {
+  if (SW.modes.inDebugMode || always_log) {
+    if (type == 'log') {
+      console.log(message);
+    } else if (type == 'error') {
+      console.error(message);
+    } else if (type == 'warn') {
+      console.warn(message);
+    }
+  }			
+};
+
 SW.methods.saveNotificationStore = function() {
   chrome.storage.sync.set({'notificationStore': SW.stores.notificationStore}, function() {
-    console.log(SW.messages.INFO_DATA_SAVED);
+    SW.methods.log(SW.messages.INFO_DATA_SAVED, 'info', false);
   });
 };
 
