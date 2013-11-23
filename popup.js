@@ -53,7 +53,7 @@ Popup.methods.getNotificationToShow = function(notificationObject) {
 
   markup = '<div class="upper-row">' + text + ' on' + '</div>';
   markup += '<div class="lower-row">' + 
-            '<a href="' + notificationObject.link + '">' + notificationObject.title + '</a>' +
+            '<a class="question-link" href="' + notificationObject.link + '">' + notificationObject.title + '</a>' +
             '</div>';
 
   return markup;
@@ -83,7 +83,19 @@ Popup.methods.init = function() {
   Popup.methods.updateCurrentPage();
 };
 
+Popup.methods.openQuestionInTab = function(evt) {
+  var href = evt.target.href;
+
+  chrome.tabs.create({
+    active: true,
+    url: href
+  }, null);
+
+  return false;
+}
+
 Popup.methods.init();
 
 // All Event listeners go here
 Popup.vars.$watchButton.click(Popup.methods.watchCurrentPage);
+$('#notification-area').find('.question-link').click(Popup.methods.openQuestionInTab);
