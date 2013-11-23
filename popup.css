@@ -1,3 +1,10 @@
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: #333333;
+}
+
 .hidden {
   display: none;
 }
@@ -11,6 +18,7 @@
   height: 0.4rem;
   border-radius: 2px;
   border: 1px solid #777;
+  margin: 0;
 }
 
 .notification-count-button {
@@ -20,4 +28,25 @@
   border-radius: 3px;
   border: 2px solid rgb(68, 170, 68);
   margin-top: 0.2rem;
+}
+
+.notification-list {
+  list-style-type: none;
+  margin: 0;
+}
+
+.notification-list li {
+  padding: 10px;
+}
+
+.notification-list li:nth-child(even) {
+  background-color: #eee;
+}
+
+.notification-list li:nth-child(odd) {
+  background-color: white;
+}
+
+.bold {
+  font-weight: bold;
 }
