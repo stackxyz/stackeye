@@ -1,18 +1,8 @@
-SW.methods.log = function(message, type, always_log) {
-  if (SW.modes.inDebugMode || always_log) {
-    if (type == 'log') {
-      console.log(message);
-    } else if (type == 'error') {
-      console.error(message);
-    } else if (type == 'warn') {
-      console.warn(message);
-    }
-  }			
-};
-
 SW.methods.saveNotificationStore = function() {
   chrome.storage.sync.set({'notificationStore': SW.stores.notificationStore}, function() {
-    SW.methods.log(SW.messages.INFO_DATA_SAVED, 'info', false);
+    if (SW.modes.inDebugMode) {
+      console.log(SW.messages.INFO_DATA_SAVED);
+    }
   });
 };
 
@@ -244,8 +234,10 @@ SW.methods.fetchNewNotifications = function() {
       questionUpdates = SW.methods.getQuestionUpdates(
                     question.questionId, question.domain, question.lastFetchDate);
 
-      SW.methods.log(question.title, 'log', false);
-      SW.methods.log(questionUpdates, 'log', false);
+      if (SW.modes.inDebugMode) {
+        console.log(question.title);
+        console.log(questionUpdates);
+      }
 
       if (questionUpdates.length > 0) {
         // Parse the question updates and store relevant info into Notification Store

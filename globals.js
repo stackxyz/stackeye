@@ -15,7 +15,7 @@ SW.vars.ALLOWED_PAGES = [
   'stackexchange.com/questions/'
 ];
 
-SW.modes.inDebugMode = false;
+SW.modes.inDebugMode = true;
 
 // Conversion to seconds
 // TODO: Store as a computed value later on to improve performance
