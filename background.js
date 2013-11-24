@@ -14,6 +14,7 @@ SW.methods.loadNotificationStore = function() {
 
     if (notifications && notifications.length) {
       SW.stores.notificationStore = notifications;
+      SW.methods.updateBadgeText();
     }
   });
 };
@@ -267,9 +268,26 @@ SW.methods.fetchNewNotifications = function() {
   }
 };
 
+SW.methods.updateBadgeText = function(changes, areaName) {
+  var numNotifications = SW.stores.notificationStore.length;
+
+  if (numNotifications ==0 ) {
+    return; // We don't want to show ZERO as notification
+  } else if (numNotifications > 99) {
+    numNotifications = '99+';
+  } else {
+    numNotifications = '' + numNotifications;
+  }
+
+  chrome.browserAction.setBadgeText({ text: numNotifications });
+  chrome.browserAction.setBadgeBackgroundColor({ color: '#333' });
+};
+
 SW.methods.init = function() {
   SW.methods.loadNotificationStore();
   SW.methods.loadQuestionFeedStore();
+
+  chrome.storage.onChanged.addListener(SW.methods.updateBadgeText);
 
   setInterval(SW.methods.fetchNewNotifications, SW.vars.FETCH_NOTIFICATION_TIME);
 };
