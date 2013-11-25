@@ -32,7 +32,7 @@ SW.vars.TIME = {
 };
 
 // SW.vars.FETCH_NOTIFICATION_TIME = SW.vars.TIME.T_30_MIN * 1000;
-SW.vars.FETCH_NOTIFICATION_TIME =  2000 * 60; //setinterval takes time in miliseconds
+SW.vars.FETCH_NOTIFICATION_TIME =  5000 * 60; //setinterval takes time in miliseconds
 
 SW.messages = {
   WARN_INVALID_URL: 'Please navigate to a stackoverflow question page',
