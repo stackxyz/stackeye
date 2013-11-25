@@ -274,7 +274,7 @@ SW.methods.updateBadgeText = function(changes, areaName) {
   var numNotifications = SW.stores.notificationStore.length;
 
   if (numNotifications ==0 ) {
-    return; // We don't want to show ZERO as notification
+    numNotifications = '';
   } else if (numNotifications > 99) {
     numNotifications = '99+';
   } else {
