@@ -13,6 +13,13 @@
       "background.js"
     ]
   },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.stackexchange.com/*", "http://stackoverflow.com/*"],
+      "js": ["libs/jquery-1.9.1.js", "content_scripts/cs.js"]
+    }
+  ],
   
   "browser_action": {
     "default_icon"    : "images/icon_so_48.png",
