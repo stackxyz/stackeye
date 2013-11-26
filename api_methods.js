@@ -75,8 +75,6 @@ SW.methods.getAllAnswerIds = function(answerList) {
     answerIds.push(answerObject.answer_id);
   });
 
-  // Add question id to the list as well because want to fetch comments for the question too
-  answerIds.push(SW.vars.questionId);
   return answerIds;
 };
 
@@ -103,6 +101,11 @@ SW.methods.getAllComments = function(ids, domain) {
   return commentList;
 };
 
+/* https://bitbucket.org/blunderboy/sowatchman/issue/15/timeline-api-not-fetching-comments-when
+**Since timeline API is having a bug..I (Sachin Jain) am fetching questionUpdates in a different way
+*/
+
+/*
 SW.methods.getQuestionUpdates = function(id, domain, lastFetchDate) {
   var url = SW.methods.getUrlForQuestionUpdates(id, domain, lastFetchDate),
     questionUpdates = [];
@@ -118,6 +121,49 @@ SW.methods.getQuestionUpdates = function(id, domain, lastFetchDate) {
       console.error(e);
     }
   });
+
+  return questionUpdates;
+};
+*/
+
+SW.methods.filterByCreationDate = function(list, lastFetchDate, timeline_type) {
+  var filteredList = [],
+    listItem,
+    creation_date;
+
+  for (var i = 0; i < list.length; i++) {
+    listItem = list[i];
+    creation_date = +list[i].creation_date;
+    lastFetchDate = +lastFetchDate;
+
+    if (creation_date > lastFetchDate) {
+      listItem.timeline_type = timeline_type;
+      filteredList.push(listItem);
+    }
+  }
+
+  return filteredList;
+}
+
+SW.methods.getQuestionUpdates = function(id, domain, lastFetchDate) {
+  var answerList,
+    answerIds,
+    commentList,
+    questionUpdates;
+
+  answerList = SW.methods.getAllAnswers(id, domain);
+  answerIds = SW.methods.getAllAnswerIds(answerList);
+
+  // Add questionId to answerIds as well because we want to get comments on question as well
+  answerIds.push(id);
+
+  // Fetch all comments on all answers and on question 
+  commentList = SW.methods.getAllComments(answerIds, domain);
+
+  answerList = SW.methods.filterByCreationDate(answerList, lastFetchDate, SW.constants.ANSWER);
+  commentList = SW.methods.filterByCreationDate(commentList, lastFetchDate, SW.constants.NEW_COMMENT);
+
+  questionUpdates = answerList.concat(commentList);
 
   return questionUpdates;
 };

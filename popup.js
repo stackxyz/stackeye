@@ -7,7 +7,6 @@ Popup.vars.busyWatching = false;
 Popup.vars.numNotificationsToShow = 5;
 Popup.vars.$watchButton = $('#swo_watch_button');
 Popup.vars.$watchingButton = $('#swo_watching_button');
-Popup.vars.$notificationCountButton = $('#notification-count');
 Popup.vars.$notificationList = $('#notification-area').find('.notification-list');
 Popup.vars.notifications = BG.SW.stores.notificationStore;
 
@@ -25,16 +24,6 @@ Popup.methods.watchCurrentPage = function() {
     BG.SW.methods.startWatchingActiveTabPage(Popup.methods.watchSuccess);
     Popup.vars.busyWatching = false;
   }
-};
-
-Popup.methods.setNotificationCount = function() {
-  var num_notifications = Popup.vars.notifications.length;
-
-  if (num_notifications > 99) {
-    num_notifications = '100+';
-  }
-
-  Popup.vars.$notificationCountButton.text(num_notifications);
 };
 
 Popup.methods.getNotificationToShow = function(notificationObject) {
@@ -74,7 +63,6 @@ Popup.methods.renderNotifications = function() {
 };
 
 Popup.methods.updateCurrentPage = function() {
-  Popup.methods.setNotificationCount();
   Popup.methods.renderNotifications();
 };
 

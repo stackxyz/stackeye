@@ -83,6 +83,7 @@ SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
 
 SW.methods.isCurrentTabUrlAllowed = function(url) {
   var isUrlValid = false;
+
   $.each(SW.vars.ALLOWED_PAGES, function(index, allowedUrl) {
     if (url.indexOf(allowedUrl) > -1) {
       isUrlValid = true;
@@ -209,6 +210,7 @@ SW.methods.updateNotificationStore = function(updates, questionInfo) {
         // Create a new notification entry
         notificationEntry.link = questionInfo.link;
         notificationEntry.title = questionInfo.title;
+        notificationEntry.domain = questionInfo.domain;
         notificationEntry.questionId = questionInfo.questionId;
         notificationEntry.numComments = (update.timeline_type == SW.constants.NEW_COMMENT) ? 1 : 0;
         notificationEntry.numAnswers = (update.timeline_type == SW.constants.ANSWER) ? 1 : 0;
@@ -272,7 +274,7 @@ SW.methods.updateBadgeText = function(changes, areaName) {
   var numNotifications = SW.stores.notificationStore.length;
 
   if (numNotifications ==0 ) {
-    return; // We don't want to show ZERO as notification
+    numNotifications = '';
   } else if (numNotifications > 99) {
     numNotifications = '99+';
   } else {
@@ -283,11 +285,55 @@ SW.methods.updateBadgeText = function(changes, areaName) {
   chrome.browserAction.setBadgeBackgroundColor({ color: '#333' });
 };
 
+SW.methods.removeNotificationFromStore = function(qId, domain) {
+  var notificationStore = SW.stores.notificationStore,
+    numNotifications = notificationStore.length,
+    IS_NOTIFICATION_REMOVED = false;
+
+  for (var i = numNotifications - 1; i >= 0; i--) {
+    if (notificationStore[i].questionId === qId && notificationStore[i].domain == domain) {
+      if (SW.modes.inDebugMode) {
+        console.log('Removing: ' + notificationStore[i].title + ' from Notification Store');
+      }
+
+      notificationStore.splice(i, 1);
+      IS_NOTIFICATION_REMOVED = true;
+    }
+  }
+
+  if (IS_NOTIFICATION_REMOVED) {
+    SW.methods.saveNotificationStore();
+
+    // Badge is not getting updated automatically whenever store is changed behind the scene
+    // So explicitly setting the badge value
+    SW.methods.updateBadgeText();
+  }
+};
+
+SW.methods.clearNotification = function(url) {
+  var urlInfo;
+
+  if (SW.methods.isCurrentTabUrlAllowed(url)) {
+    urlInfo = SW.methods.extractUrlInfo(url);
+
+    SW.methods.removeNotificationFromStore(urlInfo.questionId, urlInfo.domain);
+  }
+};
+
+SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
+  if (request.event == 'pageLoaded') {
+    SW.methods.clearNotification(request.url);
+  }
+};
+
 SW.methods.init = function() {
   SW.methods.loadNotificationStore();
   SW.methods.loadQuestionFeedStore();
 
   chrome.storage.onChanged.addListener(SW.methods.updateBadgeText);
+
+  // Add Listener for events from content scripts
+  chrome.runtime.onMessage.addListener(SW.methods.contentScriptCommunicator);
 
   setInterval(SW.methods.fetchNewNotifications, SW.vars.FETCH_NOTIFICATION_TIME);
 };
