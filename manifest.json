@@ -17,7 +17,8 @@
   "content_scripts": [
     {
       "matches": ["*://*.stackexchange.com/*", "http://stackoverflow.com/*"],
-      "js": ["libs/jquery-1.9.1.js", "content_scripts/cs.js"]
+      "js": ["libs/jquery-1.9.1.js", "content_scripts/cs.js"],
+      "css": ["content_scripts/cs.css"]
     }
   ],
   
@@ -38,5 +39,10 @@
     "tabs",
     "http://*/*",
     "https://*/*"
+  ],
+  
+  "web_accessible_resources": [
+    "images/icon_color_19.png",
+    "images/icon_grey_19.png"
   ]
 }

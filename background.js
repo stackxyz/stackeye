@@ -63,11 +63,13 @@ SW.methods.isPagebeingWatched = function(watchSuccessCallback) {
       SW.vars = $.extend(SW.vars, urlInfo);
 
       if (SW.vars.isUrlValid && SW.methods.questionStoreContainCurrentPage()) {
-        watchSuccessCallback('');
+        watchSuccessCallback(true /* Page is being watched */);
+        return ;
       }
     } else {
       console.error(SW.messages.ERROR_UNABLE_TO_GET_URL_CURRENT_TAB);
     }
+    watchSuccessCallback(false /* Page not watched */);
   });
 };
 
@@ -320,9 +322,19 @@ SW.methods.clearNotification = function(url) {
   }
 };
 
+SW.methods.watchStatus = function(message) {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, {messageType: 'watchStatus', watchStatus: message});
+     });
+};
+
 SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
   if (request.event == 'pageLoaded') {
     SW.methods.clearNotification(request.url);
+    SW.methods.isPagebeingWatched(SW.methods.watchStatus);
+  }
+  else if (request.event == "watchPage") {
+    SW.methods.startWatchingActiveTabPage(SW.methods.watchStatus);
   }
 };
 

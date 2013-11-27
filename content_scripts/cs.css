@@ -1,0 +1,7 @@
+#watchEye {
+  cursor: pointer;
+}
+
+#watchEye:hover {
+  opacity: 0.7;
+}

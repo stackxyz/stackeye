@@ -11,11 +11,11 @@ Popup.vars.$notificationList = $('#notification-area').find('.notification-list'
 Popup.vars.notifications = BG.SW.stores.notificationStore;
 
 Popup.methods.watchSuccess = function(message) {
-  Popup.vars.$watchButton.hide();
-  Popup.vars.$watchingButton.show();
-
-  // Show message somewhere on popup
-  if (message) alert(message);
+  if (message == true)
+  {
+    Popup.vars.$watchButton.hide();
+    Popup.vars.$watchingButton.show();
+  }
 };
 
 Popup.methods.watchCurrentPage = function() {
