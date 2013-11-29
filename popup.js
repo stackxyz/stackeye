@@ -11,8 +11,7 @@ Popup.vars.$notificationList = $('#notification-area').find('.notification-list'
 Popup.vars.notifications = BG.SW.stores.notificationStore;
 
 Popup.methods.watchSuccess = function(message) {
-  if (message == true)
-  {
+  if (message) {
     Popup.vars.$watchButton.hide();
     Popup.vars.$watchingButton.show();
   }

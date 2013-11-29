@@ -62,14 +62,17 @@ SW.methods.isPagebeingWatched = function(watchSuccessCallback) {
       urlInfo = SW.methods.extractUrlInfo(SW.vars.activeTabUrl);
       SW.vars = $.extend(SW.vars, urlInfo);
 
-      if (SW.vars.isUrlValid && SW.methods.questionStoreContainCurrentPage()) {
-        watchSuccessCallback(true /* Page is being watched */);
-        return ;
+      if (SW.vars.isUrlValid) {
+        if (SW.methods.questionStoreContainCurrentPage()) {
+          watchSuccessCallback(true /* Page is being watched */);
+        }
+        else {
+          watchSuccessCallback(false /* Page not watched */);
+        }
       }
     } else {
       console.error(SW.messages.ERROR_UNABLE_TO_GET_URL_CURRENT_TAB);
     }
-    watchSuccessCallback(false /* Page not watched */);
   });
 };
 
@@ -322,19 +325,28 @@ SW.methods.clearNotification = function(url) {
   }
 };
 
-SW.methods.watchStatus = function(message) {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {messageType: 'watchStatus', watchStatus: message});
-     });
+function sendMessageToContentScript(message) {
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, message);
+  });
+}
+
+SW.methods.sendWatchStatus = function(isPageWatched) {
+  var message = {
+    messageType: 'watchStatus',
+    watchStatus: isPageWatched
+  };
+  
+  sendMessageToContentScript(message);
 };
 
 SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
   if (request.event == 'pageLoaded') {
     SW.methods.clearNotification(request.url);
-    SW.methods.isPagebeingWatched(SW.methods.watchStatus);
+    SW.methods.isPagebeingWatched(SW.methods.sendWatchStatus);
   }
-  else if (request.event == "watchPage") {
-    SW.methods.startWatchingActiveTabPage(SW.methods.watchStatus);
+  else if (request.action == "watchPage") {
+    SW.methods.startWatchingActiveTabPage(SW.methods.sendWatchStatus);
   }
 };
 

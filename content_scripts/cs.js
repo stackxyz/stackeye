@@ -16,16 +16,26 @@ function notifyBackgroundForPageLoad() {
 
 $(document).ready(notifyBackgroundForPageLoad);
 
-// Create WatchEye Element and register for events.
-var watchEye = document.createElement("img");
-watchEye.id = "watchEye";
-$("div.vote").first().append(watchEye);
-watchEye.onclick = function() {
-  sendMessageToBackground({event: 'watchPage'}, function() {});
+// WatchEye DOM Element
+var watchEye;
+
+ // Create WatchEye Element and register for events.
+function createWatchEye()
+{
+  watchEye = document.createElement("img");
+  watchEye.id = "watchEye";
+  $("div.vote").first().append(watchEye);
+  watchEye.onclick = function() {
+    sendMessageToBackground({action: 'watchPage'}, function() {});
+  }
 }
 
 function updateWatchButton(isWatching)
 {
+  if (!watchEye) {
+    createWatchEye();
+  }
+  
   watchEye.src = chrome.extension.getURL(isWatching ? "images/icon_color_19.png" : "images/icon_grey_19.png");
 }
 
