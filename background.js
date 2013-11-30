@@ -76,6 +76,25 @@ SW.methods.isPagebeingWatched = function(watchSuccessCallback) {
   });
 };
 
+SW.methods.initUnwatchProcess = function() {
+  var questionList = SW.stores.questionFeedStore,
+    question = null,
+    IS_QUESTION_REMOVED = false;
+
+  for (index = questionList.length - 1; index >= 0; i--) {
+    question = questionList[index];
+
+    if (question.domain == SW.vars.domain && question.questionId == SW.vars.questionId) {
+      questionList.splice(index, 1);
+      IS_QUESTION_REMOVED = true;
+    }
+  }
+
+  if (IS_QUESTION_REMOVED) {
+    SW.methods.saveQuestionsFeedStore();
+  }
+};
+
 SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
   // Register the callback here
   SW.callbacks.watchProcessSuccessCallback = watchProcessSuccessCallback;
@@ -84,6 +103,14 @@ SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
     SW.methods.initWatchingProcess();
   } else {
     alert(SW.messages.WARN_INVALID_URL);
+  }
+};
+
+SW.methods.unwatchActiveTabPage = function() {
+  if (SW.vars.isUrlValid) {
+    SW.methods.initUnwatchProcess();
+  } else {
+    console.error(SW.messages.WARN_INVALID_URL);
   }
 };
 

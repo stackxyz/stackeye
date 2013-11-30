@@ -6,14 +6,14 @@ Popup.vars = {};
 Popup.vars.busyWatching = false;
 Popup.vars.numNotificationsToShow = 5;
 Popup.vars.$watchButton = $('#swo_watch_button');
-Popup.vars.$watchingButton = $('#swo_watching_button');
+Popup.vars.$unwatchButton = $('#swo_unwatch_button');
 Popup.vars.$notificationList = $('#notification-area').find('.notification-list');
 Popup.vars.notifications = BG.SW.stores.notificationStore;
 
 Popup.methods.watchSuccess = function(message) {
   if (message) {
     Popup.vars.$watchButton.hide();
-    Popup.vars.$watchingButton.show();
+    Popup.vars.$unwatchButton.show();
   }
 };
 
@@ -23,6 +23,10 @@ Popup.methods.watchCurrentPage = function() {
     BG.SW.methods.startWatchingActiveTabPage(Popup.methods.watchSuccess);
     Popup.vars.busyWatching = false;
   }
+};
+
+Popup.methods.unwatchCurrentPage = function() {
+  BG.SW.methods.unwatchActiveTabPage();
 };
 
 Popup.methods.getNotificationToShow = function(notificationObject) {
@@ -86,3 +90,4 @@ Popup.methods.init();
 // All Event listeners go here
 Popup.vars.$watchButton.click(Popup.methods.watchCurrentPage);
 $('#notification-area').find('.question-link').click(Popup.methods.openQuestionInTab);
+Popup.vars.$unwatchButton.click(Popup.methods.unwatchCurrentPage);
