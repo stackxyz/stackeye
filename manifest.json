@@ -29,7 +29,7 @@
   },
   
   "icons": {
-	"16": "images/icon_so_48.png",
+    "16": "images/icon_so_48.png",
     "48": "images/icon_so_48.png",
     "128": "images/icon_so_48.png" 
   },

@@ -77,6 +77,7 @@ SW.methods.isPagebeingWatched = function(watchSuccessCallback) {
 };
 
 SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
+  // Register the callback here
   SW.callbacks.watchProcessSuccessCallback = watchProcessSuccessCallback;
 
   if (SW.vars.isUrlValid) {
@@ -343,9 +344,8 @@ SW.methods.sendWatchStatus = function(isPageWatched) {
 SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
   if (request.event == 'pageLoaded') {
     SW.methods.clearNotification(request.url);
-    SW.methods.isPagebeingWatched(SW.methods.sendWatchStatus);
-  }
-  else if (request.action == "watchPage") {
+    SW.methods.isPagebeingWatched(SW.methods.sendWatchStatus /* callback */);
+  } else if (request.action == 'watchPage') {
     SW.methods.startWatchingActiveTabPage(SW.methods.sendWatchStatus);
   }
 };
