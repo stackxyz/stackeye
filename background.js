@@ -174,7 +174,7 @@ SW.methods.getNextFetchDate = function(lastFetchDate, creation_date) {
 
   // If app is in debug mode, we wlays want to fetch notification after 2 minutes
   if (SW.modes.inDebugMode) {
-    nextFetchInterval = SW.vars.TIME.T_2_MIN;
+    nextFetchInterval = SW.vars.TIME.T_5_MIN;
   }
 
   return lastFetchDate + nextFetchInterval;
