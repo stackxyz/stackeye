@@ -208,13 +208,13 @@ SW.methods.getNotificationEntryForQuestion = function(question) {
 
 SW.methods.updateNotificationStore = function(updates, questionInfo) {
   var updatesLength = updates.length,
-      update = null,
-      entryForSameQuestion = null,
-      notificationEntry = {},
-      acceptedTimelineTypes = [
-        SW.constants.NEW_COMMENT,
-        SW.constants.ANSWER
-      ];
+    update = null,
+    entryForSameQuestion = null,
+    notificationEntry = {},
+    acceptedTimelineTypes = [
+      SW.constants.NEW_COMMENT,
+      SW.constants.ANSWER
+    ];
 
   for (var i = updatesLength - 1; i >= 0; i--) {
     update = updates[i];

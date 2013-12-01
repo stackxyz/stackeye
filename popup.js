@@ -52,12 +52,14 @@ Popup.methods.getNotificationToShow = function(notificationObject) {
 }
 
 Popup.methods.renderNotifications = function() {
-  // TODO @Sachin: Use document fragment here
+  // TODO @SachinJ: Use document fragment here
   var notificationList = Popup.vars.notifications,
     notificationListLength = Popup.vars.notifications.length,
     notificationToShow;
 
-  // TODO @Sachin: Sort the notification list by latest answer/comment
+  // TODO @SachinJ: Sort the notification list by latest answer/comment
+
+  Popup.vars.$notificationList.empty();
 
   for (var i = 0; i < notificationListLength && i < Popup.vars.numNotificationsToShow; i++) {
     notificationToShow = Popup.methods.getNotificationToShow(notificationList[i]);
