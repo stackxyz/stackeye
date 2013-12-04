@@ -9,6 +9,7 @@ Popup.vars.$watchButton = $('#swo_watch_button');
 Popup.vars.$watchingButton = $('#swo_watching_button');
 Popup.vars.$notificationList = $('#notification-area').find('.notification-list');
 Popup.vars.notifications = BG.SW.stores.notificationStore;
+Popup.vars.$viewNotificationsButton = $("#swo_view_notifications_button");
 
 Popup.methods.watchSuccess = function(message) {
   if (message) {
@@ -81,8 +82,18 @@ Popup.methods.openQuestionInTab = function(evt) {
   return false;
 }
 
+Popup.methods.viewAllNotificationsInTab = function(evt) {
+  chrome.tabs.create({
+    active: true,
+    url: 'notifications.html'
+  }, null);
+
+  return false;
+}
+
 Popup.methods.init();
 
 // All Event listeners go here
 Popup.vars.$watchButton.click(Popup.methods.watchCurrentPage);
 $('#notification-area').find('.question-link').click(Popup.methods.openQuestionInTab);
+Popup.vars.$viewNotificationsButton.click(Popup.methods.viewAllNotificationsInTab);
