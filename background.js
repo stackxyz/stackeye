@@ -76,13 +76,41 @@ SW.methods.isPagebeingWatched = function(watchSuccessCallback) {
   });
 };
 
+SW.methods.initUnwatchProcess = function() {
+  var questionList = SW.stores.questionFeedStore,
+    question = null,
+    IS_QUESTION_REMOVED = false;
+
+  for (index = questionList.length - 1; index >= 0; i--) {
+    question = questionList[index];
+
+    if (question.domain == SW.vars.domain && question.questionId == SW.vars.questionId) {
+      questionList.splice(index, 1);
+      IS_QUESTION_REMOVED = true;
+    }
+  }
+
+  if (IS_QUESTION_REMOVED) {
+    SW.methods.saveQuestionsFeedStore();
+  }
+};
+
 SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
+  // Register the callback here
   SW.callbacks.watchProcessSuccessCallback = watchProcessSuccessCallback;
 
   if (SW.vars.isUrlValid) {
     SW.methods.initWatchingProcess();
   } else {
     alert(SW.messages.WARN_INVALID_URL);
+  }
+};
+
+SW.methods.unwatchActiveTabPage = function() {
+  if (SW.vars.isUrlValid) {
+    SW.methods.initUnwatchProcess();
+  } else {
+    console.error(SW.messages.WARN_INVALID_URL);
   }
 };
 
@@ -146,7 +174,7 @@ SW.methods.getNextFetchDate = function(lastFetchDate, creation_date) {
 
   // If app is in debug mode, we wlays want to fetch notification after 2 minutes
   if (SW.modes.inDebugMode) {
-    nextFetchInterval = SW.vars.TIME.T_2_MIN;
+    nextFetchInterval = SW.vars.TIME.T_5_MIN;
   }
 
   return lastFetchDate + nextFetchInterval;
@@ -180,13 +208,13 @@ SW.methods.getNotificationEntryForQuestion = function(question) {
 
 SW.methods.updateNotificationStore = function(updates, questionInfo) {
   var updatesLength = updates.length,
-      update = null,
-      entryForSameQuestion = null,
-      notificationEntry = {},
-      acceptedTimelineTypes = [
-        SW.constants.NEW_COMMENT,
-        SW.constants.ANSWER
-      ];
+    update = null,
+    entryForSameQuestion = null,
+    notificationEntry = {},
+    acceptedTimelineTypes = [
+      SW.constants.NEW_COMMENT,
+      SW.constants.ANSWER
+    ];
 
   for (var i = updatesLength - 1; i >= 0; i--) {
     update = updates[i];
@@ -343,9 +371,8 @@ SW.methods.sendWatchStatus = function(isPageWatched) {
 SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
   if (request.event == 'pageLoaded') {
     SW.methods.clearNotification(request.url);
-    SW.methods.isPagebeingWatched(SW.methods.sendWatchStatus);
-  }
-  else if (request.action == "watchPage") {
+    SW.methods.isPagebeingWatched(SW.methods.sendWatchStatus /* callback */);
+  } else if (request.action == 'watchPage') {
     SW.methods.startWatchingActiveTabPage(SW.methods.sendWatchStatus);
   }
 };

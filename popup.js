@@ -6,7 +6,7 @@ Popup.vars = {};
 Popup.vars.busyWatching = false;
 Popup.vars.numNotificationsToShow = 5;
 Popup.vars.$watchButton = $('#swo_watch_button');
-Popup.vars.$watchingButton = $('#swo_watching_button');
+Popup.vars.$unwatchButton = $('#swo_unwatch_button');
 Popup.vars.$notificationList = $('#notification-area').find('.notification-list');
 Popup.vars.notifications = BG.SW.stores.notificationStore;
 Popup.vars.$viewNotificationsButton = $("#swo_view_notifications_button");
@@ -14,7 +14,7 @@ Popup.vars.$viewNotificationsButton = $("#swo_view_notifications_button");
 Popup.methods.watchSuccess = function(message) {
   if (message) {
     Popup.vars.$watchButton.hide();
-    Popup.vars.$watchingButton.show();
+    Popup.vars.$unwatchButton.show();
   }
 };
 
@@ -24,6 +24,10 @@ Popup.methods.watchCurrentPage = function() {
     BG.SW.methods.startWatchingActiveTabPage(Popup.methods.watchSuccess);
     Popup.vars.busyWatching = false;
   }
+};
+
+Popup.methods.unwatchCurrentPage = function() {
+  BG.SW.methods.unwatchActiveTabPage();
 };
 
 Popup.methods.getNotificationToShow = function(notificationObject) {
@@ -49,12 +53,14 @@ Popup.methods.getNotificationToShow = function(notificationObject) {
 }
 
 Popup.methods.renderNotifications = function() {
-  // TODO @Sachin: Use document fragment here
+  // TODO @SachinJ: Use document fragment here
   var notificationList = Popup.vars.notifications,
     notificationListLength = Popup.vars.notifications.length,
     notificationToShow;
 
-  // TODO @Sachin: Sort the notification list by latest answer/comment
+  // TODO @SachinJ: Sort the notification list by latest answer/comment
+
+  Popup.vars.$notificationList.empty();
 
   for (var i = 0; i < notificationListLength && i < Popup.vars.numNotificationsToShow; i++) {
     notificationToShow = Popup.methods.getNotificationToShow(notificationList[i]);
@@ -97,3 +103,4 @@ Popup.methods.init();
 Popup.vars.$watchButton.click(Popup.methods.watchCurrentPage);
 $('#notification-area').find('.question-link').click(Popup.methods.openQuestionInTab);
 Popup.vars.$viewNotificationsButton.click(Popup.methods.viewAllNotificationsInTab);
+Popup.vars.$unwatchButton.click(Popup.methods.unwatchCurrentPage);

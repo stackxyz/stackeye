@@ -18,9 +18,9 @@ SW.vars.ALLOWED_PAGES = [
 SW.modes.inDebugMode = true;
 
 // Conversion to seconds
-// TODO: Store as a computed value later on to improve performance
 SW.vars.TIME = {
   T_2_MIN   : 60*2,
+  T_5_MIN   : 60*5, 
   T_15_MIN  : 60*15,
   T_30_MIN  : 60*30,
   T_1_HOUR  : 60*60,
@@ -32,7 +32,7 @@ SW.vars.TIME = {
 };
 
 // SW.vars.FETCH_NOTIFICATION_TIME = SW.vars.TIME.T_30_MIN * 1000;
-SW.vars.FETCH_NOTIFICATION_TIME =  5000 * 60; //setinterval takes time in miliseconds
+SW.vars.FETCH_NOTIFICATION_TIME =  SW.vars.TIME.T_5_MIN * 1000; //setinterval takes time in miliseconds
 
 SW.messages = {
   WARN_INVALID_URL: 'Please navigate to a stackoverflow question page',

@@ -5,6 +5,10 @@ body {
   color: #333333;
 }
 
+button {
+  cursor: pointer;
+}
+
 .hidden {
   display: none;
 }
@@ -19,15 +23,6 @@ body {
   border-radius: 2px;
   border: 1px solid #777;
   margin: 0;
-}
-
-.notification-count-button {
-  float: right;
-  background-color: rgb(76, 153, 76);
-  color: white;
-  border-radius: 3px;
-  border: 2px solid rgb(68, 170, 68);
-  margin-top: 0.2rem;
 }
 
 .notification-list {
