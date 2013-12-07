@@ -3,36 +3,14 @@ var Popup = {};
 Popup.methods = {};
 Popup.vars = {};
 
-Popup.vars.busyWatching = false;
 Popup.vars.numNotificationsToShow = 5;
-Popup.vars.$watchButton = $('#swo_watch_button');
-Popup.vars.$unwatchButton = $('#swo_unwatch_button');
 Popup.vars.$notificationList = $('#notification-area').find('.notification-list');
 Popup.vars.notifications = BG.SW.stores.notificationStore;
 Popup.vars.$viewNotificationsButton = $("#swo_view_notifications_button");
 
-Popup.methods.watchSuccess = function(message) {
-  if (message) {
-    Popup.vars.$watchButton.hide();
-    Popup.vars.$unwatchButton.show();
-  }
-};
-
-Popup.methods.watchCurrentPage = function() {
-  if (!Popup.vars.busyWatching) {
-    Popup.vars.busyWatching = true;
-    BG.SW.methods.startWatchingActiveTabPage(Popup.methods.watchSuccess);
-    Popup.vars.busyWatching = false;
-  }
-};
-
-Popup.methods.unwatchCurrentPage = function() {
-  BG.SW.methods.unwatchActiveTabPage();
-};
-
 Popup.methods.getNotificationToShow = function(notificationObject) {
   var text = '',
-    markup = '',
+    markup,
     numAnswers = notificationObject.numAnswers,
     numComments = notificationObject.numComments;
 
@@ -50,15 +28,13 @@ Popup.methods.getNotificationToShow = function(notificationObject) {
             '</div>';
 
   return markup;
-}
+};
 
 Popup.methods.renderNotifications = function() {
-  // TODO @SachinJ: Use document fragment here
+  // TODO(@SachinJ): Use document fragment here
   var notificationList = Popup.vars.notifications,
     notificationListLength = Popup.vars.notifications.length,
     notificationToShow;
-
-  // TODO @SachinJ: Sort the notification list by latest answer/comment
 
   Popup.vars.$notificationList.empty();
 
@@ -73,34 +49,37 @@ Popup.methods.updateCurrentPage = function() {
 };
 
 Popup.methods.init = function() {
-  BG.SW.methods.isPagebeingWatched(Popup.methods.watchSuccess);
   Popup.methods.updateCurrentPage();
+};
+
+Popup.methods.createNewTab = function(options) {
+  if (!options.url) {
+    return false;
+  }
+
+  options.active = options.active || true; //Default value
+  chrome.tabs.create({
+    active: options.active,
+    url: options.url
+  }, null);
 };
 
 Popup.methods.openQuestionInTab = function(evt) {
   var href = evt.target.href;
 
-  chrome.tabs.create({
-    active: true,
-    url: href
-  }, null);
-
+  Popup.methods.createNewTab({ active: true, url: href });
   return false;
-}
+};
 
 Popup.methods.viewAllNotificationsInTab = function(evt) {
-  chrome.tabs.create({
-    active: true,
-    url: 'notifications.html'
-  }, null);
+  var url = 'notifications.html';
 
+  Popup.methods.createNewTab({ active: true, url: url });
   return false;
-}
+};
 
 Popup.methods.init();
 
 // All Event listeners go here
-Popup.vars.$watchButton.click(Popup.methods.watchCurrentPage);
 $('#notification-area').find('.question-link').click(Popup.methods.openQuestionInTab);
 Popup.vars.$viewNotificationsButton.click(Popup.methods.viewAllNotificationsInTab);
-Popup.vars.$unwatchButton.click(Popup.methods.unwatchCurrentPage);
