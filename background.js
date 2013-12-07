@@ -42,41 +42,27 @@ SW.methods.loadQuestionFeedStore = function() {
   });
 };
 
-/* This method is being called whenever popover is opened
+/* This method is being called whenever page is loaded
 ** So we extract all the page info here
 */
-SW.methods.isPagebeingWatched = function(watchSuccessCallback) {
+SW.methods.isPagebeingWatched = function(activeTabUrl, watchSuccessCallback) {
+  var urlInfo,
+    watchStatus = false;
+
   SW.vars.isUrlValid = false;
+  SW.vars.activeTabUrl = activeTabUrl;
+  SW.vars.isUrlValid = SW.methods.isCurrentTabUrlAllowed(SW.vars.activeTabUrl);
 
-  chrome.tabs.query({active: true, currentWindow: true}, function(arrayOfTabs) {
-    // Since only one tab should be active and in the current window at once
-    // the return variable should only have one entry
-    var activeTab = arrayOfTabs[0];
-    var urlInfo;
+  urlInfo = SW.methods.extractUrlInfo(SW.vars.activeTabUrl);
+  SW.vars = $.extend(SW.vars, urlInfo);
 
-    if (activeTab) {
-      SW.vars.activeTabUrl = activeTab.url;
-
-      SW.vars.isUrlValid = SW.methods.isCurrentTabUrlAllowed(SW.vars.activeTabUrl);
-
-      urlInfo = SW.methods.extractUrlInfo(SW.vars.activeTabUrl);
-      SW.vars = $.extend(SW.vars, urlInfo);
-
-      if (SW.vars.isUrlValid) {
-        if (SW.methods.questionStoreContainCurrentPage()) {
-          watchSuccessCallback(true /* Page is being watched */);
-        }
-        else {
-          watchSuccessCallback(false /* Page not watched */);
-        }
-      }
-    } else {
-      console.error(SW.messages.ERROR_UNABLE_TO_GET_URL_CURRENT_TAB);
-    }
-  });
+  if (SW.vars.isUrlValid) {
+    watchStatus = SW.methods.isQuestionInStore(urlInfo.questionId, urlInfo.domain);
+    watchSuccessCallback(watchStatus);
+  }
 };
 
-SW.methods.initUnwatchProcess = function() {
+SW.methods.removeQuestionFromStore = function(questionId, domain) {
   var questionList = SW.stores.questionFeedStore,
     question = null,
     index,
@@ -85,7 +71,7 @@ SW.methods.initUnwatchProcess = function() {
   for (index = questionList.length - 1; index >= 0; index--) {
     question = questionList[index];
 
-    if (question.domain == SW.vars.domain && question.questionId == SW.vars.questionId) {
+    if (question.domain == domain && question.questionId == questionId) {
       questionList.splice(index, 1);
       IS_QUESTION_REMOVED = true;
     }
@@ -94,6 +80,8 @@ SW.methods.initUnwatchProcess = function() {
   if (IS_QUESTION_REMOVED) {
     SW.methods.saveQuestionsFeedStore();
   }
+
+  return IS_QUESTION_REMOVED;
 };
 
 SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
@@ -107,9 +95,14 @@ SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
   }
 };
 
-SW.methods.unwatchActiveTabPage = function() {
+SW.methods.unwatchActiveTabPage = function(sCallback) {
+  var isQuestionRemoved = false;
+
   if (SW.vars.isUrlValid) {
-    SW.methods.initUnwatchProcess();
+    isQuestionRemoved = SW.methods.removeQuestionFromStore(SW.vars.questionId, SW.vars.domain);
+    if (isQuestionRemoved) {
+      sCallback(false /* watchStatus */);
+    }
   } else {
     console.error(SW.messages.WARN_INVALID_URL);
   }
@@ -134,10 +127,10 @@ SW.methods.initWatchingProcess = function() {
   SW.methods.addQuestionToStore(questionData);
 };
 
-SW.methods.questionStoreContainCurrentPage = function() {
+SW.methods.isQuestionInStore = function(questionId, domain) {
   for (var i=0; i < SW.stores.questionFeedStore.length; i++) {
-    if (SW.stores.questionFeedStore[i].domain == SW.vars.domain &&
-      SW.stores.questionFeedStore[i].questionId == SW.vars.questionId) {
+    if (SW.stores.questionFeedStore[i].domain == domain &&
+      SW.stores.questionFeedStore[i].questionId == questionId) {
       return true;
     }
   }
@@ -372,9 +365,11 @@ SW.methods.sendWatchStatus = function(isPageWatched) {
 SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
   if (request.event == 'pageLoaded') {
     SW.methods.clearNotification(request.url);
-    SW.methods.isPagebeingWatched(SW.methods.sendWatchStatus /* callback */);
+    SW.methods.isPagebeingWatched(request.url, SW.methods.sendWatchStatus /* callback */);
   } else if (request.action == 'watchPage') {
     SW.methods.startWatchingActiveTabPage(SW.methods.sendWatchStatus);
+  } else if (request.action == 'unwatchPage') {
+    SW.methods.unwatchActiveTabPage(SW.methods.sendWatchStatus);
   }
 };
 

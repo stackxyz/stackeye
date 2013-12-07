@@ -1,7 +1,7 @@
-#watchEye {
+#watchIcon {
   cursor: pointer;
 }
 
-#watchEye:hover {
+#watchIcon:hover {
   opacity: 0.7;
 }
