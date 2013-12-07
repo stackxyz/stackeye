@@ -13,7 +13,6 @@ function notifyBackgroundForPageLoad() {
   });
 };
 
-
 // WatchEye DOM Element
 var watchEye;
 

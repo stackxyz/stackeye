@@ -40,6 +40,7 @@ SW.messages = {
   ERROR_UNABLE_TO_GET_URL_CURRENT_TAB: 'Unable to get the url of current tab.Please file a bug',
   ERROR_FETCH_ANSWER_LIST: 'Error in fetching answer list',
   ERROR_FETCH_COMMENT_LIST: 'Error in fetching comment list',
+  ERROR_FETCH_QUESTION_DATA: 'Error in fetching question data',
 
   INFO_DATA_SAVED: 'Question has been added to watch list'
 };

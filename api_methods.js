@@ -42,7 +42,6 @@ SW.methods.getQuestionData = function(questionId, domain) {
     },
     error: function(e) {
       console.error(SW.messages.ERROR_FETCH_QUESTION_DATA);
-      questionData = null;
     }
   });
 
@@ -51,7 +50,7 @@ SW.methods.getQuestionData = function(questionId, domain) {
 
 SW.methods.getAllAnswers = function(questionId, domain) {
   var url = SW.methods.getUrlForAllAnswers(questionId, domain),
-    answerList = null;
+    answerList = [];
 
   $.ajax({
     method: 'GET',
@@ -81,7 +80,7 @@ SW.methods.getAllAnswerIds = function(answerList) {
 SW.methods.getAllComments = function(ids, domain) {
   var idString,
     url,
-    commentList;
+    commentList = [];
 
   idString = ids.join(';');
   url = SW.methods.getUrlForAllComments(idString, domain);
@@ -143,7 +142,7 @@ SW.methods.filterByCreationDate = function(list, lastFetchDate, timeline_type) {
   }
 
   return filteredList;
-}
+};
 
 SW.methods.getQuestionUpdates = function(id, domain, lastFetchDate) {
   var answerList,

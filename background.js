@@ -79,9 +79,10 @@ SW.methods.isPagebeingWatched = function(watchSuccessCallback) {
 SW.methods.initUnwatchProcess = function() {
   var questionList = SW.stores.questionFeedStore,
     question = null,
+    index,
     IS_QUESTION_REMOVED = false;
 
-  for (index = questionList.length - 1; index >= 0; i--) {
+  for (index = questionList.length - 1; index >= 0; index--) {
     question = questionList[index];
 
     if (question.domain == SW.vars.domain && question.questionId == SW.vars.questionId) {
@@ -257,7 +258,7 @@ SW.methods.updateNotificationStore = function(updates, questionInfo) {
 
 SW.methods.fetchNewNotifications = function() {
   var currentTime = parseInt(Date.now()/1000),
-    i = 0,
+    i,
     questionFeedStoreLength = SW.stores.questionFeedStore.length,
     question,
     questionUpdates,
