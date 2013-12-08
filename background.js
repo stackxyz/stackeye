@@ -91,7 +91,7 @@ SW.methods.isQuestionWatchAllowed = function() {
     return {allowed: false, reason: SW.messages.WARN_WATCH_LIMIT};
   }
 
-  if (SW.vars.isUrlValid) {
+  if (!SW.vars.isUrlValid) {
     return {allowed: false, reason: SW.messages.WARN_INVALID_URL};
   }
 
