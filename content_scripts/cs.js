@@ -1,4 +1,6 @@
-var $watchIcon = null;
+var $watchIcon = null,
+  $notificationDiv = $('<div></div>').attr({id: 'se_notifier', title: 'Click to close'}),
+  $target = null;
 
 function sendMessageToBackground(message, callback) {
   chrome.runtime.sendMessage(message, callback);
@@ -23,7 +25,13 @@ function createWatchIcon() {
       sendMessageToBackground({action: action}, function(){} );
    });
 
-  $('#question').find('div.vote').first().append($watchIcon);
+  $notificationDiv.click(function() {
+    $(this).css('visibility', 'hidden');
+  });
+
+  $target = $('#question').find('div.vote').first();
+  $target.append($watchIcon);
+  $target.append($notificationDiv);
 }
 
 function updateWatchIcon(watchStatus) {
@@ -44,9 +52,17 @@ function updateWatchIcon(watchStatus) {
   $watchIcon.attr({ src: imageUrl, 'data-action': action });
 }
 
+function showNotification(notification) {
+  $notificationDiv.text(notification.message)
+    .removeClass('se_warning se_error se_success').addClass(notification.type)
+    .css('visibility', 'none');
+}
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.messageType == 'watchStatus') {
     updateWatchIcon(request.watchStatus);
+  } else if (request.messageType == 'notification') {
+    showNotification({ type: request.type, message: request.message });
   }
 });
 

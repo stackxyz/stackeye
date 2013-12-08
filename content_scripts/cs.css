@@ -5,3 +5,17 @@
 #watchIcon:hover {
   opacity: 0.7;
 }
+
+#se_notifier {
+  margin-right: 8px;
+  padding: 5px;
+  margin-top: 8px;
+  word-wrap: break-word;
+  max-width: 60px;
+  cursor: pointer;
+}
+
+#se_notifier.se_error {
+  outline: 1px solid red;
+  background: lightcoral;
+}

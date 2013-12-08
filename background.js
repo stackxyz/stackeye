@@ -84,15 +84,37 @@ SW.methods.removeQuestionFromStore = function(questionId, domain) {
   return IS_QUESTION_REMOVED;
 };
 
-SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
-  // Register the callback here
-  SW.callbacks.watchProcessSuccessCallback = watchProcessSuccessCallback;
+SW.methods.isQuestionWatchAllowed = function() {
+  var questionStore = SW.stores.questionFeedStore;
+
+  if (questionStore.length >= SW.vars.WATCH_QUESTION_LIMIT) {
+    return {allowed: false, reason: SW.messages.WARN_WATCH_LIMIT};
+  }
 
   if (SW.vars.isUrlValid) {
-    SW.methods.initWatchingProcess();
-  } else {
-    alert(SW.messages.WARN_INVALID_URL);
+    return {allowed: false, reason: SW.messages.WARN_INVALID_URL};
   }
+
+  return {allowed: true};
+};
+
+SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
+  var QUESTION_WATCH_CRITERIA;
+
+  // Register the callback here
+  SW.callbacks.watchProcessSuccessCallback = watchProcessSuccessCallback;
+  QUESTION_WATCH_CRITERIA = SW.methods.isQuestionWatchAllowed();
+
+  if (!QUESTION_WATCH_CRITERIA.allowed) {
+    SW.methods.sendMessageToContentScript({
+      messageType: 'notification',
+      type: 'se_error',
+      message: QUESTION_WATCH_CRITERIA.reason
+    });
+    return;
+  }
+
+  SW.methods.initWatchingProcess();
 };
 
 SW.methods.unwatchActiveTabPage = function(sCallback) {
@@ -154,14 +176,14 @@ SW.methods.addQuestionToStore = function(questionData) {
 
 SW.methods.getNextFetchDate = function(lastFetchDate, creation_date) {
   var difference = lastFetchDate - creation_date,
-      nextFetchInterval = SW.vars.TIME.T_30_MIN;
+    nextFetchInterval = SW.vars.TIME.T_30_MIN;
 
   if (difference >= SW.vars.TIME.T_5_DAY) {
-    nextFetchInterval = SW.vars.TIME.T_5_HOUR;
+    nextFetchInterval = SW.vars.TIME.T_10_HOUR;
   } else if (difference >= SW.vars.TIME.T_2_DAY) {
-    nextFetchInterval = SW.vars.TIME.T_2_HOUR;
+    nextFetchInterval = SW.vars.TIME.T_5_HOUR;
   } else if (difference >= SW.vars.TIME.T_1_DAY) {
-    nextFetchInterval = SW.vars.TIME.T_1_HOUR;
+    nextFetchInterval = SW.vars.TIME.T_2_HOUR;
   } else {
     nextFetchInterval = SW.vars.TIME.T_30_MIN;
   }
@@ -278,6 +300,11 @@ SW.methods.fetchNewNotifications = function() {
       question.lastFetchDate = currentTime;
       question.nextFetchDate = SW.methods.getNextFetchDate(
                     question.lastFetchDate, question.creation_date);
+
+      // Since we have fetched notifications for a question,
+      // we will fetch notification for next question after 5mins
+      // to prevent throtlling of StackExchange API (so break here)
+      break;
     } else {
       //Since questionFeedStore is sorted by nextFetchDate So we can safely exit the loop
       // when we encounter a question having nextFecthDate greater than currentTime
@@ -347,7 +374,7 @@ SW.methods.clearNotification = function(url) {
   }
 };
 
-function sendMessageToContentScript(message) {
+SW.methods.sendMessageToContentScript = function(message) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, message);
   });
@@ -359,7 +386,7 @@ SW.methods.sendWatchStatus = function(isPageWatched) {
     watchStatus: isPageWatched
   };
   
-  sendMessageToContentScript(message);
+  SW.methods.sendMessageToContentScript(message);
 };
 
 SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
@@ -382,7 +409,7 @@ SW.methods.init = function() {
   // Add Listener for events from content scripts
   chrome.runtime.onMessage.addListener(SW.methods.contentScriptCommunicator);
 
-  setInterval(SW.methods.fetchNewNotifications, SW.vars.FETCH_NOTIFICATION_TIME);
+  setInterval(SW.methods.fetchNewNotifications, SW.vars.FETCH_NOTIFICATION_INTERVAL);
 };
 
 SW.methods.init();

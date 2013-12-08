@@ -26,16 +26,21 @@ SW.vars.TIME = {
   T_1_HOUR  : 60*60,
   T_2_HOUR  : 60*60*2,
   T_5_HOUR  : 60*60*5,
+  T_10_HOUR : 60*60*10,
   T_1_DAY   : 60*60*24,
   T_2_DAY   : 60*60*24*2,
   T_5_DAY   : 60*60*24*5
 };
 
-// SW.vars.FETCH_NOTIFICATION_TIME = SW.vars.TIME.T_30_MIN * 1000;
-SW.vars.FETCH_NOTIFICATION_TIME =  SW.vars.TIME.T_5_MIN * 1000; //setinterval takes time in miliseconds
+//setinterval takes time in miliseconds
+SW.vars.FETCH_NOTIFICATION_INTERVAL =  SW.vars.TIME.T_5_MIN * 1000;
+
+// Maximum number of questions a user can watch
+SW.vars.WATCH_QUESTION_LIMIT = 20;
 
 SW.messages = {
   WARN_INVALID_URL: 'Please navigate to a stackoverflow question page',
+  WARN_WATCH_LIMIT: 'You can not watch more than 20 Questions',
 
   ERROR_UNABLE_TO_GET_URL_CURRENT_TAB: 'Unable to get the url of current tab.Please file a bug',
   ERROR_FETCH_ANSWER_LIST: 'Error in fetching answer list',
