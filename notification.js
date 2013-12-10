@@ -1,4 +1,5 @@
 var BG = chrome.extension.getBackgroundPage();
+
 var NotificationPage = {};
 NotificationPage.vars = {};
 NotificationPage.methods = {};
@@ -7,7 +8,7 @@ NotificationPage.vars.$notificationList = $('#notification-area').find('.notific
 
 NotificationPage.methods.getNotificationToShow = function(notificationObject) {
   var text = '',
-    markup = '',
+    markup,
     numAnswers = notificationObject.numAnswers,
     numComments = notificationObject.numComments;
 

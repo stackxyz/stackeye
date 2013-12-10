@@ -6,7 +6,7 @@ Popup.vars = {};
 Popup.vars.numNotificationsToShow = 5;
 Popup.vars.$notificationList = $('#notification-area').find('.notification-list');
 Popup.vars.notifications = BG.SW.stores.notificationStore;
-Popup.vars.$viewNotificationsButton = $("#swo_view_notifications_button");
+Popup.vars.$viewNotificationsButton = $("#swo_view_notifications");
 
 Popup.methods.getNotificationToShow = function(notificationObject) {
   var text = '',
