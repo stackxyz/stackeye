@@ -2,6 +2,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 20px;
+  background: rgb(250, 250, 250);
   color: #333333;
 }
 
@@ -14,7 +15,26 @@ button {
 }
 
 .header {
-  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.86);
+  height: 45px;
+  line-height: 45px;
+  font-size: 14px;
+  text-align: center;
+  color: #ccc;
+}
+
+.se-white {
+  color: white;
+  font-size: 18px;
+  text-shadow: 0 0 1px;
+}
+
+.se-blue {
+  color: #2f73eb;
+  margin-left: -4px;
+  font-weight: bold;
+  font-size: 18px;
+  text-shadow: 0 0 1px;
 }
 
 .divider {
@@ -28,6 +48,14 @@ button {
 .notification-list {
   list-style-type: none;
   margin: 0;
+  padding: 0;
+  min-height: 120px;
+}
+
+.default-template {
+  line-height: 120px;
+  text-align: center;
+  margin-left: -40px;
 }
 
 .notification-list li {
@@ -36,18 +64,27 @@ button {
 
 .notification-list li:nth-child(even) {
   background-color: #eee;
+  border-top: 1px solid #bbb;
+  border-bottom: 1px solid #ccc;
 }
 
 .notification-list li:nth-child(odd) {
   background-color: white;
+  border-bottom: 1px solid #ddd;
 }
 
 .bold {
   font-weight: bold;
 }
 
+.question-link {
+  color: rgb(0, 120, 231);
+}
+
 .footer {
   padding: 5px;
+  text-align: right;
+  background: #ccc;
 }
 
 .notification-page-header {

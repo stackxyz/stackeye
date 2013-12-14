@@ -35,7 +35,9 @@ Popup.methods.renderNotifications = function() {
     notificationListLength = Popup.vars.notifications.length,
     notificationToShow;
 
-  Popup.vars.$notificationList.empty();
+  if (notificationListLength) {
+    Popup.vars.$notificationList.empty();
+  }
 
   for (var i = 0; i < notificationListLength && i < Popup.vars.numNotificationsToShow; i++) {
     notificationToShow = Popup.methods.getNotificationToShow(notificationList[i]);
