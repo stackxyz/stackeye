@@ -41,7 +41,8 @@ SW.methods.getQuestionData = function(questionId, domain) {
       questionData['owner']['link'] = qInfo.owner.link;
     },
     error: function(e) {
-      console.error(SW.messages.ERROR_FETCH_QUESTION_DATA);
+      console.error(SW.messages.ERROR_FETCH_QUESTION_DATA + ':' + url);
+      console.error(e);
     }
   });
 
@@ -60,7 +61,8 @@ SW.methods.getAllAnswers = function(questionId, domain) {
       answerList = response.items;
     },
     error: function(e) {
-      console.error(SW.messages.ERROR_FETCH_ANSWER_LIST);
+      console.error(SW.messages.ERROR_FETCH_ANSWER_LIST + ':' + url);
+      console.error(e);
     }
   });
 
@@ -93,7 +95,8 @@ SW.methods.getAllComments = function(ids, domain) {
       commentList = response.items;
     },
     error: function(e) {
-      console.error(SW.messages.ERROR_FETCH_COMMENT_LIST);
+      console.error(SW.messages.ERROR_FETCH_COMMENT_LIST + ':' + url);
+      console.error(e);
     }
   });
 
