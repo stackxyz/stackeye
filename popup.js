@@ -31,7 +31,6 @@ Popup.methods.getNotificationToShow = function(notificationObject) {
 };
 
 Popup.methods.renderNotifications = function() {
-  // TODO(@SachinJ): Use document fragment here
   var notificationList = Popup.vars.notifications,
     notificationListLength = Popup.vars.notifications.length,
     notificationToShow;

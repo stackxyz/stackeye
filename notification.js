@@ -34,8 +34,6 @@ NotificationPage.methods.renderNotifications = function() {
     notificationListLength = NotificationPage.vars.notifications.length,
     notificationToShow;
 
-  // TODO @Sachin: Sort the notification list by latest answer/comment
-  
   for (var i = 0; i < notificationListLength; i++) {
     notificationToShow = NotificationPage.methods.getNotificationToShow(notificationList[i]);
     $('<li>').html(notificationToShow).appendTo(NotificationPage.vars.$notificationList);
