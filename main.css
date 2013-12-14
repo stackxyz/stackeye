@@ -90,3 +90,16 @@ button {
 .notification-page-header {
   margin: 20px 0px;
 }
+
+.pure-menu.se-category {
+  background: none;
+}
+
+.se-category {
+  margin-bottom: 1rem;
+}
+
+.pure-menu-selected {
+  background: #eee;
+  border-radius: 3px;
+}
