@@ -6,6 +6,13 @@ NotificationPage.methods = {};
 NotificationPage.vars.notifications = BG.SW.stores.notificationStore;
 NotificationPage.vars.$notificationList = $('#notification-area').find('.notification-list');
 
+var NP = {};
+NP.vars = {};
+NP.methods = {};
+NP.vars.notificationSelector = null;
+NP.vars.questionList = null;
+NP.vars.$notificationDeleteButton = $('#notification-deleter');
+
 NotificationPage.methods.getNotificationToShow = function(notificationObject) {
   var text = '',
     markup,
@@ -26,10 +33,9 @@ NotificationPage.methods.getNotificationToShow = function(notificationObject) {
             '</div>';
 
   return markup;
-}
+};
 
 NotificationPage.methods.renderNotifications = function() {
-  // TODO @Sachin: Use document fragment here
   var notificationList = NotificationPage.vars.notifications,
     notificationListLength = NotificationPage.vars.notifications.length,
     notificationToShow;
@@ -40,8 +46,44 @@ NotificationPage.methods.renderNotifications = function() {
   }
 };
 
-NotificationPage.methods.init = function() {
-  NotificationPage.methods.renderNotifications();
-}
+NP.methods.updateNotificationDeleteButton = function() {
+  var selectedItems = NP.vars.notificationSelector.getSelectedItems();
+  if (selectedItems.length) {
+    NP.vars.$notificationDeleteButton.removeAttr('disabled');
+  } else {
+    NP.vars.$notificationDeleteButton.attr('disabled', true);
+  }
+};
 
-NotificationPage.methods.init();
+NP.methods.initializeNotificationComponent = function() {
+  NP.vars.notificationSelector = new ListItemSelector({
+    multiSelectMode: true,
+    el: '.notification-list',
+    activeItemClassName: 'se-active',
+    selectedItemClassName: 'se-selected'
+  });
+
+  $(NP.vars.notificationSelector).on('item:click', NP.methods.updateNotificationDeleteButton.bind(this));
+};
+
+NP.methods.removeSelectedNotifications = function() {
+  var selectedItems = NP.vars.notificationSelector.getSelectedItems(),
+    questionURLs = [];
+
+  $.each(selectedItems, function(item) {
+    var url = $(this).find('.question-link').attr('href');
+    questionURLs.push(url);
+    $(this).remove();
+  });
+
+  NP.methods.updateNotificationDeleteButton();
+  BG.SW.methods.clearBulkNotifications(questionURLs);
+};
+
+NP.methods.init = function() {
+  NotificationPage.methods.renderNotifications();
+  NP.methods.initializeNotificationComponent();
+};
+
+NP.methods.init();
+NP.vars.$notificationDeleteButton.click(NP.methods.removeSelectedNotifications.bind(this));

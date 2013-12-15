@@ -60,6 +60,7 @@ button {
 
 .notification-list li {
   padding: 10px;
+  cursor: pointer;
 }
 
 .notification-list li:nth-child(even) {
@@ -108,4 +109,24 @@ button {
 .pure-menu-selected {
   background: #eee;
   border-radius: 3px;
+}
+
+.pure-button-error {
+  background: rgba(250, 20, 20, 0.8);
+  color: white;
+  border-radius: 4px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.notification-list li.se-active {
+  background-color: rgba(100,100,250,0.2);
+}
+
+.notification-list li.se-selected {
+  background-color: rgba(47, 115, 235, 0.5);
+}
+
+#notification-deleter {
+  float: right;
+  margin-top: 0.5rem;
 }

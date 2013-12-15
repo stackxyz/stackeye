@@ -355,30 +355,43 @@ SW.methods.removeNotificationFromStore = function(qId, domain) {
     }
   }
 
-  if (IS_NOTIFICATION_REMOVED) {
-    SW.methods.saveNotificationStore();
-
-    // Badge is not getting updated automatically whenever store is changed behind the scene
-    // So explicitly setting the badge value
-    SW.methods.updateBadgeText();
-  }
+  return IS_NOTIFICATION_REMOVED;
 };
 
 SW.methods.clearNotification = function(url) {
-  var urlInfo;
+  var urlInfo,
+    IS_NOTIFICATION_REMOVED;
 
   if (SW.methods.isCurrentTabUrlAllowed(url)) {
     urlInfo = SW.methods.extractUrlInfo(url);
 
-    SW.methods.removeNotificationFromStore(urlInfo.questionId, urlInfo.domain);
+    IS_NOTIFICATION_REMOVED = SW.methods.removeNotificationFromStore(urlInfo.questionId, urlInfo.domain);
+    if (IS_NOTIFICATION_REMOVED) {
+      SW.methods.saveNotificationStore();
+
+      // Badge is not getting updated automatically whenever store is changed behind the scene
+      // So explicitly setting the badge value
+      SW.methods.updateBadgeText();
+    }
   }
+};
+
+SW.methods.clearBulkNotifications = function(urls) {
+  $.each(urls, function(index, url) {
+    console.log(url);
+    var urlInfo = SW.methods.extractUrlInfo(url);
+    SW.methods.removeNotificationFromStore(urlInfo.questionId, urlInfo.domain);
+  });
+
+  SW.methods.saveNotificationStore();
+  SW.methods.updateBadgeText();
 };
 
 SW.methods.sendMessageToContentScript = function(message) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, message);
   });
-}
+};
 
 SW.methods.sendWatchStatus = function(isPageWatched) {
   var message = {
