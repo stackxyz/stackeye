@@ -10,8 +10,10 @@ var NP = {};
 NP.vars = {};
 NP.methods = {};
 NP.vars.notificationSelector = null;
-NP.vars.questionList = null;
+NP.vars.questions = BG.SW.stores.questionFeedStore;
+NP.vars.$questionList = $('#question-area').find('.question-list');
 NP.vars.$notificationDeleteButton = $('#notification-deleter');
+NP.vars.$questionDeleteButton = $('#question-deleter');
 
 NotificationPage.methods.getNotificationToShow = function(notificationObject) {
   var text = '',
@@ -35,14 +37,45 @@ NotificationPage.methods.getNotificationToShow = function(notificationObject) {
   return markup;
 };
 
+NP.methods.getQuestionToShow = function(questionObject) {
+  var markup = '<div class="lower-row">' +
+    '<a class="question-link" target="_blank" href="' + questionObject.link + '">' + questionObject.title + '</a>' +
+  '</div>';
+
+  return markup;
+};
+
 NotificationPage.methods.renderNotifications = function() {
   var notificationList = NotificationPage.vars.notifications,
     notificationListLength = NotificationPage.vars.notifications.length,
-    notificationToShow;
+    notificationToShow,
+    defaultTemplate = '';
 
+  if (!notificationListLength) {
+    defaultTemplate = '<div class="default-template">Hooray!! No Unread Notifications</div>';
+  }
+
+  NotificationPage.vars.$notificationList.html(defaultTemplate);
   for (var i = 0; i < notificationListLength; i++) {
     notificationToShow = NotificationPage.methods.getNotificationToShow(notificationList[i]);
-    $('<li>').html(notificationToShow).appendTo(NotificationPage.vars.$notificationList);
+    $('<li></li>').html(notificationToShow).appendTo(NotificationPage.vars.$notificationList);
+  }
+};
+
+NP.methods.renderQuestions = function() {
+  var questionList = NP.vars.questions,
+    numQuestions = questionList.length,
+    questionToShow,
+    defaultTemplate = '';
+
+  if (!numQuestions) {
+    defaultTemplate = '<div class="default-template">Too Bad!! You are not watching any question</div>';
+  }
+
+  NP.vars.$questionList.html(defaultTemplate);
+  for (var i = 0; i < numQuestions; i++) {
+    questionToShow = NP.methods.getQuestionToShow(questionList[i]);
+    $('<li></li>').html(questionToShow).appendTo(NP.vars.$questionList);
   }
 };
 
@@ -55,7 +88,16 @@ NP.methods.updateNotificationDeleteButton = function() {
   }
 };
 
-NP.methods.initializeNotificationComponent = function() {
+NP.methods.updateQuestionDeleteButton = function() {
+  var selectedItems = NP.vars.questionSelector.getSelectedItems();
+  if (selectedItems.length) {
+    NP.vars.$questionDeleteButton.removeAttr('disabled');
+  } else {
+    NP.vars.$questionDeleteButton.attr('disabled', true);
+  }
+};
+
+NP.methods.initializeNotificationSelectorComponent = function() {
   NP.vars.notificationSelector = new ListItemSelector({
     multiSelectMode: true,
     el: '.notification-list',
@@ -64,6 +106,17 @@ NP.methods.initializeNotificationComponent = function() {
   });
 
   $(NP.vars.notificationSelector).on('item:click', NP.methods.updateNotificationDeleteButton.bind(this));
+};
+
+NP.methods.initializeQuestionSelectorComponent = function() {
+  NP.vars.questionSelector = new ListItemSelector({
+    multiSelectMode: true,
+    el: '.question-list',
+    activeItemClassName: 'se-active',
+    selectedItemClassName: 'se-selected'
+  });
+
+  $(NP.vars.questionSelector).on('item:click', NP.methods.updateQuestionDeleteButton.bind(this));
 };
 
 NP.methods.removeSelectedNotifications = function() {
@@ -80,10 +133,41 @@ NP.methods.removeSelectedNotifications = function() {
   BG.SW.methods.clearBulkNotifications(questionURLs);
 };
 
+NP.methods.removeSelectedQuestions = function() {
+  var selectedItems = NP.vars.questionSelector.getSelectedItems(),
+    questionURLs = [];
+
+  $.each(selectedItems, function(item) {
+    var url = $(this).find('.question-link').attr('href');
+    questionURLs.push(url);
+    $(this).remove();
+  });
+
+  NP.methods.updateQuestionDeleteButton();
+  BG.SW.methods.removeBulkQuestions(questionURLs);
+};
+
+NP.methods.showTab = function(event) {
+  var el = event.target,
+    targetId = el.getAttribute('data-targetId');
+
+  $('.pure-menu').find('li').removeClass('pure-menu-selected');
+  $(event.target).parent('li').addClass('pure-menu-selected');
+
+  $('.category-area').hide();
+  $('#' + targetId).show();
+
+  return false;
+};
+
 NP.methods.init = function() {
   NotificationPage.methods.renderNotifications();
-  NP.methods.initializeNotificationComponent();
+  NP.methods.renderQuestions();
+  NP.methods.initializeNotificationSelectorComponent();
+  NP.methods.initializeQuestionSelectorComponent();
 };
 
 NP.methods.init();
 NP.vars.$notificationDeleteButton.click(NP.methods.removeSelectedNotifications.bind(this));
+NP.vars.$questionDeleteButton.click(NP.methods.removeSelectedQuestions.bind(this));
+$('.se-tab').click(NP.methods.showTab);

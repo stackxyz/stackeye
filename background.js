@@ -77,11 +77,16 @@ SW.methods.removeQuestionFromStore = function(questionId, domain) {
     }
   }
 
-  if (IS_QUESTION_REMOVED) {
-    SW.methods.saveQuestionsFeedStore();
-  }
-
   return IS_QUESTION_REMOVED;
+};
+
+SW.methods.removeBulkQuestions = function(urls) {
+  $.each(urls, function(index, url) {
+    var urlInfo = SW.methods.extractUrlInfo(url);
+    SW.methods.removeQuestionFromStore(urlInfo.questionId, urlInfo.domain);
+  });
+
+  SW.methods.saveQuestionsFeedStore();
 };
 
 SW.methods.isQuestionWatchAllowed = function() {
@@ -124,6 +129,7 @@ SW.methods.unwatchActiveTabPage = function(sCallback) {
     isQuestionRemoved = SW.methods.removeQuestionFromStore(SW.vars.questionId, SW.vars.domain);
     if (isQuestionRemoved) {
       sCallback(false /* watchStatus */);
+      SW.methods.saveQuestionsFeedStore();
     }
   } else {
     console.error(SW.messages.WARN_INVALID_URL);

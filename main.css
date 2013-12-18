@@ -45,7 +45,7 @@ button {
   margin: 0;
 }
 
-.notification-list {
+.se-list {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -58,18 +58,23 @@ button {
   margin-left: -40px;
 }
 
-.notification-list li {
+.category-area .default-template {
+  margin: 0;
+  background: #eee;
+}
+
+.se-list li {
   padding: 10px;
   cursor: pointer;
 }
 
-.notification-list li:nth-child(even) {
+.se-list li:nth-child(even) {
   background-color: #eee;
   border-top: 1px solid #bbb;
   border-bottom: 1px solid #ccc;
 }
 
-.notification-list li:nth-child(odd) {
+.se-list li:nth-child(odd) {
   background-color: white;
   border-bottom: 1px solid #ddd;
 }
@@ -118,15 +123,15 @@ button {
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
-.notification-list li.se-active {
+.se-list li.se-active {
   background-color: rgba(100,100,250,0.2);
 }
 
-.notification-list li.se-selected {
+.se-list li.se-selected {
   background-color: rgba(47, 115, 235, 0.5);
 }
 
-#notification-deleter {
+.deleter {
   float: right;
   margin-top: 0.5rem;
 }
