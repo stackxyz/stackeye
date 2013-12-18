@@ -1,5 +1,5 @@
 SW.methods.saveNotificationStore = function() {
-  chrome.storage.sync.set({'notificationStore': SW.stores.notificationStore}, function() {
+  chrome.storage.local.set({'notificationStore': SW.stores.notificationStore}, function() {
     if (SW.modes.inDebugMode) {
       console.log(SW.messages.INFO_DATA_SAVED);
     }
@@ -9,7 +9,7 @@ SW.methods.saveNotificationStore = function() {
 SW.methods.loadNotificationStore = function() {
   SW.stores.notificationStore = [];
 
-  chrome.storage.sync.get('notificationStore', function(items) {
+  chrome.storage.local.get('notificationStore', function(items) {
     var notifications = items.notificationStore;
 
     if (notifications && notifications.length) {
@@ -20,7 +20,7 @@ SW.methods.loadNotificationStore = function() {
 };
 
 SW.methods.saveQuestionsFeedStore = function() {
-  chrome.storage.sync.set({
+  chrome.storage.local.set({
     'questionFeedStore': SW.stores.questionFeedStore
   }, function() {
     if (SW.callbacks.watchProcessSuccessCallback) {
@@ -33,7 +33,7 @@ SW.methods.saveQuestionsFeedStore = function() {
 SW.methods.loadQuestionFeedStore = function() {
   SW.stores.questionFeedStore = [];
 
-  chrome.storage.sync.get('questionFeedStore', function(items) {
+  chrome.storage.local.get('questionFeedStore', function(items) {
     var questions = items.questionFeedStore;
 
     if (questions && questions.length) {
