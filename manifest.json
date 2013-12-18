@@ -1,5 +1,5 @@
 {
-  "name": "Stack Overflow Watchman",
+  "name": "Stack Eye",
 
   "version": "1.0",
   "manifest_version": 2,
@@ -37,8 +37,8 @@
   "permissions": [
     "storage",
     "tabs",
-    "http://*/*",
-    "https://*/*"
+    "*://*.stackexchange.com/*",
+    "http://stackoverflow.com/*"
   ],
   
   "web_accessible_resources": [
