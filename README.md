@@ -1,14 +1,14 @@
-sowatchman
+StackEye
 ==========
 
-StackOverflow watchman is a chrome extension which lets user to watch a question and notifies him about a new comment or answer.
+StackEye is a chrome extension which lets user to watch a question and notifies him about a new comment or answer.
 
-Steps to run the extension:
+Steps to run the extension in Developer Mode:
 ----------------------
 
 <strong>Step1:</strong> Download the extension code on your machine <br/>
-(Using git): git clone https://github.com/blunderboy/sowatchman.git some_directory_name <br/>
-(Download ZIP): You can also download the extension in zip format from  [Stackeye Repsitory](https://github.com/blunderboy/sowatchman)
+(Using git): git clone https://github.com/blunderboy/stackeye.git some_directory_name <br/>
+(Download ZIP): You can also download the extension in zip format from  [Stackeye Repsitory](https://github.com/blunderboy/stackeye)
 
 <strong>Step2:</strong> Browse chrome://extensions/
 
