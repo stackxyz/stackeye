@@ -58,6 +58,10 @@ button {
   margin-left: -40px;
 }
 
+.category-area {
+  margin-bottom: 3rem;
+}
+
 .category-area .default-template {
   margin: 0;
   background: #eee;
