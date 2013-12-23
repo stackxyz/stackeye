@@ -22,3 +22,9 @@ Author
 ------------------------------
 
 Please feel free to drop a mail to sachinjain024@gmail.com in case you find any issues.
+
+
+License
+----------------------
+
+MIT: http://sachinjain.mit-license.org
