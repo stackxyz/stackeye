@@ -1,7 +1,9 @@
 StackEye
 ==========
 
-StackEye is a chrome extension which lets user to watch a question and notifies him about a new comment or answer.
+StackEye is a chrome extension which lets user watch questions on stackoverflow and other stackexchange sites.StackEye notifies the user about any new comment/answer on watched questions. 
+StackEye usage and snapshots are also mentioned on [Stackapps page](http://stackapps.com/q/4454/20686)
+You can also install StackEye from [Chrome Store](https://chrome.google.com/webstore/detail/stackeye/pihfndpmcafdecheofkjfkadecoogigm)
 
 Steps to run the extension in Developer Mode:
 ----------------------
@@ -21,7 +23,7 @@ Steps to run the extension in Developer Mode:
 Author
 ------------------------------
 
-Please feel free to drop a mail to sachinjain024@gmail.com in case you find any issues.
+Please feel free to drop an email to sachinjain024 [at] gmail [dot] com in case you find any issues.
 
 
 License
