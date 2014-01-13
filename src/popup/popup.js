@@ -73,7 +73,7 @@ Popup.methods.openQuestionInTab = function(evt) {
 };
 
 Popup.methods.viewAllNotificationsInTab = function(evt) {
-  var url = 'index.html';
+  var url = 'src/pages/index/index.html';
 
   Popup.methods.createNewTab({ active: true, url: url });
   return false;

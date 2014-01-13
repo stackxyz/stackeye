@@ -7,31 +7,31 @@
 
   "background": {
     "scripts": [
-      "libs/jquery-1.9.1.js",
-      "globals.js",
-      "api_methods.js",
-      "background.js"
+      "src/libs/jquery-1.9.1.js",
+      "src/shared/globals.js",
+      "src/shared/api_methods.js",
+      "src/background/background.js"
     ]
   },
 
   "content_scripts": [
     {
       "matches": ["*://*.stackexchange.com/*", "http://stackoverflow.com/*"],
-      "js": ["libs/jquery-1.9.1.js", "content_scripts/cs.js"],
-      "css": ["content_scripts/cs.css"]
+      "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/cs.js"],
+      "css": ["src/content_scripts/cs.css"]
     }
   ],
   
   "browser_action": {
-    "default_icon"    : "images/icon_so_48.png",
+    "default_icon"    : "resources/images/icon_so_48.png",
     "default_title"   : "Get latest notifications on your favorite questions",
-    "default_popup"   : "popup.html"
+    "default_popup"   : "src/popup/popup.html"
   },
   
   "icons": {
-    "16": "images/icon_so_48.png",
-    "48": "images/icon_so_48.png",
-    "128": "images/icon_so_48.png" 
+    "16": "resources/images/icon_so_48.png",
+    "48": "resources/images/icon_so_48.png",
+    "128": "resources/images/icon_so_48.png"
   },
   
   "permissions": [
@@ -42,7 +42,7 @@
   ],
   
   "web_accessible_resources": [
-    "images/icon_color_19.png",
-    "images/icon_grey_19.png"
+    "resources/images/icon_color_19.png",
+    "resources/images/icon_grey_19.png"
   ]
 }

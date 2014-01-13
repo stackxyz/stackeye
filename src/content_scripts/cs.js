@@ -17,7 +17,7 @@ function notifyBackgroundForPageLoad() {
 }
 
 function createWatchIcon() {
-  var imageUrl = chrome.extension.getURL('images/icon_grey_19.png');
+  var imageUrl = chrome.extension.getURL('resources/images/icon_grey_19.png');
 
   $watchIcon = $('<img>').attr({ id: 'watchIcon', src: imageUrl })
     .click(function() {
@@ -42,10 +42,10 @@ function updateWatchIcon(watchStatus) {
   }
 
   if (watchStatus) {
-    imageUrl = chrome.extension.getURL('images/icon_color_19.png');
+    imageUrl = chrome.extension.getURL('resources/images/icon_color_19.png');
     action = 'unwatchPage';
   } else {
-    imageUrl = chrome.extension.getURL('images/icon_grey_19.png');
+    imageUrl = chrome.extension.getURL('resources/images/icon_grey_19.png');
     action = 'watchPage';
   }
 
