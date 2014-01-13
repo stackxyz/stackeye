@@ -87,6 +87,11 @@ button {
   font-weight: bold;
 }
 
+.lower-row img {
+  float: left;
+  margin-right: 0.5rem;
+}
+
 .question-link {
   color: rgb(0, 120, 231);
 }

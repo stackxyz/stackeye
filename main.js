@@ -39,6 +39,7 @@ NotificationPage.methods.getNotificationToShow = function(notificationObject) {
 
 NP.methods.getQuestionToShow = function(questionObject) {
   var markup = '<div class="lower-row">' +
+    '<img src="https://www.google.com/s2/favicons?domain=' + questionObject.domain + '/>' +
     '<a class="question-link" target="_blank" href="' + questionObject.link + '">' + questionObject.title + '</a>' +
   '</div>';
 
