@@ -1,21 +1,29 @@
 SW.methods.getUrlForAllComments = function(idString, domain) {
   // e.g. https://api.stackexchange.com/posts/18829971;18830520;18830230/comments?site=stackoverflow
-  return 'https://api.stackexchange.com/posts/' + idString + '/comments?site=' + domain;
+  return 'https://api.stackexchange.com/posts/' + idString + '/comments' +
+    '?site=' + domain +
+    '&key=' + SW.constants.APP_KEY;
 };
 
 SW.methods.getUrlForQuestionUpdates = function(id, domain, lastFetchDate) {
   // https://api.stackexchange.com/questions/19570820/timeline?fromdate =1382486400&site=stackoverflow
-  return 'https://api.stackexchange.com/questions/' + id + '/timeline?fromdate=' + 
-          lastFetchDate + '&site=' + domain;
+  return 'https://api.stackexchange.com/questions/' + id + '/timeline' +
+    '?fromdate=' + lastFetchDate +
+    '&site=' + domain +
+    '&key=' + SW.constants.APP_KEY;
 };
 
 SW.methods.getUrlForAllAnswers = function(questionId, domain) {
-  return 'https://api.stackexchange.com/questions/' + questionId + '/answers?site=' + domain;
+  return 'https://api.stackexchange.com/questions/' + questionId + '/answers' +
+    '?site=' + domain +
+    '&key=' + SW.constants.APP_KEY;
 };
 
 SW.methods.getUrlForQuestionData = function(questionId, domain) {
   // https://api.stackexchange.com/questions/18829971?site=stackoverflow
-  return 'https://api.stackexchange.com/questions/' + questionId + '?site=' + domain;
+  return 'https://api.stackexchange.com/questions/' + questionId +
+    '?site=' + domain +
+    '&key=' + SW.constants.APP_KEY;
 };
 
 SW.methods.getQuestionData = function(questionId, domain) {

@@ -3,9 +3,9 @@ SW.methods = SW.methods || {};
 SW.vars = SW.vars || {};
 SW.stores = SW.stores || {};
 SW.modes = SW.modes || {};
-SW.constants = SW.constants || {};
 
 /*-----------------------------------------------------------*/
+
 SW.vars.ALLOWED_PAGES = [
   'stackoverflow.com/questions/',
   'stackexchange.com/questions/'
@@ -49,5 +49,6 @@ SW.messages = {
 SW.constants = {
   ACCEPTED_ANSWER: 'accepted_answer',
   NEW_COMMENT: 'comment',
-  ANSWER: 'answer'
+  ANSWER: 'answer',
+  APP_KEY: 'MKhHgtFFPM)vQAp2pvu)fw(('
 };
