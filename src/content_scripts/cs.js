@@ -17,12 +17,13 @@ function notifyBackgroundForPageLoad() {
 }
 
 function createWatchIcon() {
-  var imageUrl = chrome.extension.getURL('resources/images/icon_grey_19.png');
+  var url = window.location.href,
+    imageUrl = chrome.extension.getURL('resources/images/icon_grey_19.png');
 
   $watchIcon = $('<img>').attr({ id: 'watchIcon', src: imageUrl })
     .click(function() {
       var action = $(this).attr('data-action');
-      sendMessageToBackground({action: action}, function(){} );
+      sendMessageToBackground({ action: action, url: url }, function(){ } );
    });
 
   $notificationDiv.click(function() {

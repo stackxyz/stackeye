@@ -2,14 +2,10 @@ window.SW = window.SW || {};
 SW.methods = SW.methods || {};
 SW.vars = SW.vars || {};
 SW.stores = SW.stores || {};
-SW.callbacks = SW.callbacks || {};
 SW.modes = SW.modes || {};
 SW.constants = SW.constants || {};
 
 /*-----------------------------------------------------------*/
-SW.vars.isUrlValid = false;
-SW.vars.activeTabUrl = '';
-
 SW.vars.ALLOWED_PAGES = [
   'stackoverflow.com/questions/',
   'stackexchange.com/questions/'

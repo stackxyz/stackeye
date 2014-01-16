@@ -19,15 +19,14 @@ SW.methods.loadNotificationStore = function() {
   });
 };
 
-SW.methods.saveQuestionsFeedStore = function() {
+SW.methods.saveQuestionsFeedStore = function(sCallback) {
+  if (!sCallback) {
+    sCallback = function() {};
+  }
+
   chrome.storage.local.set({
     'questionFeedStore': SW.stores.questionFeedStore
-  }, function() {
-    if (SW.callbacks.watchProcessSuccessCallback) {
-      SW.callbacks.watchProcessSuccessCallback(SW.messages.INFO_DATA_SAVED);
-      SW.callbacks.watchProcessSuccessCallback = null;
-    }
-  });
+  }, sCallback);
 };
 
 SW.methods.loadQuestionFeedStore = function() {
@@ -45,20 +44,15 @@ SW.methods.loadQuestionFeedStore = function() {
 /* This method is being called whenever page is loaded
 ** So we extract all the page info here
 */
-SW.methods.isPagebeingWatched = function(activeTabUrl, watchSuccessCallback) {
-  var urlInfo,
+SW.methods.isPageBeingWatched = function(questionPageUrl, watchSuccessCallback) {
+  var urlInfo = SW.methods.extractUrlInfo(questionPageUrl),
+    isUrlValid,
     watchStatus = false;
 
-  SW.vars.isUrlValid = false;
-  SW.vars.activeTabUrl = activeTabUrl;
-  SW.vars.isUrlValid = SW.methods.isCurrentTabUrlAllowed(SW.vars.activeTabUrl);
-
-  urlInfo = SW.methods.extractUrlInfo(SW.vars.activeTabUrl);
-  SW.vars = $.extend(SW.vars, urlInfo);
-
-  if (SW.vars.isUrlValid) {
+  isUrlValid = SW.methods.validateQuestionUrl(questionPageUrl);
+  if (isUrlValid) {
     watchStatus = SW.methods.isQuestionInStore(urlInfo.questionId, urlInfo.domain);
-    watchSuccessCallback(watchStatus);
+    watchSuccessCallback(watchStatus, questionPageUrl);
   }
 };
 
@@ -89,26 +83,23 @@ SW.methods.removeBulkQuestions = function(urls) {
   SW.methods.saveQuestionsFeedStore();
 };
 
-SW.methods.isQuestionWatchAllowed = function() {
-  var questionStore = SW.stores.questionFeedStore;
+SW.methods.isQuestionWatchAllowed = function(questionUrl) {
+  var questionStore = SW.stores.questionFeedStore,
+    isUrlValid = SW.methods.validateQuestionUrl(questionUrl);
 
   if (questionStore.length >= SW.vars.WATCH_QUESTION_LIMIT) {
-    return {allowed: false, reason: SW.messages.WARN_WATCH_LIMIT};
+    return { allowed: false, reason: SW.messages.WARN_WATCH_LIMIT };
   }
 
-  if (!SW.vars.isUrlValid) {
-    return {allowed: false, reason: SW.messages.WARN_INVALID_URL};
+  if (!isUrlValid) {
+    return { allowed: false, reason: SW.messages.WARN_INVALID_URL };
   }
 
-  return {allowed: true};
+  return { allowed: true };
 };
 
-SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
-  var QUESTION_WATCH_CRITERIA;
-
-  // Register the callback here
-  SW.callbacks.watchProcessSuccessCallback = watchProcessSuccessCallback;
-  QUESTION_WATCH_CRITERIA = SW.methods.isQuestionWatchAllowed();
+SW.methods.startWatchingQuestion = function(questionUrl, sCallback) {
+  var QUESTION_WATCH_CRITERIA = SW.methods.isQuestionWatchAllowed(questionUrl);
 
   if (!QUESTION_WATCH_CRITERIA.allowed) {
     SW.methods.sendMessageToContentScript({
@@ -119,14 +110,16 @@ SW.methods.startWatchingActiveTabPage = function(watchProcessSuccessCallback) {
     return;
   }
 
-  SW.methods.initWatchingProcess();
+  SW.methods.initWatchingProcess(questionUrl, sCallback);
 };
 
-SW.methods.unwatchActiveTabPage = function(sCallback) {
-  var isQuestionRemoved = false;
+SW.methods.unwatchQuestion = function(questionUrl, sCallback) {
+  var isQuestionRemoved = false,
+    urlInfo = SW.methods.extractUrlInfo(questionUrl),
+    isUrlValid = SW.methods.validateQuestionUrl(questionUrl);
 
-  if (SW.vars.isUrlValid) {
-    isQuestionRemoved = SW.methods.removeQuestionFromStore(SW.vars.questionId, SW.vars.domain);
+  if (isUrlValid) {
+    isQuestionRemoved = SW.methods.removeQuestionFromStore(urlInfo.questionId, urlInfo.domain);
     if (isQuestionRemoved) {
       sCallback(false /* watchStatus */);
       SW.methods.saveQuestionsFeedStore();
@@ -136,7 +129,7 @@ SW.methods.unwatchActiveTabPage = function(sCallback) {
   }
 };
 
-SW.methods.isCurrentTabUrlAllowed = function(url) {
+SW.methods.validateQuestionUrl = function(url) {
   var isUrlValid = false;
 
   $.each(SW.vars.ALLOWED_PAGES, function(index, allowedUrl) {
@@ -148,11 +141,12 @@ SW.methods.isCurrentTabUrlAllowed = function(url) {
   return isUrlValid;
 };
 
-SW.methods.initWatchingProcess = function() {
-  var questionData;
+SW.methods.initWatchingProcess = function(url, sCallback) {
+  var questionData,
+    urlInfo = SW.methods.extractUrlInfo(url);
 
-  questionData = SW.methods.getQuestionData(SW.vars.questionId, SW.vars.domain);
-  SW.methods.addQuestionToStore(questionData);
+  questionData = SW.methods.getQuestionData(urlInfo.questionId, urlInfo.domain);
+  SW.methods.addQuestionToStore(questionData, sCallback);
 };
 
 SW.methods.isQuestionInStore = function(questionId, domain) {
@@ -165,7 +159,7 @@ SW.methods.isQuestionInStore = function(questionId, domain) {
   return false;
 };
 
-SW.methods.addQuestionToStore = function(questionData) {
+SW.methods.addQuestionToStore = function(questionData, sCallback) {
   var currentTime = new Date().getTime();
   currentTime = parseInt(currentTime/1000);
 
@@ -177,7 +171,7 @@ SW.methods.addQuestionToStore = function(questionData) {
     return a.nextFetchDate - b.nextFetchDate;
   });
 
-  SW.methods.saveQuestionsFeedStore();
+  SW.methods.saveQuestionsFeedStore(sCallback);
 };
 
 SW.methods.getNextFetchDate = function(lastFetchDate, creation_date) {
@@ -368,7 +362,7 @@ SW.methods.clearNotification = function(url) {
   var urlInfo,
     IS_NOTIFICATION_REMOVED;
 
-  if (SW.methods.isCurrentTabUrlAllowed(url)) {
+  if (SW.methods.validateQuestionUrl(url)) {
     urlInfo = SW.methods.extractUrlInfo(url);
 
     IS_NOTIFICATION_REMOVED = SW.methods.removeNotificationFromStore(urlInfo.questionId, urlInfo.domain);
@@ -393,29 +387,40 @@ SW.methods.clearBulkNotifications = function(urls) {
   SW.methods.updateBadgeText();
 };
 
-SW.methods.sendMessageToContentScript = function(message) {
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, message);
+SW.methods.sendMessageToContentScript = function(message, options) {
+  options = options || {};
+  chrome.tabs.query(options, function(tabs) {
+    $.each(tabs, function(index, tab) {
+      chrome.tabs.sendMessage(tab.id, message);
+    });
   });
 };
 
-SW.methods.sendWatchStatus = function(isPageWatched) {
+SW.methods.sendWatchStatus = function(isPageWatched, url) {
   var message = {
     messageType: 'watchStatus',
     watchStatus: isPageWatched
   };
   
-  SW.methods.sendMessageToContentScript(message);
+  SW.methods.sendMessageToContentScript(message, {
+    url: url /*Send message to all tabs with this URL */
+  });
 };
 
 SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
   if (request.event == 'pageLoaded') {
     SW.methods.clearNotification(request.url);
-    SW.methods.isPagebeingWatched(request.url, SW.methods.sendWatchStatus /* callback */);
-  } else if (request.action == 'watchPage') {
-    SW.methods.startWatchingActiveTabPage(SW.methods.sendWatchStatus);
-  } else if (request.action == 'unwatchPage') {
-    SW.methods.unwatchActiveTabPage(SW.methods.sendWatchStatus);
+    SW.methods.isPageBeingWatched(request.url, SW.methods.sendWatchStatus /* callback */);
+  }
+
+  if (request.action == 'watchPage') {
+    SW.methods.startWatchingQuestion(request.url, function() {
+      SW.methods.sendWatchStatus(true, request.url);
+    });
+  }
+
+  if (request.action == 'unwatchPage') {
+    SW.methods.unwatchQuestion(request.url, SW.methods.sendWatchStatus);
   }
 };
 
