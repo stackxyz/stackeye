@@ -40,8 +40,10 @@ Popup.methods.renderNotifications = function() {
   }
 
   for (var i = 0; i < notificationListLength && i < Popup.vars.numNotificationsToShow; i++) {
-    notificationToShow = Popup.methods.getNotificationToShow(notificationList[i]);
-    $('<li>').html(notificationToShow).appendTo(Popup.vars.$notificationList);
+    if (notificationList[i]) {
+      notificationToShow = Popup.methods.getNotificationToShow(notificationList[i]);
+      $('<li>').html(notificationToShow).appendTo(Popup.vars.$notificationList);
+    }
   }
 };
 

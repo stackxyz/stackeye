@@ -58,8 +58,10 @@ NotificationPage.methods.renderNotifications = function() {
 
   NotificationPage.vars.$notificationList.html(defaultTemplate);
   for (var i = 0; i < notificationListLength; i++) {
-    notificationToShow = NotificationPage.methods.getNotificationToShow(notificationList[i]);
-    $('<li></li>').html(notificationToShow).appendTo(NotificationPage.vars.$notificationList);
+    if (notificationList[i]) {
+      notificationToShow = NotificationPage.methods.getNotificationToShow(notificationList[i]);
+      $('<li></li>').html(notificationToShow).appendTo(NotificationPage.vars.$notificationList);
+    }
   }
 };
 
