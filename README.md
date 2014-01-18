@@ -20,6 +20,11 @@ Steps to run the extension in Developer Mode:
 
 <strong>Step5:</strong> Browse the directory in which extension code is present
 
+Changelogs
+-----------
+
+You can view changelogs on this [StackEye official Page](http://blunderboy.github.io/stackeye/index.html#changelog)
+
 Author
 ------------------------------
 

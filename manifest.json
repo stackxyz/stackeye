@@ -1,9 +1,9 @@
 {
   "name": "Stack Eye",
 
-  "version": "1.0.2",
+  "version": "1.1.2",
   "manifest_version": 2,
-  "description": "This plugin is used to notify users about new answers & comments on a watched question",
+  "description": "Chrome Extension to get notifications for new answers and comments on StackOverflow and StackExchange sites",
 
   "background": {
     "scripts": [
