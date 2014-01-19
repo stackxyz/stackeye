@@ -13,7 +13,9 @@ NP.vars.notificationSelector = null;
 NP.vars.questions = BG.SW.stores.questionFeedStore;
 NP.vars.$questionList = $('#question-area').find('.question-list');
 NP.vars.$notificationDeleteButton = $('#notification-deleter');
+NP.vars.$notificationDeleteAllButton = $('#notification-deleter-all');
 NP.vars.$questionDeleteButton = $('#question-deleter');
+NP.vars.$questionDeleteAllButton = $('#question-deleter-all');
 
 NotificationPage.methods.getNotificationToShow = function(notificationObject) {
   var text = '',
@@ -61,7 +63,7 @@ NotificationPage.methods.renderNotifications = function() {
     if (notificationList[i]) {
       notificationToShow = NotificationPage.methods.getNotificationToShow(notificationList[i]);
       $('<li></li>').html(notificationToShow).appendTo(NotificationPage.vars.$notificationList);
-    }
+	  }
   }
 };
 
@@ -88,6 +90,28 @@ NP.methods.updateNotificationDeleteButton = function() {
     NP.vars.$notificationDeleteButton.removeAttr('disabled');
   } else {
     NP.vars.$notificationDeleteButton.attr('disabled', true);
+  }
+};
+
+NP.methods.updateNotificationDeleteAllButton = function() {
+  var notificationList = NotificationPage.vars.notifications,
+    notificationListLength = NotificationPage.vars.notifications.length;
+
+  if (notificationListLength) {
+    NP.vars.$notificationDeleteAllButton.removeAttr('disabled');
+  } else {
+    NP.vars.$notificationDeleteAllButton.attr('disabled', true);
+  }
+};
+
+NP.methods.updateQuestionDeleteAllButton = function() {
+ var questionList = NP.vars.questions,
+    numQuestions = questionList.length;
+ 
+  if (numQuestions) {
+    NP.vars.$questionDeleteAllButton.removeAttr('disabled');
+  } else {
+    NP.vars.$questionDeleteAllButton.attr('disabled', true);
   }
 };
 
@@ -132,8 +156,26 @@ NP.methods.removeSelectedNotifications = function() {
     $(this).remove();
   });
 
-  NP.methods.updateNotificationDeleteButton();
   BG.SW.methods.clearBulkNotifications(questionURLs);
+  NotificationPage.methods.renderNotifications();
+  NP.methods.updateNotificationDeleteButton();
+  NP.methods.updateNotificationDeleteAllButton();
+};
+
+NP.methods.removeAllNotifications = function() {
+  var selectedItems = NP.vars.notificationSelector.getAllListItems(),
+    questionURLs = [];
+
+  $.each(selectedItems, function(item) {
+    var url = $(this).find('.question-link').attr('href');
+    questionURLs.push(url);
+    $(this).remove();
+  });
+
+  BG.SW.methods.clearBulkNotifications(questionURLs);
+  NotificationPage.methods.renderNotifications();
+  NP.methods.updateNotificationDeleteButton();
+  NP.methods.updateNotificationDeleteAllButton();
 };
 
 NP.methods.removeSelectedQuestions = function() {
@@ -146,9 +188,27 @@ NP.methods.removeSelectedQuestions = function() {
     $(this).remove();
   });
 
-  NP.methods.updateQuestionDeleteButton();
   BG.SW.methods.removeBulkQuestions(questionURLs);
+  NP.methods.renderQuestions ();
+  NP.methods.updateQuestionDeleteButton();
+  NP.methods.updateQuestionDeleteAllButton();
 };
+
+NP.methods.removeAllQuestions = function() {
+  var selectedItems = NP.vars.questionSelector.getAllListItems(),
+    questionURLs = [];
+	
+  $.each(selectedItems, function(item) {
+    var url = $(this).find('.question-link').attr('href');
+    questionURLs.push(url);
+    $(this).remove();
+  });
+
+  BG.SW.methods.removeBulkQuestions(questionURLs);
+  NP.methods.renderQuestions ();
+  NP.methods.updateQuestionDeleteButton();
+  NP.methods.updateQuestionDeleteAllButton();
+ };
 
 NP.methods.showTab = function(event) {
   var el = event.target,
@@ -168,9 +228,13 @@ NP.methods.init = function() {
   NP.methods.renderQuestions();
   NP.methods.initializeNotificationSelectorComponent();
   NP.methods.initializeQuestionSelectorComponent();
+  NP.methods.updateNotificationDeleteAllButton();
+  NP.methods.updateQuestionDeleteAllButton();
 };
 
 NP.methods.init();
 NP.vars.$notificationDeleteButton.click(NP.methods.removeSelectedNotifications.bind(this));
+NP.vars.$notificationDeleteAllButton.click(NP.methods.removeAllNotifications.bind(this));
 NP.vars.$questionDeleteButton.click(NP.methods.removeSelectedQuestions.bind(this));
+NP.vars.$questionDeleteAllButton.click(NP.methods.removeAllQuestions.bind(this));
 $('.se-tab').click(NP.methods.showTab);

@@ -52,6 +52,10 @@ ListItemSelector.prototype.getSelectedItems = function() {
   return selectedItems;
 };
 
+ListItemSelector.prototype.getAllListItems = function() {
+  return this.$items;
+};
+
 /*var listSelector = new ListItemSelector({
   singleSelectMode: true,
   el: '#list',

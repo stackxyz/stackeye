@@ -119,7 +119,6 @@ button {
 .se-category {
   margin-bottom: 1rem;
 }
-
 .pure-menu-selected {
   background: #eee;
   border-radius: 3px;
@@ -143,4 +142,5 @@ button {
 .deleter {
   float: right;
   margin-top: 0.5rem;
+  margin-left: 4px;
 }
