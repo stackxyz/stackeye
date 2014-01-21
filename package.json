@@ -1,0 +1,30 @@
+{
+  "name": "stackeye",
+  "version": "1.1.2",
+  "description": "StackEye is a chrome extension which lets user watch questions on stackoverflow and other stackexchange sites.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blunderboy/stackeye"
+  },
+  "keywords": [
+    "Stackoverflow",
+    "StackExchange",
+    "Notifications",
+    "Chrome",
+    "Extension"
+  ],
+  "author": "Sachin Jain <sachinjain024@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blunderboy/stackeye/issues"
+  },
+  "homepage": "https://github.com/blunderboy/stackeye",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-zipup": "~0.1.6"
+  }
+}
