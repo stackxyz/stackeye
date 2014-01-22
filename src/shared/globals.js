@@ -16,12 +16,14 @@ SW.modes.inDebugMode = false;
 // Conversion to seconds
 SW.vars.TIME = {
   T_2_MIN   : 60*2,
-  T_5_MIN   : 60*5, 
+  T_5_MIN   : 60*5,
+  T_10_MIN  : 60*10,
   T_15_MIN  : 60*15,
   T_30_MIN  : 60*30,
   T_1_HOUR  : 60*60,
   T_2_HOUR  : 60*60*2,
   T_5_HOUR  : 60*60*5,
+  T_6_HOUR  : 60*60*6,
   T_10_HOUR : 60*60*10,
   T_1_DAY   : 60*60*24,
   T_2_DAY   : 60*60*24*2,
