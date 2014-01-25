@@ -19,3 +19,16 @@
   outline: 1px solid red;
   background: lightcoral;
 }
+
+#se_watch_status_notifier {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  height: 40px;  
+  line-height: 40px;
+  font-size: 17px;
+  font-weight: bolder;
+  background: orange;
+  color: black;
+  opacity: 0;
+}

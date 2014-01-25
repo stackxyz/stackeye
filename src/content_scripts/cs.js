@@ -1,6 +1,7 @@
 var $watchIcon = null,
   $notificationDiv = $('<div></div>').attr({id: 'se_notifier', title: 'Click to close'}),
-  $target = null;
+  $target = null,
+  $watchStatusNotificationDiv = $('<div></div>').attr({id: 'se_watch_status_notifier'});
 
 function sendMessageToBackground(message, callback) {
   chrome.runtime.sendMessage(message, callback);
@@ -23,6 +24,12 @@ function createWatchIcon() {
   $watchIcon = $('<img>').attr({ id: 'watchIcon', src: imageUrl })
     .click(function() {
       var action = $(this).attr('data-action');
+  
+      // Update the watch button state ASAP.
+      // In case watch/un-watch fails, the same is handled when message received
+      // from background script.
+      updateWatchIcon(action == 'watchPage');
+  
       sendMessageToBackground({ action: action, url: url }, function(){ } );
    });
 
@@ -33,6 +40,7 @@ function createWatchIcon() {
   $target = $('#question').find('div.vote').first();
   $target.append($watchIcon);
   $target.append($notificationDiv);
+  $(document.body).append($watchStatusNotificationDiv);
 }
 
 function updateWatchIcon(watchStatus) {
@@ -41,13 +49,22 @@ function updateWatchIcon(watchStatus) {
   if (!$watchIcon) {
     createWatchIcon();
   }
+  else {
+    $watchStatusNotificationDiv.css('opacity','1');
+    setTimeout(function() {
+    $watchStatusNotificationDiv.fadeTo(1000,0);
+  }, 3*1000);
+  }
+
 
   if (watchStatus) {
     imageUrl = chrome.extension.getURL('resources/images/icon_color_19.png');
     action = 'unwatchPage';
+    $watchStatusNotificationDiv.text('Question has been added to watch list');
   } else {
     imageUrl = chrome.extension.getURL('resources/images/icon_grey_19.png');
     action = 'watchPage';
+    $watchStatusNotificationDiv.text('Question has been removed from watch list');
   }
 
   $watchIcon.attr({ src: imageUrl, 'data-action': action });
