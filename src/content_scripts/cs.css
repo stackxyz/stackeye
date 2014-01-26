@@ -7,28 +7,22 @@
 }
 
 #se_notifier {
-  margin-right: 8px;
-  padding: 5px;
-  margin-top: 8px;
-  word-wrap: break-word;
-  max-width: 60px;
-  cursor: pointer;
-}
-
-#se_notifier.se_error {
-  outline: 1px solid red;
-  background: lightcoral;
-}
-
-#se_watch_status_notifier {
   position: fixed;
-  top: 0px;
+  top: 0;
+  cursor: pointer;
   width: 100%;
-  height: 40px;  
+  height: 40px;
   line-height: 40px;
   font-size: 17px;
   font-weight: bolder;
-  background: orange;
   color: black;
-  opacity: 0;
+  display: none;
+}
+
+#se_notifier.se_error {
+  background: lightcoral;
+}
+
+#se_notifier.se_notice {
+  background: orange;
 }
