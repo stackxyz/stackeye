@@ -49,26 +49,25 @@ NP.methods.getQuestionToShow = function(questionObject) {
 };
 
 NP.methods.showDefaultNotificationTemplate = function() {
-  defaultTemplate = '<div class="default-template">Hooray!! No Unread Notifications</div>';
+  var defaultTemplate = '<div class="default-template">Hooray!! No Unread Notifications</div>';
   NotificationPage.vars.$notificationList.html(defaultTemplate);	
 }
 
 NotificationPage.methods.renderNotifications = function() {
   var notificationList = NotificationPage.vars.notifications,
     notificationListLength = NotificationPage.vars.notifications.length,
-    notificationToShow,
-    defaultTemplate = '';
+    notificationToShow;
 
   if (!notificationListLength) {
     NP.methods.showDefaultNotificationTemplate();
   } else {
-	NotificationPage.vars.$notificationList.html(defaultTemplate);
-	for (var i = 0; i < notificationListLength; i++) {
-		if (notificationList[i]) {
-		notificationToShow = NotificationPage.methods.getNotificationToShow(notificationList[i]);
-		$('<li></li>').html(notificationToShow).appendTo(NotificationPage.vars.$notificationList);
-		}
-	}
+	   NotificationPage.vars.$notificationList.html('');
+	   for (var i = 0; i < notificationListLength; i++) {
+		    if (notificationList[i]) {
+		      notificationToShow = NotificationPage.methods.getNotificationToShow(notificationList[i]);
+		      $('<li></li>').html(notificationToShow).appendTo(NotificationPage.vars.$notificationList);
+		    }
+	   }
   }
 };
 
@@ -80,40 +79,40 @@ NP.methods.showDefaultQuestionTemplate = function() {
 NP.methods.renderQuestions = function() {
   var questionList = NP.vars.questions,
     numQuestions = questionList.length,
-    questionToShow,
-    defaultTemplate = '';
+    questionToShow;
+    
   if(!numQuestions) {
-	NP.methods.showDefaultQuestionTemplate();
+	   NP.methods.showDefaultQuestionTemplate();
   } else {
-	NP.vars.$questionList.html(defaultTemplate);
-	for (var i = 0; i < numQuestions; i++) {
-		questionToShow = NP.methods.getQuestionToShow(questionList[i]);
-		$('<li></li>').html(questionToShow).appendTo(NP.vars.$questionList);
-	}
+	   NP.vars.$questionList.html('');
+	   for (var i = 0; i < numQuestions; i++) {
+		    questionToShow = NP.methods.getQuestionToShow(questionList[i]);
+		    $('<li></li>').html(questionToShow).appendTo(NP.vars.$questionList);
+	   }
   }
 };
 
 NP.methods.updateNotificationDeleteButton = function() {
-  var selectedItems = NP.vars.notificationSelector.getSelectedItems();
-  var disableStatus = (selectedItems.length == 0);
+  var selectedItems = NP.vars.notificationSelector.getSelectedItems(),
+    disableStatus = (selectedItems.length == 0);
   NP.vars.$notificationDeleteButton.attr('disabled', disableStatus);
 };
 
 NP.methods.updateNotificationDeleteAllButton = function() {
-  var notificationList = NotificationPage.vars.notifications;
-  var disableStatus = (notificationList.length == 0);
+  var notificationList = NotificationPage.vars.notifications,
+    disableStatus = (notificationList.length == 0);
   NP.vars.$notificationDeleteAllButton.attr('disabled', disableStatus);
 };
 
 NP.methods.updateQuestionDeleteAllButton = function() {
-  var questionList = NP.vars.questions;
-  var disableStatus = (questionList.length == 0);
+  var questionList = NP.vars.questions,
+    disableStatus = (questionList.length == 0);
   NP.vars.$questionDeleteAllButton.attr('disabled', disableStatus);
 };
 
 NP.methods.updateQuestionDeleteButton = function() {
-  var selectedItems = NP.vars.questionSelector.getSelectedItems();
-  var disableStatus = (selectedItems.length == 0);
+  var selectedItems = NP.vars.questionSelector.getSelectedItems(),
+    disableStatus = (selectedItems.length == 0);
   NP.vars.$questionDeleteButton.attr('disabled', disableStatus);
 };
 
@@ -151,7 +150,7 @@ NP.methods.removeNotificationListItems = function(notificationListItems) {
   BG.SW.methods.clearBulkNotifications(notificationURLs);
   //if we don't have any notifications to show, we show the default template.
   if(NotificationPage.vars.notifications.length == 0)
-	NP.methods.showDefaultNotificationTemplate();
+	   NP.methods.showDefaultNotificationTemplate();
   NP.methods.updateNotificationDeleteButton();
   NP.methods.updateNotificationDeleteAllButton();
 }
@@ -168,7 +167,7 @@ NP.methods.removeQuestionListItems = function(questionListItems) {
   BG.SW.methods.removeBulkQuestions(questionURLs);
   //if we don't have any questions to show, we show the default template.
   if(NP.vars.questions.length == 0)
-	NP.methods.showDefaultQuestionTemplate();
+	   NP.methods.showDefaultQuestionTemplate();
   NP.methods.updateQuestionDeleteButton();
   NP.methods.updateQuestionDeleteAllButton();
 }
