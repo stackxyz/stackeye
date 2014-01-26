@@ -48,6 +48,11 @@ NP.methods.getQuestionToShow = function(questionObject) {
   return markup;
 };
 
+NP.methods.showDefaultNotificationTemplate = function() {
+  defaultTemplate = '<div class="default-template">Hooray!! No Unread Notifications</div>';
+  NotificationPage.vars.$notificationList.html(defaultTemplate);	
+}
+
 NotificationPage.methods.renderNotifications = function() {
   var notificationList = NotificationPage.vars.notifications,
     notificationListLength = NotificationPage.vars.notifications.length,
@@ -55,73 +60,61 @@ NotificationPage.methods.renderNotifications = function() {
     defaultTemplate = '';
 
   if (!notificationListLength) {
-    defaultTemplate = '<div class="default-template">Hooray!! No Unread Notifications</div>';
-  }
-
-  NotificationPage.vars.$notificationList.html(defaultTemplate);
-  for (var i = 0; i < notificationListLength; i++) {
-    if (notificationList[i]) {
-      notificationToShow = NotificationPage.methods.getNotificationToShow(notificationList[i]);
-      $('<li></li>').html(notificationToShow).appendTo(NotificationPage.vars.$notificationList);
-	  }
+    NP.methods.showDefaultNotificationTemplate();
+  } else {
+	NotificationPage.vars.$notificationList.html(defaultTemplate);
+	for (var i = 0; i < notificationListLength; i++) {
+		if (notificationList[i]) {
+		notificationToShow = NotificationPage.methods.getNotificationToShow(notificationList[i]);
+		$('<li></li>').html(notificationToShow).appendTo(NotificationPage.vars.$notificationList);
+		}
+	}
   }
 };
+
+NP.methods.showDefaultQuestionTemplate = function() {
+  var defaultTemplate = '<div class="default-template">Too Bad!! You are not watching any question</div>';
+  NP.vars.$questionList.html(defaultTemplate);
+}
 
 NP.methods.renderQuestions = function() {
   var questionList = NP.vars.questions,
     numQuestions = questionList.length,
     questionToShow,
     defaultTemplate = '';
-
-  if (!numQuestions) {
-    defaultTemplate = '<div class="default-template">Too Bad!! You are not watching any question</div>';
-  }
-
-  NP.vars.$questionList.html(defaultTemplate);
-  for (var i = 0; i < numQuestions; i++) {
-    questionToShow = NP.methods.getQuestionToShow(questionList[i]);
-    $('<li></li>').html(questionToShow).appendTo(NP.vars.$questionList);
+  if(!numQuestions) {
+	NP.methods.showDefaultQuestionTemplate();
+  } else {
+	NP.vars.$questionList.html(defaultTemplate);
+	for (var i = 0; i < numQuestions; i++) {
+		questionToShow = NP.methods.getQuestionToShow(questionList[i]);
+		$('<li></li>').html(questionToShow).appendTo(NP.vars.$questionList);
+	}
   }
 };
 
 NP.methods.updateNotificationDeleteButton = function() {
   var selectedItems = NP.vars.notificationSelector.getSelectedItems();
-  if (selectedItems.length) {
-    NP.vars.$notificationDeleteButton.removeAttr('disabled');
-  } else {
-    NP.vars.$notificationDeleteButton.attr('disabled', true);
-  }
+  var disableStatus = (selectedItems.length == 0);
+  NP.vars.$notificationDeleteButton.attr('disabled', disableStatus);
 };
 
 NP.methods.updateNotificationDeleteAllButton = function() {
-  var notificationList = NotificationPage.vars.notifications,
-    notificationListLength = NotificationPage.vars.notifications.length;
-
-  if (notificationListLength) {
-    NP.vars.$notificationDeleteAllButton.removeAttr('disabled');
-  } else {
-    NP.vars.$notificationDeleteAllButton.attr('disabled', true);
-  }
+  var notificationList = NotificationPage.vars.notifications;
+  var disableStatus = (notificationList.length == 0);
+  NP.vars.$notificationDeleteAllButton.attr('disabled', disableStatus);
 };
 
 NP.methods.updateQuestionDeleteAllButton = function() {
- var questionList = NP.vars.questions,
-    numQuestions = questionList.length;
- 
-  if (numQuestions) {
-    NP.vars.$questionDeleteAllButton.removeAttr('disabled');
-  } else {
-    NP.vars.$questionDeleteAllButton.attr('disabled', true);
-  }
+  var questionList = NP.vars.questions;
+  var disableStatus = (questionList.length == 0);
+  NP.vars.$questionDeleteAllButton.attr('disabled', disableStatus);
 };
 
 NP.methods.updateQuestionDeleteButton = function() {
   var selectedItems = NP.vars.questionSelector.getSelectedItems();
-  if (selectedItems.length) {
-    NP.vars.$questionDeleteButton.removeAttr('disabled');
-  } else {
-    NP.vars.$questionDeleteButton.attr('disabled', true);
-  }
+  var disableStatus = (selectedItems.length == 0);
+  NP.vars.$questionDeleteButton.attr('disabled', disableStatus);
 };
 
 NP.methods.initializeNotificationSelectorComponent = function() {
@@ -146,68 +139,59 @@ NP.methods.initializeQuestionSelectorComponent = function() {
   $(NP.vars.questionSelector).on('item:click', NP.methods.updateQuestionDeleteButton.bind(this));
 };
 
-NP.methods.removeSelectedNotifications = function() {
-  var selectedItems = NP.vars.notificationSelector.getSelectedItems(),
-    questionURLs = [];
+NP.methods.removeNotificationListItems = function(notificationListItems) {
+  var notificationURLs = [];
 
-  $.each(selectedItems, function(item) {
+  $.each(notificationListItems, function(item) {
+    var url = $(this).find('.question-link').attr('href');
+    notificationURLs.push(url);
+    $(this).remove();
+  });
+
+  BG.SW.methods.clearBulkNotifications(notificationURLs);
+  //if we don't have any notifications to show, we show the default template.
+  if(NotificationPage.vars.notifications.length == 0)
+	NP.methods.showDefaultNotificationTemplate();
+  NP.methods.updateNotificationDeleteButton();
+  NP.methods.updateNotificationDeleteAllButton();
+}
+
+NP.methods.removeQuestionListItems = function(questionListItems) {
+  var questionURLs = [];
+
+  $.each(questionListItems, function(item) {
     var url = $(this).find('.question-link').attr('href');
     questionURLs.push(url);
     $(this).remove();
   });
 
-  BG.SW.methods.clearBulkNotifications(questionURLs);
-  NotificationPage.methods.renderNotifications();
-  NP.methods.updateNotificationDeleteButton();
-  NP.methods.updateNotificationDeleteAllButton();
+  BG.SW.methods.removeBulkQuestions(questionURLs);
+  //if we don't have any questions to show, we show the default template.
+  if(NP.vars.questions.length == 0)
+	NP.methods.showDefaultQuestionTemplate();
+  NP.methods.updateQuestionDeleteButton();
+  NP.methods.updateQuestionDeleteAllButton();
+}
+
+
+NP.methods.removeSelectedNotifications = function() {
+  var selectedItems = NP.vars.notificationSelector.getSelectedItems();
+  NP.methods.removeNotificationListItems(selectedItems);
 };
 
 NP.methods.removeAllNotifications = function() {
-  var selectedItems = NP.vars.notificationSelector.getAllListItems(),
-    questionURLs = [];
-
-  $.each(selectedItems, function(item) {
-    var url = $(this).find('.question-link').attr('href');
-    questionURLs.push(url);
-    $(this).remove();
-  });
-
-  BG.SW.methods.clearBulkNotifications(questionURLs);
-  NotificationPage.methods.renderNotifications();
-  NP.methods.updateNotificationDeleteButton();
-  NP.methods.updateNotificationDeleteAllButton();
+  var allNotificationItems = NP.vars.notificationSelector.getAllListItems();
+  NP.methods.removeNotificationListItems(allNotificationItems);  
 };
 
 NP.methods.removeSelectedQuestions = function() {
-  var selectedItems = NP.vars.questionSelector.getSelectedItems(),
-    questionURLs = [];
-
-  $.each(selectedItems, function(item) {
-    var url = $(this).find('.question-link').attr('href');
-    questionURLs.push(url);
-    $(this).remove();
-  });
-
-  BG.SW.methods.removeBulkQuestions(questionURLs);
-  NP.methods.renderQuestions ();
-  NP.methods.updateQuestionDeleteButton();
-  NP.methods.updateQuestionDeleteAllButton();
+  var selectedItems = NP.vars.questionSelector.getSelectedItems();
+  NP.methods.removeQuestionListItems(selectedItems);
 };
 
 NP.methods.removeAllQuestions = function() {
-  var selectedItems = NP.vars.questionSelector.getAllListItems(),
-    questionURLs = [];
-	
-  $.each(selectedItems, function(item) {
-    var url = $(this).find('.question-link').attr('href');
-    questionURLs.push(url);
-    $(this).remove();
-  });
-
-  BG.SW.methods.removeBulkQuestions(questionURLs);
-  NP.methods.renderQuestions ();
-  NP.methods.updateQuestionDeleteButton();
-  NP.methods.updateQuestionDeleteAllButton();
+  var allQuestionsItems = NP.vars.questionSelector.getAllListItems();
+  NP.methods.removeQuestionListItems(allQuestionsItems);
  };
 
 NP.methods.showTab = function(event) {
