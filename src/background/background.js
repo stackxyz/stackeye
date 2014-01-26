@@ -181,14 +181,20 @@ SW.methods.getNextFetchDate = function(lastFetchDate, creation_date) {
   if (difference >= SW.vars.TIME.T_5_DAY) {
     nextFetchInterval = SW.vars.TIME.T_10_HOUR;
   } else if (difference >= SW.vars.TIME.T_2_DAY) {
-    nextFetchInterval = SW.vars.TIME.T_5_HOUR;
+    nextFetchInterval = SW.vars.TIME.T_6_HOUR;
   } else if (difference >= SW.vars.TIME.T_1_DAY) {
     nextFetchInterval = SW.vars.TIME.T_2_HOUR;
+  } else if (difference >= SW.vars.TIME.T_5_HOUR) {
+    nextFetchInterval = SW.vars.TIME.T_30_MIN;
+  } else if (difference >= SW.vars.TIME.T_2_HOUR) {
+    nextFetchInterval = SW.vars.TIME.T_10_MIN;
+  } else if (difference >= SW.vars.TIME.T_30_MIN) {
+    nextFetchInterval = SW.vars.TIME.T_10_MIN;
   } else {
     nextFetchInterval = SW.vars.TIME.T_5_MIN;
   }
 
-  // If app is in debug mode, we always want to fetch notification after 2 minutes
+  // If app is in debug mode, we always want to fetch notification after 5 minutes
   if (SW.modes.inDebugMode) {
     nextFetchInterval = SW.vars.TIME.T_5_MIN;
   }
