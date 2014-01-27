@@ -40,6 +40,11 @@ SW.messages = {
   WARN_INVALID_URL: 'Please navigate to a stackoverflow question page',
   WARN_WATCH_LIMIT: 'You can not watch more than 20 Questions',
 
+  CONFIRM_SELECTED_NOTIFICATIONS_DELETE: 'Selected notifications will be removed. Proceed ?',
+  CONFIRM_SELECTED_QUESTIONS_DELETE: 'Selected questions will be removed from watchlist. Proceed ?',
+  CONFIRM_ALL_NOTIFICATIONS_DELETE: 'All notifications will be removed. Proceed ?',
+  CONFIRM_ALL_QUESTIONS_DELETE: 'All questions will be removed from your watchlist. Proceed ?',
+
   ERROR_UNABLE_TO_GET_URL_CURRENT_TAB: 'Unable to get the url of current tab.Please file a bug',
   ERROR_FETCH_ANSWER_LIST: 'Error in fetching answer list',
   ERROR_FETCH_COMMENT_LIST: 'Error in fetching comment list',
