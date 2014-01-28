@@ -395,6 +395,13 @@ SW.methods.clearBulkNotifications = function(urls) {
 
 SW.methods.sendMessageToContentScript = function(message, options) {
   options = options || {};
+  var hashPosition = (options.url ? options.url.indexOf('#') : -1);
+
+  // Remove # if it is present in the URL
+  if (hashPosition != -1) {
+    options.url = options.url.substr(0, hashPosition);
+  }
+
   chrome.tabs.query(options, function(tabs) {
     $.each(tabs, function(index, tab) {
       chrome.tabs.sendMessage(tab.id, message);
