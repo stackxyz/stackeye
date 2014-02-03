@@ -57,5 +57,6 @@ SW.constants = {
   ACCEPTED_ANSWER: 'accepted_answer',
   NEW_COMMENT: 'comment',
   ANSWER: 'answer',
-  APP_KEY: 'MKhHgtFFPM)vQAp2pvu)fw(('
+  APP_KEY: 'MKhHgtFFPM)vQAp2pvu)fw((',
+  VERSION: '1.2'
 };
