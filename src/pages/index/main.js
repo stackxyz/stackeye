@@ -148,10 +148,11 @@ NP.methods.removeNotificationListItems = function(notificationListItems) {
     $(this).remove();
   });
 
-  BG.SW.methods.clearBulkNotifications(notificationURLs);
+  BG.SW.methods.removeBulkNotifications(notificationURLs);
   //if we don't have any notifications to show, we show the default template.
-  if(NotificationPage.vars.notifications.length == 0)
-	   NP.methods.showDefaultNotificationTemplate();
+  if (NotificationPage.vars.notifications.length == 0) {
+    NP.methods.showDefaultNotificationTemplate();
+  }
   NP.methods.updateNotificationDeleteButton();
   NP.methods.updateNotificationDeleteAllButton();
 };

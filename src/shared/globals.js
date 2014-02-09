@@ -3,9 +3,9 @@ SW.methods = SW.methods || {};
 SW.vars = SW.vars || {};
 SW.stores = SW.stores || {};
 SW.modes = SW.modes || {};
+SW.maps = SW.maps || {};
 
 /*-----------------------------------------------------------*/
-
 SW.vars.ALLOWED_PAGES = [
   'stackoverflow.com/questions/',
   'stackexchange.com/questions/'
@@ -54,9 +54,22 @@ SW.messages = {
 };
 
 SW.constants = {
-  ACCEPTED_ANSWER: 'accepted_answer',
-  NEW_COMMENT: 'comment',
-  ANSWER: 'answer',
-  APP_KEY: 'MKhHgtFFPM)vQAp2pvu)fw((',
-  VERSION: '1.2'
+  ACCEPTED_ANSWER : 'accepted_answer',
+  NEW_COMMENT     : 'comment',
+  ANSWER          : 'answer',
+  APP_KEY         : 'MKhHgtFFPM)vQAp2pvu)fw((',
+  VERSION         : '1.3'
+};
+
+SW.OBJECT_TYPES = {
+  QUESTION: 'question',
+  NEW_ACTIVITY_NOTIFICATION: 'new_activity_notification' /*New Answer/Comment on question */
+};
+
+SW.stores.questionFeedStore = [];
+SW.stores.notificationStore = [];
+
+SW.maps.ObjectTypeToStoreMap = {
+  'question': SW.stores.questionFeedStore,
+  'new_activity_notification': SW.stores.notificationStore
 };
