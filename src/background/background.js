@@ -291,9 +291,8 @@ SW.methods.updateNotificationStore = function(updates, questionInfo) {
         newNotificationEntry.numAnswers = (update.timeline_type == SW.constants.ANSWER) ? 1 : 0;
 
         // Push new entry into notification list
-        SW.methods.saveObject(newNotificationEntry, function() {
-          SW.stores.notificationStore.push(newNotificationEntry);
-        });
+        SW.stores.notificationStore.push(newNotificationEntry);
+        SW.methods.saveObject(newNotificationEntry);
       }
     }
   }
