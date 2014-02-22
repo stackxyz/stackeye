@@ -112,9 +112,9 @@ SW.methods.extractQuestionPageUrlInfo = function(url) {
  */
 SW.methods.extractProfilePageUrlInfo = function(url) {
   var urlData = url.split('/');
+
   return {
-    userId: urlData[4],
-    userName: urlData[5]
+    userId: urlData[4]
   };
 };
 
