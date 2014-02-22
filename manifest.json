@@ -10,14 +10,21 @@
       "src/libs/jquery-1.9.1.js",
       "src/shared/globals.js",
       "src/shared/api_methods.js",
+      "src/background/watchQuestion.js",
+      "src/background/followUser.js",
       "src/background/background.js"
     ]
   },
 
   "content_scripts": [
     {
-      "matches": ["*://*.stackexchange.com/*", "http://stackoverflow.com/*"],
-      "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/cs.js"],
+      "matches": ["*://*.stackexchange.com/questions/*", "http://stackoverflow.com/questions/*"],
+      "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/questionPage.js"],
+      "css": ["src/content_scripts/cs.css"]
+    },
+    {
+      "matches": ["*://*.stackexchange.com/users/*", "http://stackoverflow.com/users/*"],
+      "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/profilePage.js"],
       "css": ["src/content_scripts/cs.css"]
     }
   ],

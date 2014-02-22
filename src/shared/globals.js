@@ -8,7 +8,9 @@ SW.maps = SW.maps || {};
 /*-----------------------------------------------------------*/
 SW.vars.ALLOWED_PAGES = [
   'stackoverflow.com/questions/',
-  'stackexchange.com/questions/'
+  'stackexchange.com/questions/',
+  'stackoverflow.com/users/',
+  'stackexchange.com/users/',
 ];
 
 SW.modes.inDebugMode = false;
@@ -63,13 +65,19 @@ SW.constants = {
 
 SW.OBJECT_TYPES = {
   QUESTION: 'question',
-  NEW_ACTIVITY_NOTIFICATION: 'new_activity_notification' /*New Answer/Comment on question */
+  NEW_ACTIVITY_NOTIFICATION: 'question_notification', /*New Answer/Comment on question */
+  USER: 'user',
+  USER_NOTIFICATION: 'user_notification'
 };
 
 SW.stores.questionFeedStore = [];
 SW.stores.notificationStore = [];
+SW.stores.userStore = [];
+SW.stores.userNotifictionStore = [];
 
 SW.maps.ObjectTypeToStoreMap = {
   'question': SW.stores.questionFeedStore,
-  'new_activity_notification': SW.stores.notificationStore
+  'question_notification': SW.stores.notificationStore,
+  'user': SW.stores.userStore,
+  'user_notification': SW.stores.userNotifictionStore
 };

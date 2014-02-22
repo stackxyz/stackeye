@@ -8,7 +8,7 @@ function sendMessageToBackground(message, callback) {
 
 function notifyBackgroundForPageLoad() {
   var url = window.location.href,
-    message = { event: 'pageLoaded', url: url };
+    message = { event: 'pageLoaded', url: url, pageType: 'questionPage' };
 
   sendMessageToBackground(message, function() {});
 }
@@ -26,9 +26,11 @@ function createWatchIcon() {
       // the same is handled when message is received from background script.
       updateWatchIcon(action == 'watchPage');
 
-      notificationText = (action == 'watchPage') ?
-        'Question has been added to your watch list' :
-        'Question has been removed from watch list';
+      if (action == 'watchPage') {
+        notificationText = 'Question has been added to your watch list';
+      } else {
+        notificationText = 'Question has been removed from watch list';
+      }
 
       showNotification({type: 'se_notice', message: notificationText});
   
