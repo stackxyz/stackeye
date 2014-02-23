@@ -26,3 +26,10 @@
 #se_notifier.se_notice {
   background: orange;
 }
+
+#se_follow_button {
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  border-radius: 2px;
+  cursor: pointer;
+}
