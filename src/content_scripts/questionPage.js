@@ -1,6 +1,5 @@
 var $watchIcon = null,
-  $notificationDiv = $('<div></div>').attr({id: 'se_notifier', title: 'Click to close'}),
-  $target = null;
+  $notificationDiv = $('<div></div>').attr({id: 'se_notifier', title: 'Click to close'});
 
 function sendMessageToBackground(message, callback) {
   chrome.runtime.sendMessage(message, callback);
@@ -15,6 +14,7 @@ function notifyBackgroundForPageLoad() {
 
 function createWatchIcon() {
   var url = window.location.href,
+    $target,
     notificationText = '',
     imageUrl = chrome.extension.getURL('resources/images/icon_grey_19.png');
 
