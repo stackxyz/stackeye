@@ -13,12 +13,30 @@ function notifyBackgroundForPageLoad() {
 }
 
 function createFollowButton() {
-  var $target = $('#user-displayname'),
+  var url = window.location.href,
+    username = url.split('/')[5],
+    $target = $('#user-displayname'),
     notificationText = '';
+
+  username = username.split('-').join(' ');
 
   $followButton = $('<button></button>').attr({ id: 'se_follow_button' })
     .click(function() {
       var action = $(this).attr('data-action');
+
+      // Update the follow button state ASAP. In case follow/un-follow fails,
+      // the same is handled when message is received from background script.
+      updateFollowButton(action == 'followUser');
+
+      if (action == 'followUser') {
+        notificationText = 'You are now following ' + username;
+      } else {
+        notificationText = 'You are no longer following ' + username;
+      }
+
+      showNotification({type: 'se_notice', message: notificationText});
+
+      sendMessageToBackground({ action: action, url: url }, function(){ } );
     });
 
   $notificationDiv.click(function() {
@@ -50,6 +68,12 @@ function updateFollowButton(followStatus) {
   }
 
   $followButton.attr({ class: className, 'data-action': action }).html(buttonName);
+}
+
+function showNotification(notification) {
+  $notificationDiv.text(notification.message)
+    .removeClass('se_notice se_error se_success').addClass(notification.type)
+    .fadeIn(1000);
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {

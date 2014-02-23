@@ -193,6 +193,10 @@ SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
   if (request.action == 'unwatchPage') {
     SW.methods.unwatchQuestion(request.url, SW.methods.sendWatchStatus);
   }
+
+  if (request.action == 'followUser') {
+    alert('Message received');
+  }
 };
 
 SW.methods.init = function() {
