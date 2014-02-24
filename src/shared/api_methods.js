@@ -177,3 +177,50 @@ SW.methods.getQuestionUpdates = function(id, domain, lastFetchDate) {
 
   return questionUpdates;
 };
+
+/**
+ *
+ * @param userId
+ * Url: http://api.stackexchange.com/docs/posts-on-users#pagesize=10&order=desc&sort=activity&ids=1310070&filter=!)5Us_x-e1YSaW3xeb7fWp3sds7aR&site=stackoverflow&run=true
+ */
+SW.methods.getUrlForUserPosts = function(userId) {
+  var url = 'http://api.stackexchange.com/2.2/users/' + userId + '/posts';
+  url += '?key=' + SW.constants.APP_KEY;
+  url += '&filter=' + SW.filters.USER_POSTS;
+  url += '&pagesize=' + 100;
+
+  return url;
+};
+
+/**
+ *
+ * @param userId
+ * @returns {string}
+ */
+SW.methods.getUrlForUserDetails = function(userId, domain) {
+  var url = 'http://api.stackexchange.com/2.2/users/' + userId;
+  url += '?key=' + SW.constants.APP_KEY;
+  url += '&site=' + domain;
+  url += '&filter=' + SW.filters.USER_DETAILS;
+
+  return url;
+};
+
+SW.methods.getUserDetails = function(userId, domain) {
+  var url = SW.methods.getUrlForUserDetails(userId, domain);
+  var userInfo = null;
+
+  $.ajax({
+    method: 'GET',
+    url: url,
+    async: false,
+    success: function(response) {
+      userInfo = response.items[0];
+    },
+    error: function(e) {
+      console.error(e);
+    }
+  });
+
+  return userInfo;
+};

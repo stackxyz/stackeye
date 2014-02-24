@@ -19,3 +19,20 @@ SW.methods.isUserFollowed = function(profilePageUrl, callback) {
     callback(followStatus, profilePageUrl);
   }
 };
+
+SW.methods.followUser = function(profilePageUrl, callback) {
+  var urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
+    userDetailsObject = SW.methods.getUserDetails(urlInfo.userId, urlInfo.domain),
+    objectKey;
+
+  callback = callback || function() {};
+
+  if (userDetailsObject) {
+    userDetailsObject['objectType'] = SW.OBJECT_TYPES.USER;
+    objectKey = 'user' + ':' + userDetailsObject['user_id'];
+    SW.methods.saveObject(userDetailsObject, function() {
+      callback();
+      SW.methods.addObjectToStore(userDetailsObject);
+    }, objectKey);
+  }
+};

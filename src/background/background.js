@@ -4,13 +4,16 @@ SW.methods.printStorageItems = function() {
   })
 };
 
-SW.methods.saveObject = function(object, callback) {
-  var objectKey = object.objectType + ':' + object.questionId,
-    storageObject = {};
+SW.methods.saveObject = function(object, callback, objectKey) {
+  var storageObject = {};
+
+  if (!objectKey) {
+    objectKey = object.objectType + ':' + object.questionId;
+  }
 
   storageObject[objectKey] = object;
-  callback = callback || function() {};
 
+  callback = callback || function() {};
   chrome.storage.local.set(storageObject, callback);
 };
 
@@ -114,6 +117,7 @@ SW.methods.extractProfilePageUrlInfo = function(url) {
   var urlData = url.split('/');
 
   return {
+    domain: urlData[2],
     userId: urlData[4]
   };
 };
@@ -195,7 +199,9 @@ SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
   }
 
   if (request.action == 'followUser') {
-    alert('Message received');
+    SW.methods.followUser(request.url, function() {
+      SW.methods.sendFollowStatus(true, request.url);
+    });
   }
 };
 

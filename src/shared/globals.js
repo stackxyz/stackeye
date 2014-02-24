@@ -63,6 +63,11 @@ SW.constants = {
   VERSION         : '1.3'
 };
 
+SW.filters = {
+  USER_POSTS: '!)5Us_x-e1YSaW3xeb7fWp3sds7aR',
+  USER_DETAILS: '!)sjb*LbmKJq1r8IglXiR'
+};
+
 SW.OBJECT_TYPES = {
   QUESTION: 'question',
   NEW_ACTIVITY_NOTIFICATION: 'question_notification', /*New Answer/Comment on question */
