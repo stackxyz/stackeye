@@ -1,6 +1,6 @@
 SW.methods.isUserInStore = function(userId) {
   for (var i=0; i < SW.stores.userStore.length; i++) {
-    if (SW.stores.userStore[i].userId == userId) {
+    if (SW.stores.userStore[i]['user_id'] == userId) {
       return true;
     }
   }
