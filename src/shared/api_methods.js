@@ -183,13 +183,41 @@ SW.methods.getQuestionUpdates = function(id, domain, lastFetchDate) {
  * @param userId
  * Url: http://api.stackexchange.com/docs/posts-on-users#pagesize=10&order=desc&sort=activity&ids=1310070&filter=!)5Us_x-e1YSaW3xeb7fWp3sds7aR&site=stackoverflow&run=true
  */
-SW.methods.getUrlForUserPosts = function(userId) {
+SW.methods.getUrlForUserPosts = function(userId, domain, fromDate) {
   var url = 'http://api.stackexchange.com/2.2/users/' + userId + '/posts';
   url += '?key=' + SW.constants.APP_KEY;
+  url += '&site=' + domain;
+  url += '&fromDate=' + fromDate;
   url += '&filter=' + SW.filters.USER_POSTS;
   url += '&pagesize=' + 100;
 
   return url;
+};
+
+/**
+ *
+ * @param userIds Array of userIds
+ * @param domain
+ * @returns {Array}
+ */
+SW.methods.getUserNotifications = function(userIds, domain, fromDate) {
+  var idString = userIds.join(';'),
+    url = SW.methods.getUrlForUserPosts(idString, domain, fromDate),
+    userNotifications = [];
+
+  $.ajax({
+    method: 'GET',
+    url: url,
+    async: false,
+    success: function(response) {
+      userNotifications = response.items;
+    },
+    error: function(e) {
+      console.error(e);
+    }
+  });
+
+  return userNotifications;
 };
 
 /**
@@ -206,6 +234,12 @@ SW.methods.getUrlForUserDetails = function(userId, domain) {
   return url;
 };
 
+/**
+ *
+ * @param userId
+ * @param domain
+ * @returns {*}
+ */
 SW.methods.getUserDetails = function(userId, domain) {
   var url = SW.methods.getUrlForUserDetails(userId, domain);
   var userInfo = null;

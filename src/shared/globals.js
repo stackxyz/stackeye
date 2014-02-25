@@ -34,6 +34,7 @@ SW.vars.TIME = {
 
 //setinterval takes time in miliseconds
 SW.vars.FETCH_NOTIFICATION_INTERVAL =  SW.vars.TIME.T_5_MIN * 1000;
+SW.vars.USER_NOTIFICATION_FETCH_INTERVAL = SW.vars.TIME.T_30_MIN * 1000;
 
 // Maximum number of questions a user can watch
 SW.vars.WATCH_QUESTION_LIMIT = 20;
