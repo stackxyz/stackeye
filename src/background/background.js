@@ -224,6 +224,9 @@ SW.methods.init = function() {
 
   setInterval(SW.methods.fetchNewNotifications, SW.vars.FETCH_NOTIFICATION_INTERVAL);
   setInterval(SW.methods.fetchUserNotifications, SW.vars.USER_NOTIFICATION_FETCH_INTERVAL);
+
+  // Load all user notifications whenever browser is opened
+  SW.methods.fetchUserNotifications();
 };
 
 SW.methods.init();

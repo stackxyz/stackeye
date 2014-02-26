@@ -44,11 +44,9 @@ SW.methods.followUser = function(profilePageUrl, callback) {
  * @param userIds
  * @param domain
  */
-SW.methods.fetchUserNotification = function(userIds, domain) {
+SW.methods.fetchUserNotification = function(userIds, domain, fromDate) {
   var notificationItem,
     objectKey,
-    currentTime = parseInt(Date.now()/1000),
-    fromDate = currentTime - SW.vars.TIME.T_30_MIN,
     notifications = SW.methods.getUserNotifications(userIds, domain, fromDate);
 
   for (var i = 0; i < notifications.length; i++) {
@@ -66,11 +64,17 @@ SW.methods.fetchUserNotification = function(userIds, domain) {
  * Fetches notifications for all domains and all users
  */
 SW.methods.fetchUserNotifications = function() {
-  var usersInSite = SW.methods.createMapOfUsersInDomain();
+  var usersInSite = SW.methods.createMapOfUsersInDomain(),
+    currentTime = parseInt(Date.now()/1000),
+    fromDate = currentTime - SW.vars.TIME.T_30_MIN;
 
-  for (var site in usersInSite) {
-    SW.methods.fetchUserNotification(usersInSite[site], site);
-  }
+  chrome.storage.local.get('userNotificationsLastFetchDate', function(o) {
+    var lastFetchDate = o['userNotificationsLastFetchDate'] || fromDate;
+    for (var site in usersInSite) {
+      SW.methods.fetchUserNotification(usersInSite[site], site, lastFetchDate);
+    }
+    chrome.storage.local.set({ userNotificationsLastFetchDate: currentTime });
+  });
 };
 
 SW.methods.createMapOfUsersInDomain = function() {
