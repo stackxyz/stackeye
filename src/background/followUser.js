@@ -43,6 +43,7 @@ SW.methods.followUser = function(profilePageUrl, callback) {
  * Fetches notifications for list of users corresponding to a domain
  * @param userIds
  * @param domain
+ * @param fromDate
  */
 SW.methods.fetchUserNotification = function(userIds, domain, fromDate) {
   var notificationItem,
@@ -77,6 +78,10 @@ SW.methods.fetchUserNotifications = function() {
   });
 };
 
+/**
+ *
+ * @returns {{}}
+ */
 SW.methods.createMapOfUsersInDomain = function() {
   var usersInSite = {},
     domain,
@@ -93,3 +98,6 @@ SW.methods.createMapOfUsersInDomain = function() {
 
   return usersInSite;
 };
+
+// Whenever extension is reloaded (browser reopened/extension re-enabled, fetch usernotifications
+$(document).on('stores:created', SW.methods.fetchUserNotifications);
