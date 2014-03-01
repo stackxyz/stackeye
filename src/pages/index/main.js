@@ -8,7 +8,7 @@ $(function() {
 
   // Cache all stores types in local variable
   NP.vars.notifications = BG.SW.stores.notificationStore;
-  NP.vars.userNotifications = BG.SW.stores.userNotifictionStore;
+  NP.vars.userNotifications = BG.SW.stores.userNotificationStore;
   NP.vars.questions = BG.SW.stores.questionFeedStore;
 
   NP.vars.$userNotificationList = $('#user-notification-area').find('.se-list');
@@ -31,9 +31,8 @@ $(function() {
     return markup;
   };
 
-  NP.methods.showDefaultNotificationTemplate = function() {
-    var defaultTemplate = '<div class="default-template">Hooray!! No Unread Notifications</div>';
-    NP.vars.$notificationList.html(defaultTemplate);
+  NP.methods.showDefaultNotificationTemplate = function($container) {
+    $container.html('<div class="default-template">Hooray!! No Unread Notifications</div>');
   };
 
   NP.methods.renderItems = function(notificationList, $listContainer, getMarkupMethod) {
@@ -41,7 +40,7 @@ $(function() {
       notificationToShow;
 
     if (!notificationListLength) {
-      NP.methods.showDefaultNotificationTemplate();
+      NP.methods.showDefaultNotificationTemplate($listContainer);
     } else {
        $listContainer.empty();
        for (var i = 0; i < notificationListLength; i++) {
@@ -124,7 +123,7 @@ $(function() {
     var notificationURLs = [];
 
     $.each(notificationListItems, function(item) {
-      var url = $(this).find('.question-link').attr('href');
+      var url = $(this).find('.link').attr('href');
       notificationURLs.push(url);
       $(this).remove();
     });
@@ -132,7 +131,7 @@ $(function() {
     BG.SW.methods.removeBulkNotifications(notificationURLs);
     //if we don't have any notifications to show, we show the default template.
     if (NP.vars.notifications.length == 0) {
-      NP.methods.showDefaultNotificationTemplate();
+      NP.methods.showDefaultNotificationTemplate($(notificationListItems).eq(0).parent());
     }
     NP.methods.updateNotificationDeleteButton();
     NP.methods.updateNotificationDeleteAllButton();

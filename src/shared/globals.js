@@ -79,11 +79,11 @@ SW.OBJECT_TYPES = {
 SW.stores.questionFeedStore = [];
 SW.stores.notificationStore = [];
 SW.stores.userStore = [];
-SW.stores.userNotifictionStore = [];
+SW.stores.userNotificationStore = [];
 
 SW.maps.ObjectTypeToStoreMap = {
   'question': SW.stores.questionFeedStore,
   'question_notification': SW.stores.notificationStore,
   'user': SW.stores.userStore,
-  'user_notification': SW.stores.userNotifictionStore
+  'user_notification': SW.stores.userNotificationStore
 };

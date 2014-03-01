@@ -11,6 +11,9 @@ SW.methods.saveObject = function(object, callback, objectKey) {
     objectKey = object.objectType + ':' + object.questionId;
   }
 
+  // Will be used at the time of deleting this object
+  object['objectKey'] = objectKey;
+
   storageObject[objectKey] = object;
 
   callback = callback || function() {};
@@ -25,6 +28,19 @@ SW.methods.deleteObject = function(objectKey, callback) {
 SW.methods.addObjectToStore = function(object) {
   var store = SW.maps.ObjectTypeToStoreMap[object.objectType];
   store && store.push(object);
+};
+
+SW.methods.removeObjectFromStore = function(objectKey, storeItems) {
+  var isObjectRemoved = false;
+
+  for (var i = storeItems.length - 1; i >= 0; i--) {
+    if (typeof storeItems[i] == 'object' && storeItems[i]['objectKey'] == objectKey) {
+      storeItems.splice(i, 1);
+      isObjectRemoved = true;
+    }
+  }
+
+  return isObjectRemoved;
 };
 
 /* @deprecated
@@ -203,6 +219,12 @@ SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
   if (request.action == 'followUser') {
     SW.methods.followUser(request.url, function() {
       SW.methods.sendFollowStatus(true, request.url);
+    });
+  }
+
+  if (request.action == 'unfollowUser') {
+    SW.methods.unfollowUser(request.url, function() {
+      SW.methods.sendFollowStatus(false, request.url);
     });
   }
 };

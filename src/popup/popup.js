@@ -8,7 +8,7 @@ $(function() {
   Popup.vars.$notificationList = $('#notification-area').find('.notification-list');
   Popup.vars.$userNotificationList = $('#user-notification-area').find('.user-notification-list');
   Popup.vars.notifications = BG.SW.stores.notificationStore;
-  Popup.vars.userNotifications = BG.SW.stores.userNotifictionStore;
+  Popup.vars.userNotifications = BG.SW.stores.userNotificationStore;
   Popup.vars.$viewNotificationsButton = $("#swo_view_notifications");
 
   Popup.methods.renderNotifications = function(notificationList, $listContainer, getMarkupMethod) {

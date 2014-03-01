@@ -20,6 +20,11 @@ SW.methods.isUserFollowed = function(profilePageUrl, callback) {
   }
 };
 
+/**
+ *
+ * @param profilePageUrl
+ * @param callback
+ */
 SW.methods.followUser = function(profilePageUrl, callback) {
   var urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
     userDetailsObject = SW.methods.getUserDetails(urlInfo.userId, urlInfo.domain),
@@ -37,6 +42,21 @@ SW.methods.followUser = function(profilePageUrl, callback) {
       SW.methods.addObjectToStore(userDetailsObject);
     }, objectKey);
   }
+};
+
+/**
+ *
+ * @param profilePageUrl
+ * @param callback Success Callback
+ */
+SW.methods.unfollowUser = function(profilePageUrl, callback) {
+  var urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
+    objectKey = SW.OBJECT_TYPES.USER + ':' + urlInfo.userId;
+
+  callback = callback || function() {};
+
+  SW.methods.removeObjectFromStore(objectKey, SW.stores.userStore);
+  SW.methods.deleteObject(objectKey, callback);
 };
 
 /**
