@@ -2,6 +2,7 @@
   <head>
     <link rel="stylesheet" type="text/css" href="/src/libs/pure-0.3.0.css" />
     <link rel="stylesheet" type="text/css" href="/src/shared/main.css" />
+    <link rel="stylesheet" type="text/css" href="/src/pages/index/np.css" />
   </head>
  
   <body>
@@ -21,26 +22,44 @@
           <li class="question-list-option">
             <a href="#" data-targetId="question-area" class="se-tab">Questions</a>
           </li>
+          <li class="user-list-option">
+            <a href="#" data-targetId="users-area" class="se-tab">Users</a>
+          </li>
+          <li class="user-notification-list-option">
+            <a href="#" data-targetId="user-notification-area" class="se-tab">User Notifications</a>
+          </li>
         </ul>
       </div>
 
       <div id="notification-area" class="category-area">
         <ul class="notification-list se-list"></ul>
-		<button id="notification-deleter-all" class="pure-button pure-button-error deleter" disabled="true">Delete All</button>
+		    <button id="notification-deleter-all" class="pure-button pure-button-error deleter" disabled="true">Delete All</button>
         <button id="notification-deleter" class="pure-button pure-button-error deleter" disabled="true">Delete</button>
       </div>
 	  
       <div id="question-area" class="category-area hidden">
         <ul class="question-list se-list"></ul>
-		<button id="question-deleter-all" class="pure-button pure-button-error deleter" disabled="true">Delete All</button>
+		    <button id="question-deleter-all" class="pure-button pure-button-error deleter" disabled="true">Delete All</button>
         <button id="question-deleter" class="pure-button pure-button-error deleter" disabled="true">Delete</button>
-	  </div>
-	  
+	    </div>
+
+      <div id="users-area" class="category-area hidden">
+        <ul class="user-list se-list"></ul>
+        <button id="user-deleter-all" class="pure-button pure-button-error deleter" disabled="true">Delete All</button>
+        <button id="user-deleter" class="pure-button pure-button-error deleter" disabled="true">Delete</button>
+      </div>
+
+      <div id="user-notification-area" class="category-area hidden">
+        <ul class="user-notification-list se-list"></ul>
+        <button id="user-notification-deleter-all" class="pure-button pure-button-error deleter" disabled="true">Delete All</button>
+        <button id="user-notification-deleter" class="pure-button pure-button-error deleter" disabled="true">Delete</button>
+      </div>
     </div>
 
     <!-- Script area -->
     <script type="text/javascript" src="/src/libs/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="/src/shared/ItemSelector.js"></script>
+    <script type="text/javascript" src="/src/shared/markup.js"></script>
     <script type="text/javascript" src="/src/pages/index/main.js"></script>
   </body>
 </html>

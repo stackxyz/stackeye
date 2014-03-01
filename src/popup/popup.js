@@ -1,88 +1,91 @@
-var BG = chrome.extension.getBackgroundPage();
-var Popup = {};
-Popup.methods = {};
-Popup.vars = {};
+$(function() {
+  var BG = chrome.extension.getBackgroundPage();
+  var Popup = {};
+  Popup.methods = {};
+  Popup.vars = {};
 
-Popup.vars.numNotificationsToShow = 5;
-Popup.vars.$notificationList = $('#notification-area').find('.notification-list');
-Popup.vars.notifications = BG.SW.stores.notificationStore;
-Popup.vars.$viewNotificationsButton = $("#swo_view_notifications");
+  Popup.vars.numNotificationsToShow = 5;
+  Popup.vars.$notificationList = $('#notification-area').find('.notification-list');
+  Popup.vars.$userNotificationList = $('#user-notification-area').find('.user-notification-list');
+  Popup.vars.notifications = BG.SW.stores.notificationStore;
+  Popup.vars.userNotifications = BG.SW.stores.userNotifictionStore;
+  Popup.vars.$viewNotificationsButton = $("#swo_view_notifications");
 
-Popup.methods.getNotificationToShow = function(notificationObject) {
-  var text = '',
-    markup,
-    numAnswers = notificationObject.numAnswers,
-    numComments = notificationObject.numComments;
+  Popup.methods.renderNotifications = function(notificationList, $listContainer, getMarkupMethod) {
+    var notificationListLength = notificationList.length,
+      notificationToShow;
 
-  if (numAnswers != 0 && numComments != 0) {
-    text = '<span class="bold">' + numAnswers + ' answers and ' + numComments + ' comments <span>';
-  } else if (numAnswers !=0 && numComments == 0) {
-    text = '<span class="bold">' + numAnswers + ' answers <span>';
-  } else if (numAnswers == 0 && numComments != 0) {
-    text = '<span class="bold">' + numComments + ' comments <span>';
-  }
-
-  markup = '<div class="upper-row">' + text + ' on' + '</div>';
-  markup += '<div class="lower-row">' + 
-            '<a class="question-link" href="' + notificationObject.link + '">' + notificationObject.title + '</a>' +
-            '</div>';
-
-  return markup;
-};
-
-Popup.methods.renderNotifications = function() {
-  var notificationList = Popup.vars.notifications,
-    notificationListLength = Popup.vars.notifications.length,
-    notificationToShow;
-
-  if (notificationListLength) {
-    Popup.vars.$notificationList.empty();
-  }
-
-  for (var i = 0; i < notificationListLength && i < Popup.vars.numNotificationsToShow; i++) {
-    if (notificationList[i]) {
-      notificationToShow = Popup.methods.getNotificationToShow(notificationList[i]);
-      $('<li>').html(notificationToShow).appendTo(Popup.vars.$notificationList);
+    if (notificationListLength) {
+      $listContainer.empty();
     }
-  }
-};
 
-Popup.methods.updateCurrentPage = function() {
-  Popup.methods.renderNotifications();
-};
+    for (var i = 0; i < notificationListLength && i < Popup.vars.numNotificationsToShow; i++) {
+      if (notificationList[i]) {
+        notificationToShow = getMarkupMethod(notificationList[i]);
+        $('<li>').html(notificationToShow).appendTo($listContainer);
+      }
+    }
+  };
 
-Popup.methods.init = function() {
-  Popup.methods.updateCurrentPage();
-};
+  Popup.methods.updateCurrentPage = function() {
+    Popup.methods.renderNotifications(
+      Popup.vars.notifications,
+      Popup.vars.$notificationList,
+      Shared.methods.getNotificationToShow);
 
-Popup.methods.createNewTab = function(options) {
-  if (!options.url) {
+    Popup.methods.renderNotifications(
+      Popup.vars.userNotifications,
+      Popup.vars.$userNotificationList,
+      Shared.methods.getUserNotificationMarkup
+    );
+  };
+
+  Popup.methods.init = function() {
+    Popup.methods.updateCurrentPage();
+  };
+
+  Popup.methods.createNewTab = function(options) {
+    if (!options.url) {
+      return false;
+    }
+
+    options.active = options.active || true; //Default value
+    chrome.tabs.create({
+      active: options.active,
+      url: options.url
+    }, null);
+  };
+
+  Popup.methods.openQuestionInTab = function(evt) {
+    var href = evt.target.href;
+
+    Popup.methods.createNewTab({ active: true, url: href });
     return false;
-  }
+  };
 
-  options.active = options.active || true; //Default value
-  chrome.tabs.create({
-    active: options.active,
-    url: options.url
-  }, null);
-};
+  Popup.methods.viewAllNotificationsInTab = function(evt) {
+    var url = 'src/pages/index/index.html';
 
-Popup.methods.openQuestionInTab = function(evt) {
-  var href = evt.target.href;
+    Popup.methods.createNewTab({ active: true, url: url });
+    return false;
+  };
 
-  Popup.methods.createNewTab({ active: true, url: href });
-  return false;
-};
+  Popup.methods.updateTabContent = function() {
+    var $this = $(this),
+      $tabContainer = $this.parents('.tabContainer'),
+      targetContainerId = $this.attr('data-targetId');
 
-Popup.methods.viewAllNotificationsInTab = function(evt) {
-  var url = 'src/pages/index/index.html';
+    $tabContainer.find('.selected').removeClass('selected');
+    $this.addClass('selected');
 
-  Popup.methods.createNewTab({ active: true, url: url });
-  return false;
-};
+    $('.se-category').addClass('hidden');
+    $('#' + targetContainerId).removeClass('hidden');
+  };
 
-Popup.methods.init();
+  Popup.methods.init();
 
-// All Event listeners go here
-$('#notification-area').find('.question-link').click(Popup.methods.openQuestionInTab);
-Popup.vars.$viewNotificationsButton.click(Popup.methods.viewAllNotificationsInTab);
+  // All Event listeners go here
+  $('a.link').click(Popup.methods.openQuestionInTab);
+  Popup.vars.$viewNotificationsButton.click(Popup.methods.viewAllNotificationsInTab);
+  $('.se-tab').click(Popup.methods.updateTabContent);
+});

@@ -54,10 +54,10 @@ SW.methods.fetchUserNotification = function(userIds, domain, fromDate) {
     notificationItem = notifications[i];
     objectKey = SW.OBJECT_TYPES.USER_NOTIFICATION + ':' + notificationItem['post_id'];
     notificationItem['objectType'] = SW.OBJECT_TYPES.USER_NOTIFICATION;
+    notificationItem['domain'] = domain;
 
-    SW.methods.saveObject(notificationItem, function() {
-      SW.methods.addObjectToStore(notificationItem);
-    }, objectKey);
+    SW.methods.addObjectToStore(notificationItem);
+    SW.methods.saveObject(notificationItem, null, objectKey);
   }
 };
 

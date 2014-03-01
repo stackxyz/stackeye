@@ -3,29 +3,48 @@
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <link rel="stylesheet" type="text/css" href="../libs/pure-0.3.0.css" />
     <link rel="stylesheet" type="text/css" href="../shared/main.css" />
+    <link rel="stylesheet" type="text/css" href="popup.css" />
   </head>
 
-  <body style="width: 400px;">
+  <body class="popup-page">
+    <!-- Empty A tag to hide focus on 1st anchor tag -->
+    <a href="#"></a>
+
     <div class="header">
+      <img src="/resources/images/icon_so_48.png" class="icon-stackoverflow"/>
       <span class="se-white">Stack</span>
       <span class="se-blue">Eye</span>
       <span class="se-dash"> - </span>
       <span class="se-line">Keep Watching Keep Learning</span>
     </div>
-    <p id="swo_message" class="divider"></p>
 
-    <div id="notification-area">
-      <ul class="notification-list se-list">
-        <li class="default-template">Hooray!! No Unread Notifications</li>
-      </ul>
+    <div class="content">
+      <div class="divider tabContainer">
+        <span class="heading">Notifications</span>
+        <a href="#" data-targetId="notification-area" class="se-tab selected">Questions</a>
+        <a href="#" data-targetId="user-notification-area" class="se-tab">Users</a>
+      </div>
+
+      <div id="notification-area" class="se-category">
+        <ul class="notification-list se-list">
+          <li class="default-template">Hooray!! No Unread Notifications</li>
+        </ul>
+      </div>
+
+      <div id="user-notification-area" class="se-category hidden">
+        <ul class="user-notification-list se-list">
+          <li class="default-template">Hooray!! No Unread Notifications</li>
+        </ul>
+      </div>
     </div>
+
     <div class="footer">
-      <button id="swo_view_notifications" class="pure-button pure-button-primary">
-        View all</button>
+      <button id="swo_view_notifications" class="pure-button pure-button-primary">View all</button>
     </div>
 
     <!-- Script area -->
     <script type="text/javascript" src="../libs/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="/src/shared/markup.js"></script>
     <script type="text/javascript" src="popup.js"></script>
   </body>
 </html>

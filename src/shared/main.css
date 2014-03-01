@@ -14,6 +14,18 @@ button {
   display: none;
 }
 
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.bold {
+  font-weight: bold;
+}
+
 .header {
   background: rgba(0, 0, 0, 0.86);
   height: 45px;
@@ -37,14 +49,6 @@ button {
   text-shadow: 0 0 1px;
 }
 
-.divider {
-  background-color: #666;
-  height: 0.4rem;
-  border-radius: 2px;
-  border: 1px solid #777;
-  margin: 0;
-}
-
 .se-list {
   list-style-type: none;
   margin: 0;
@@ -53,7 +57,7 @@ button {
 }
 
 .default-template {
-  line-height: 120px;
+  line-height: 130px;
   text-align: center;
   margin-left: -40px;
 }
@@ -83,23 +87,36 @@ button {
   border-bottom: 1px solid #ddd;
 }
 
-.bold {
-  font-weight: bold;
-}
-
 .lower-row img {
   float: left;
   margin-right: 0.5rem;
 }
 
-.question-link {
-  color: rgb(0, 120, 231);
+.user-notification-list li {
+  overflow: auto;
 }
 
-.footer {
-  padding: 5px;
-  text-align: right;
-  background: #ccc;
+.avatar-container {
+  height: 40px;
+  width: 40px;
+}
+
+.avatar-container img {
+  height: 100%;
+  width: 100%;
+}
+
+.content-container {
+  width: 630px;
+}
+
+.link {
+  color: rgb(0, 120, 231);
+  text-decoration: none;
+}
+
+.username {
+  color: rgb(0, 0, 238);
 }
 
 .np-page {
@@ -116,9 +133,6 @@ button {
   background: none;
 }
 
-.se-category {
-  margin-bottom: 1rem;
-}
 .pure-menu-selected {
   background: #eee;
   border-radius: 3px;

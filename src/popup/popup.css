@@ -1,0 +1,55 @@
+body {
+  width: 400px;
+}
+
+.icon-stackoverflow {
+  height: 30px;
+  position: relative;
+  top: 5px;
+}
+
+.content {
+  margin-bottom: 40px;
+}
+
+.popup-page .divider {
+  background-color: #ccc;
+  margin: 0;
+  padding: 5px 0.5rem;
+  font-size: 12px;
+}
+
+.popup-page a {
+  text-decoration: none;
+}
+
+.tabContainer .heading {
+  margin-right: 1rem;
+  color: #000000;
+}
+
+.se-tab {
+  margin-right: 0.5rem;
+  background-color: #999;
+  color: white;
+  padding: 3px 0.5rem;
+  border-radius: 10px;
+}
+
+.se-tab.selected {
+  background-color: #4b4b4b;
+}
+
+.content-container {
+  width: 330px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 5px;
+  text-align: right;
+  background: #ccc;
+}
