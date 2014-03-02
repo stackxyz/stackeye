@@ -196,7 +196,7 @@ $(function() {
     });
     $(NP.vars.questionSelector).on('item:click', function() {
       var selectedItemsLength = NP.vars.questionSelector.getSelectedItems().length;
-      NP.vars.updateDeleteButton(NP.vars.$questionDeleteButton, selectedItemsLength);
+      NP.methods.updateDeleteButton(NP.vars.$questionDeleteButton, selectedItemsLength);
     });
 
     NP.vars.notificationSelector = new ListItemSelector({
@@ -207,7 +207,7 @@ $(function() {
     });
     $(NP.vars.notificationSelector).on('item:click', function() {
       var selectedItemsLength = NP.vars.notificationSelector.getSelectedItems().length;
-      NP.vars.updateDeleteButton(NP.vars.$notificationDeleteButton, selectedItemsLength);
+      NP.methods.updateDeleteButton(NP.vars.$notificationDeleteButton, selectedItemsLength);
     });
 
     NP.vars.userSelector = new ListItemSelector({
