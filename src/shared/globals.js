@@ -29,7 +29,8 @@ SW.vars.TIME = {
   T_10_HOUR : 60*60*10,
   T_1_DAY   : 60*60*24,
   T_2_DAY   : 60*60*24*2,
-  T_5_DAY   : 60*60*24*5
+  T_5_DAY   : 60*60*24*5,
+  T_1_MONTH : 60*60*24*24
 };
 
 //setinterval takes time in miliseconds
@@ -45,8 +46,6 @@ SW.messages = {
 
   CONFIRM_SELECTED_NOTIFICATIONS_DELETE: 'Selected notifications will be removed. Proceed ?',
   CONFIRM_SELECTED_QUESTIONS_DELETE: 'Selected questions will be removed from watchlist. Proceed ?',
-  CONFIRM_ALL_NOTIFICATIONS_DELETE: 'All notifications will be removed. Proceed ?',
-  CONFIRM_ALL_QUESTIONS_DELETE: 'All questions will be removed from your watchlist. Proceed ?',
 
   ERROR_UNABLE_TO_GET_URL_CURRENT_TAB: 'Unable to get the url of current tab.Please file a bug',
   ERROR_FETCH_ANSWER_LIST: 'Error in fetching answer list',
@@ -65,8 +64,9 @@ SW.constants = {
 };
 
 SW.filters = {
-  USER_POSTS: '!)5Us_x-e1YSaW3xeb7fWp3sds7aR',
-  USER_DETAILS: '!)sjb*LbmKJq1r8IglXiR'
+  USER_POSTS      : '!)5Us_x-e1YSaW3xeb7fWp3sds7aR',
+  USER_DETAILS    : '!)sjb*LbmKJq1r8IglXiR',
+  USER_TAGS       : '!9eEm6l210'
 };
 
 SW.OBJECT_TYPES = {

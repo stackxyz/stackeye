@@ -258,3 +258,33 @@ SW.methods.getUserDetails = function(userId, domain) {
 
   return userInfo;
 };
+
+SW.methods.getUrlForUserTags = function(userId, domain) {
+  var url = 'http://api.stackexchange.com/2.2/users/' + userId + '/tags';
+  url += '?key=' + SW.constants.APP_KEY;
+  url += '&site=' + domain;
+  url += '&filter=' + SW.filters.USER_TAGS;
+  url += '&pagesize=' + userId.split(';').length * 10; //Fetch 10 tags per user
+
+  return url;
+};
+
+SW.methods.fetchUserTags = function(userIds, domain) {
+  var idString = userIds.join(';'),
+    url = SW.methods.getUrlForUserTags(idString, domain),
+    userTags = [];
+
+  $.ajax({
+    method: 'GET',
+    url: url,
+    async: false,
+    success: function(response) {
+      userTags = response.items;
+    },
+    error: function(e) {
+      console.error(e);
+    }
+  });
+
+  return userTags;
+};

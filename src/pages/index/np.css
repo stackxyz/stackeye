@@ -1,3 +1,9 @@
 .np-page .se-category {
   margin-bottom: 1rem;
 }
+
+.tag {
+  background: #ccc;
+  margin-right: 5px;
+  padding: 2px 5px;
+}

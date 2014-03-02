@@ -7,11 +7,12 @@ SW.methods.printStorageItems = function() {
 SW.methods.saveObject = function(object, callback, objectKey) {
   var storageObject = {};
 
+  // By default questionId is used for creating objectKey
   if (!objectKey) {
     objectKey = object.objectType + ':' + object.questionId;
   }
 
-  // Will be used at the time of deleting this object
+  // Will be used at the time of deleting/updating this object
   object['objectKey'] = objectKey;
 
   storageObject[objectKey] = object;
@@ -41,6 +42,13 @@ SW.methods.removeObjectFromStore = function(objectKey, storeItems) {
   }
 
   return isObjectRemoved;
+};
+
+SW.methods.updateStorageArea = function(store) {
+  store = store || [];
+  store.forEach(function(object) {
+    SW.methods.saveObject(object, null, object['objectKey']);
+  });
 };
 
 /* @deprecated

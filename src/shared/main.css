@@ -74,6 +74,7 @@ button {
 .se-list li {
   padding: 10px;
   cursor: pointer;
+  overflow: auto;
 }
 
 .se-list li:nth-child(even) {

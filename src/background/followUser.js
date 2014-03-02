@@ -98,6 +98,43 @@ SW.methods.fetchUserNotifications = function() {
   });
 };
 
+SW.methods.getUserObjectFromStore = function(objectKey) {
+  var result = {};
+  SW.stores.userStore.forEach(function(userObject) {
+    if (userObject['objectKey'] == objectKey) {
+      result = userObject;
+    }
+  });
+
+  return result;
+};
+
+SW.methods.updateUserTags = function() {
+  var usersInSite = SW.methods.createMapOfUsersInDomain(),
+    tagObjects;
+
+  for (var site in usersInSite) {
+    tagObjects = SW.methods.fetchUserTags(usersInSite[site], site) || [];
+    tagObjects.forEach(function(tagObject) {
+      var objectKey = SW.OBJECT_TYPES.USER + ':' + tagObject['user_id'],
+        userObject = SW.methods.getUserObjectFromStore(objectKey),
+        tags = userObject['tags'];
+
+      if (tags) {
+        tags = tags.split(',');
+      } else {
+        tags = [];
+      }
+
+      tags.push(tagObject.name);
+      tags = tags.join(',');
+      userObject['tags'] = tags;
+    });
+  }
+
+  SW.methods.updateStorageArea(SW.stores.userStore);
+};
+
 /**
  *
  * @returns {{}}
@@ -121,3 +158,4 @@ SW.methods.createMapOfUsersInDomain = function() {
 
 // Whenever extension is reloaded (browser reopened/extension re-enabled, fetch usernotifications
 $(document).on('stores:created', SW.methods.fetchUserNotifications);
+$(document).on('stores:created', SW.methods.updateUserTags);
