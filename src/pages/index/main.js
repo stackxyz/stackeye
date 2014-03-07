@@ -74,9 +74,11 @@ $(function() {
     $listContainer.html(defaultMarkup);
 
     for (var i = 0; i < notificationListLength; i++) {
-      if (itemList[i]) {
-        notificationToShow = getMarkupMethod(itemList[i]);
-        $('<li></li>').html(notificationToShow).appendTo($list);
+      var object = itemList[i];
+      if (object) {
+        notificationToShow = getMarkupMethod(object);
+        $('<li></li>').attr('data-objectKey', object.objectKey)
+          .html(notificationToShow).appendTo($list);
       }
     }
 
@@ -89,61 +91,24 @@ $(function() {
     $button.attr('disabled', (selectedItemsLength == 0));
   };
 
-  NP.methods.updateQuestionDeleteButton = function() {
-    var selectedItems = NP.vars.questionSelector.getSelectedItems(),
-      disableStatus = (selectedItems.length == 0);
-    NP.vars.$questionDeleteButton.attr('disabled', disableStatus);
-  };
+  NP.methods.removeSelectedItems = function() {
+    var $list = $(this).parents('.category-area').find('.se-list'),
+      $selectedItems = $list.find('li.se-selected'),
+      message = $(this).attr('data-message'),
+      objectType = $(this).attr('data-objectType'),
+      store = BG.SW.maps.ObjectTypeToStoreMap[objectType];
 
-  NP.methods.removeNotificationListItems = function(notificationListItems) {
-    var notificationURLs = [];
-
-    $.each(notificationListItems, function(item) {
-      var url = $(this).find('.link').attr('href');
-      notificationURLs.push(url);
-      $(this).remove();
-    });
-
-    BG.SW.methods.removeBulkNotifications(notificationURLs);
-    //if we don't have any notifications to show, we show the default template.
-    if (NP.vars.notifications.length == 0) {
-      $(notificationListItems).eq(0).parent().html(NP.DEFAULT_TEMPLATES.QUESTION_NOTIFICATION);
+    if (window.confirm(message)) {
+      $selectedItems.each(function(index, selectedItem) {
+        var objectKey = selectedItem.getAttribute('data-objectKey');
+        BG.SW.methods.removeObjectFromStore(objectKey, store);
+        BG.SW.methods.deleteObject(objectKey);
+        BG.SW.methods.updateBadgeText();
+        $(selectedItem).remove();
+      });
     }
 
-    NP.methods.updateDeleteButton(NP.vars.$notificationDeleteButton,
-      NP.vars.notificationSelector.getSelectedItems().length);
-  };
-
-  NP.methods.removeQuestionListItems = function(questionListItems) {
-    var questionURLs = [];
-
-    $.each(questionListItems, function(item) {
-      var url = $(this).find('.question-link').attr('href');
-      questionURLs.push(url);
-      $(this).remove();
-    });
-
-    BG.SW.methods.removeBulkQuestions(questionURLs);
-    //if we don't have any questions to show, we show the default template.
-    if (NP.vars.questions.length == 0)
-      $(questionListItems).eq(0).parent().html(NP.DEFAULT_TEMPLATES.QUESTION);
-    NP.methods.updateQuestionDeleteButton();
-  };
-
-  NP.methods.removeSelectedNotifications = function() {
-    var selectedItems = NP.vars.notificationSelector.getSelectedItems();
-
-    if (window.confirm(SW.messages.CONFIRM_SELECTED_NOTIFICATIONS_DELETE)) {
-      NP.methods.removeNotificationListItems(selectedItems);
-    }
-  };
-
-  NP.methods.removeSelectedQuestions = function() {
-    var selectedItems = NP.vars.questionSelector.getSelectedItems();
-
-    if (window.confirm(SW.messages.CONFIRM_SELECTED_QUESTIONS_DELETE)) {
-      NP.methods.removeQuestionListItems(selectedItems);
-    }
+    NP.methods.updateDeleteButton($(this), $list.find('li.se-selected').length);
   };
 
   NP.methods.showTab = function(event) {
@@ -223,7 +188,6 @@ $(function() {
   };
 
   NP.methods.init();
-  NP.vars.$notificationDeleteButton.click(NP.methods.removeSelectedNotifications);
-  NP.vars.$questionDeleteButton.click(NP.methods.removeSelectedQuestions);
   $('.se-tab').click(NP.methods.showTab);
+  $('.deleter').click(NP.methods.removeSelectedItems);
 });

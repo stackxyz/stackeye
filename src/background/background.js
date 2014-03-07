@@ -27,6 +27,8 @@ SW.methods.deleteObject = function(objectKey, callback) {
 };
 
 SW.methods.addObjectToStore = function(object) {
+  if (object == null) return;
+
   var store = SW.maps.ObjectTypeToStoreMap[object.objectType];
   store && store.push(object);
 };

@@ -33,22 +33,34 @@
 
       <div id="notification-area" class="category-area">
         <ul class="notification-list se-list"></ul>
-        <button id="notification-deleter" class="pure-button pure-button-error deleter" disabled="true">Delete</button>
+        <button id="notification-deleter" class="pure-button pure-button-error deleter"
+            disabled="true" data-objectType="question_notification"
+            data-message="Are you sure you want to clear selected notifications ?"> Clear
+        </button>
       </div>
 
       <div id="user-notification-area" class="category-area hidden">
         <ul class="user-notification-list se-list"></ul>
-        <button id="user-notification-deleter" class="pure-button pure-button-error deleter" disabled="true">Delete</button>
+        <button id="user-notification-deleter" class="pure-button pure-button-error deleter"
+            disabled="true" data-objectType="user_notification"
+            data-message="Are you sure you want to clear selected notifications ?"> Clear
+        </button>
       </div>
 
       <div id="question-area" class="category-area hidden">
         <ul class="question-list se-list"></ul>
-        <button id="question-deleter" class="pure-button pure-button-error deleter" disabled="true">Delete</button>
+        <button id="question-deleter" class="pure-button pure-button-error deleter"
+            disabled="true" data-objectType="question"
+            data-message="Are you sure you want to unwatch selected questions ?"> Unwatch
+        </button>
 	    </div>
 
       <div id="users-area" class="category-area hidden">
         <ul class="user-list se-list"></ul>
-        <button id="user-deleter" class="pure-button pure-button-error deleter" disabled="true">Delete</button>
+        <button id="user-deleter" class="pure-button pure-button-error deleter"
+            disabled="true" data-objectType="user"
+            data-message="Are you sure you want to unfollow selected users ?">Unfollow
+        </button>
       </div>
 
     </div>
