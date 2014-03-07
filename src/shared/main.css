@@ -107,10 +107,6 @@ button {
   width: 100%;
 }
 
-.content-container {
-  width: 630px;
-}
-
 .link {
   color: rgb(0, 120, 231);
   text-decoration: none;
@@ -152,10 +148,4 @@ button {
 
 .se-list li.se-selected {
   background-color: rgba(47, 115, 235, 0.5);
-}
-
-.deleter {
-  float: right;
-  margin-top: 0.5rem;
-  margin-left: 4px;
 }

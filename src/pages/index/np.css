@@ -2,8 +2,28 @@
   margin-bottom: 1rem;
 }
 
+.content-container {
+  width: 615px;
+}
+
 .tag {
   background: #ccc;
   margin-right: 5px;
   padding: 2px 5px;
+}
+
+.se-list {
+  position: absolute;
+  bottom: 3.5rem;
+  top: 7rem;
+  overflow: auto;
+  width: 700px;
+  background: #eee;
+}
+
+.deleter {
+  position: absolute;
+  bottom: 1rem;
+  margin-left: 600px;
+  width: 6rem;
 }
