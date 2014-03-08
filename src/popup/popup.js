@@ -11,33 +11,18 @@ $(function() {
   Popup.vars.userNotifications = BG.SW.stores.userNotificationStore;
   Popup.vars.$viewNotificationsButton = $("#swo_view_notifications");
 
-  Popup.methods.renderNotifications = function(notificationList, $listContainer, getMarkupMethod) {
-    var notificationListLength = notificationList.length,
-      notificationToShow;
-
-    if (notificationListLength) {
-      $listContainer.empty();
-    }
-
-    for (var i = 0; i < notificationListLength && i < Popup.vars.numNotificationsToShow; i++) {
-      if (notificationList[i]) {
-        notificationToShow = getMarkupMethod(notificationList[i]);
-        $('<li>').html(notificationToShow).appendTo($listContainer);
-      }
-    }
-  };
-
   Popup.methods.updateCurrentPage = function() {
-    Popup.methods.renderNotifications(
+    Shared.methods.renderItems(
       Popup.vars.notifications,
       Popup.vars.$notificationList,
-      Shared.methods.getNotificationToShow);
+      Shared.methods.getNotificationToShow,
+      Shared.DEFAULT_TEMPLATES.QUESTION_NOTIFICATION);
 
-    Popup.methods.renderNotifications(
+    Shared.methods.renderItems(
       Popup.vars.userNotifications,
       Popup.vars.$userNotificationList,
-      Shared.methods.getUserNotificationMarkup
-    );
+      Shared.methods.getUserNotificationMarkup,
+      Shared.DEFAULT_TEMPLATES.USER_NOTIFICATION);
 
     // Show the number along side with tab names like Questions[3] and Users[5]
     $('.tabContainer').find('a').each(function(index, tab) {
@@ -83,7 +68,12 @@ $(function() {
   };
 
   Popup.methods.openQuestionInTab = function(evt) {
-    var href = evt.target.href;
+    var href = evt.target.href,
+      $listItem = $(this).parents('li'),
+      objectKey = $listItem.attr('data-objectKey'),
+      objectType = $listItem.attr('data-objectType');
+
+    Shared.methods.removeItem(objectKey, objectType);
 
     Popup.methods.createNewTab({ active: true, url: href });
     return false;

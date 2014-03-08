@@ -26,13 +26,6 @@ $(function() {
   NP.vars.questionSelector = null;
   NP.vars.userNotificationSelector = null;
 
-  NP.DEFAULT_TEMPLATES = {
-    QUESTION: '<div class="default-template">Too Bad!! You are not watching any question</div>',
-    QUESTION_NOTIFICATION: '<div class="default-template">Hooray!! No Unread Notifications</div>',
-    USER: '<div class="default-template">Too Bad!! You are not following any user</div>',
-    USER_NOTIFICATION: '<div class="default-template">Awesome!! No Unread Notification</div>'
-  };
-
   NP.methods.getQuestionMarkup = function(questionObject) {
     var markup = '<div class="lower-row">' +
       '<img src="https://www.google.com/s2/favicons?domain=' + questionObject.domain + '"/>' +
@@ -74,27 +67,6 @@ $(function() {
     return markup;
   };
 
-  NP.methods.renderItems = function(itemList, $listContainer, getMarkupMethod, defaultMarkup) {
-    var notificationListLength = itemList.length,
-      notificationToShow,
-      $list = $('<ul></ul>');
-
-    $listContainer.html(defaultMarkup);
-
-    for (var i = 0; i < notificationListLength; i++) {
-      var object = itemList[i];
-      if (object) {
-        notificationToShow = getMarkupMethod(object, i);
-        $('<li></li>').attr('data-objectKey', object.objectKey)
-          .html(notificationToShow).appendTo($list);
-      }
-    }
-
-    if (notificationListLength) {
-      $listContainer.html($list.html());
-    }
-  };
-
   NP.methods.updateDeleteButton = function($button, selectedItemsLength) {
     $button.attr('disabled', (selectedItemsLength == 0));
   };
@@ -103,20 +75,32 @@ $(function() {
     var $list = $(this).parents('.category-area').find('.se-list'),
       $selectedItems = $list.find('li.se-selected'),
       message = $(this).attr('data-message'),
-      objectType = $(this).attr('data-objectType'),
-      store = BG.SW.maps.ObjectTypeToStoreMap[objectType];
+      objectType = $(this).attr('data-objectType');
 
     if (window.confirm(message)) {
       $selectedItems.each(function(index, selectedItem) {
         var objectKey = selectedItem.getAttribute('data-objectKey');
-        BG.SW.methods.removeObjectFromStore(objectKey, store);
-        BG.SW.methods.deleteObject(objectKey);
-        BG.SW.methods.updateBadgeText();
+        Shared.methods.removeItem(objectKey, objectType);
         $(selectedItem).remove();
       });
     }
 
     NP.methods.updateDeleteButton($(this), $list.find('li.se-selected').length);
+    NP.methods.updateItemsCount();
+  };
+
+  NP.methods.removeNotificationItem = function() {
+    var $listItem = $(this).parents('li'),
+      objectKey = $listItem.attr('data-objectKey'),
+      objectType = $listItem.attr('data-objectType');
+
+    // Remove only if this is notification (not users/questions)
+    if (objectType != BG.SW.OBJECT_TYPES.NEW_ACTIVITY_NOTIFICATION && objectType != BG.SW.OBJECT_TYPES.USER_NOTIFICATION) {
+      return;
+    }
+
+    Shared.methods.removeItem(objectKey, objectType);
+    $listItem.remove();
     NP.methods.updateItemsCount();
   };
 
@@ -162,32 +146,32 @@ $(function() {
   };
 
   NP.methods.init = function() {
-    NP.methods.renderItems(
+    Shared.methods.renderItems(
       NP.vars.notifications,
       NP.vars.$notificationList,
       Shared.methods.getNotificationToShow,
-      NP.DEFAULT_TEMPLATES.QUESTION_NOTIFICATION
+      Shared.DEFAULT_TEMPLATES.QUESTION_NOTIFICATION
     );
 
-    NP.methods.renderItems(
+    Shared.methods.renderItems(
       NP.vars.userNotifications,
       NP.vars.$userNotificationList,
       Shared.methods.getUserNotificationMarkup,
-      NP.DEFAULT_TEMPLATES.USER_NOTIFICATION
+      Shared.DEFAULT_TEMPLATES.USER_NOTIFICATION
     );
 
-    NP.methods.renderItems(
+    Shared.methods.renderItems(
       NP.vars.questions,
       NP.vars.$questionList,
       NP.methods.getQuestionMarkup,
-      NP.DEFAULT_TEMPLATES.QUESTION
+      Shared.DEFAULT_TEMPLATES.QUESTION
     );
 
-    NP.methods.renderItems(
+    Shared.methods.renderItems(
       NP.vars.users,
       NP.vars.$userList,
       NP.methods.getUserMarkup,
-      NP.DEFAULT_TEMPLATES.USER
+      Shared.DEFAULT_TEMPLATES.USER
     );
 
     NP.vars.questionSelector = new ListItemSelector({
@@ -240,4 +224,5 @@ $(function() {
   NP.methods.init();
   $('.se-tab').click(NP.methods.showTab);
   $('.deleter').click(NP.methods.removeSelectedItems);
+  $('a.link').click(NP.methods.removeNotificationItem);
 });

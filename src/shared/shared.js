@@ -1,5 +1,13 @@
+var BG = chrome.extension.getBackgroundPage();
 var Shared = Shared || {};
 Shared.methods = Shared.methods || {};
+
+Shared.DEFAULT_TEMPLATES = {
+  QUESTION: '<div class="default-template">Too Bad!! You are not watching any question</div>',
+  QUESTION_NOTIFICATION: '<div class="default-template">Hooray!! No Unread Notifications</div>',
+  USER: '<div class="default-template">Too Bad!! You are not following any user</div>',
+  USER_NOTIFICATION: '<div class="default-template">Awesome!! No Unread Notification</div>'
+};
 
 Shared.methods.getNotificationToShow = function(notificationObject) {
   var text = '',
@@ -30,7 +38,7 @@ Shared.methods.getUserNotificationMarkup = function(userNotificationItem) {
     postType = userNotificationItem['post_type'],
     questionLink = userNotificationItem.link,
     questionTitle = userNotificationItem.title,
-    userProfileLink = '<a class="link username" href="' + owner['link'] + '">' + owner['display_name'] + '</a>';
+    userProfileLink = '<a class="profile-link username" href="' + owner['link'] + '">' + owner['display_name'] + '</a>';
 
   markup = '<div class="avatar-container left"><img src="' + owner['profile_image'] + '"/></div>';
 
@@ -50,4 +58,33 @@ Shared.methods.getUserNotificationMarkup = function(userNotificationItem) {
   markup += '</div>';
 
   return markup;
+};
+
+Shared.methods.renderItems = function(itemList, $listContainer, getMarkupMethod, defaultMarkup) {
+  var notificationListLength = itemList.length,
+    notificationToShow,
+    $list = $('<ul></ul>');
+
+  $listContainer.html(defaultMarkup);
+
+  for (var i = 0; i < notificationListLength; i++) {
+    var object = itemList[i];
+    if (object) {
+      notificationToShow = getMarkupMethod(object, i);
+      $('<li></li>').attr({'data-objectKey': object.objectKey, 'data-objectType': object.objectType })
+        .html(notificationToShow).appendTo($list);
+    }
+  }
+
+  if (notificationListLength) {
+    $listContainer.html($list.html());
+  }
+};
+
+Shared.methods.removeItem = function(objectKey, objectType) {
+  var store = BG.SW.maps.ObjectTypeToStoreMap[objectType];
+
+  BG.SW.methods.removeObjectFromStore(objectKey, store);
+  BG.SW.methods.deleteObject(objectKey);
+  BG.SW.methods.updateBadgeText();
 };
