@@ -24,6 +24,7 @@ $(function() {
 
   NP.vars.notificationSelector = null;
   NP.vars.questionSelector = null;
+  NP.vars.userNotificationSelector = null;
 
   NP.DEFAULT_TEMPLATES = {
     QUESTION: '<div class="default-template">Too Bad!! You are not watching any question</div>',
@@ -180,6 +181,17 @@ $(function() {
     $(NP.vars.notificationSelector).on('item:click', function() {
       var selectedItemsLength = NP.vars.notificationSelector.getSelectedItems().length;
       NP.methods.updateDeleteButton(NP.vars.$notificationDeleteButton, selectedItemsLength);
+    });
+
+    NP.vars.userNotificationSelector = new ListItemSelector({
+      multiSelectMode: true,
+      el: '.user-notification-list',
+      activeItemClassName: 'se-active',
+      selectedItemClassName: 'se-selected'
+    });
+    $(NP.vars.userNotificationSelector).on('item:click', function() {
+      var selectedItemsLength = NP.vars.userNotificationSelector.getSelectedItems().length;
+      NP.methods.updateDeleteButton(NP.vars.$userNotificationsDeleteButton, selectedItemsLength);
     });
 
     NP.vars.userSelector = new ListItemSelector({
