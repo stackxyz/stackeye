@@ -105,11 +105,11 @@ $(function() {
   };
 
   NP.methods.showTab = function(event) {
-    var el = event.target,
+    var el = event.currentTarget,
       targetId = el.getAttribute('data-targetId');
 
-    $('.pure-menu').find('li').removeClass('pure-menu-selected');
-    $(event.target).parent('li').addClass('pure-menu-selected');
+    $('.tabContainer').find('li').removeClass('pure-menu-selected');
+    $(el).parent('li').addClass('pure-menu-selected');
 
     $('.category-area').hide();
     $('#' + targetId).show();
