@@ -40,6 +40,15 @@ body {
   background-color: #4b4b4b;
 }
 
+.tabContainer > a > span {
+  background-color: #ccc;
+  padding: 0 5px;
+  margin-left: 5px;
+  border-radius: 5px;
+  color: black;
+  transition: 0.1s linear box-shadow;
+}
+
 .content-container {
   width: 330px;
 }

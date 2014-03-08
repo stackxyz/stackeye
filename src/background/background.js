@@ -163,7 +163,7 @@ SW.methods.validateUrl = function(url) {
 };
 
 SW.methods.updateBadgeText = function(changes, areaName) {
-  var numNotifications = SW.stores.notificationStore.length;
+  var numNotifications = SW.stores.notificationStore.length + SW.stores.userNotificationStore.length;
 
   if (numNotifications == 0) {
     numNotifications = '';

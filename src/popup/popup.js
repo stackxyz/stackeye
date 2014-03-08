@@ -38,6 +38,32 @@ $(function() {
       Popup.vars.$userNotificationList,
       Shared.methods.getUserNotificationMarkup
     );
+
+    // Show the number along side with tab names like Questions[3] and Users[5]
+    $('.tabContainer').find('a').each(function(index, tab) {
+      var area = tab.getAttribute('data-targetId'),
+        numItems = 0;
+
+      switch (area) {
+        case 'notification-area':
+          numItems = BG.SW.stores.notificationStore.length;
+          break;
+
+        case 'user-notification-area':
+          numItems = BG.SW.stores.userNotificationStore.length;
+          break;
+
+        case 'question-area':
+          numItems = BG.SW.stores.questionFeedStore.length;
+          break;
+
+        case 'users-area':
+          numItems = BG.SW.stores.userStore.length;
+          break;
+      }
+
+      $(tab).find('span').html(numItems);
+    });
   };
 
   Popup.methods.init = function() {

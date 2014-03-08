@@ -2,8 +2,39 @@
   margin-bottom: 1rem;
 }
 
+.se-category li {
+  background: #eee;
+}
+
+.se-category li a {
+  padding: 5px 10px;
+}
+
+.tabContainer a > span {
+  background-color: #ccc;
+  padding: 2px 5px;
+  margin-left: 5px;
+  border-radius: 5px;
+  color: black;
+}
+
+.se-category li.pure-menu-selected {
+  background: #777;
+  border-radius: 3px;
+}
+
+.se-category li a:hover,
+.se-category li a:focus {
+  background-color: #777;
+  color: white;
+}
+
+.se-category li.pure-menu-selected a {
+  color: #ffffff;
+}
+
 .content-container {
-  width: 615px;
+  width: 630px;
 }
 
 .tag {

@@ -126,15 +126,6 @@ button {
   margin: 20px 0px;
 }
 
-.pure-menu.se-category {
-  background: none;
-}
-
-.pure-menu-selected {
-  background: #eee;
-  border-radius: 3px;
-}
-
 .pure-button-error {
   background: rgba(250, 20, 20, 0.8);
   color: white;

@@ -117,6 +117,7 @@ $(function() {
     }
 
     NP.methods.updateDeleteButton($(this), $list.find('li.se-selected').length);
+    NP.methods.updateItemsCount();
   };
 
   NP.methods.showTab = function(event) {
@@ -130,6 +131,34 @@ $(function() {
     $('#' + targetId).show();
 
     return false;
+  };
+
+  NP.methods.updateItemsCount = function() {
+    // Show the number along side with tab names like Questions[3] and Users[5]
+    $('.se-category').find('a').each(function(index, tab) {
+      var area = tab.getAttribute('data-targetId'),
+        numItems = 0;
+
+      switch (area) {
+        case 'notification-area':
+          numItems = BG.SW.stores.notificationStore.length;
+          break;
+
+        case 'user-notification-area':
+          numItems = BG.SW.stores.userNotificationStore.length;
+          break;
+
+        case 'question-area':
+          numItems = BG.SW.stores.questionFeedStore.length;
+          break;
+
+        case 'users-area':
+          numItems = BG.SW.stores.userStore.length;
+          break;
+      }
+
+      $(tab).find('span').html(numItems);
+    });
   };
 
   NP.methods.init = function() {
@@ -204,6 +233,8 @@ $(function() {
       var selectedItemsLength = NP.vars.userSelector.getSelectedItems().length;
       NP.methods.updateDeleteButton(NP.vars.$userDeleteButton, selectedItemsLength);
     });
+
+    NP.methods.updateItemsCount();
   };
 
   NP.methods.init();
