@@ -19,6 +19,8 @@ function createFollowButton() {
     notificationText = '';
 
   username = username.split('-').join(' ');
+  username = username.split('#')[0];
+  username = username.split('?')[0];
 
   $followButton = $('<button></button>').attr({ id: 'se_follow_button' })
     .click(function() {

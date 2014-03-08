@@ -28,13 +28,20 @@ SW.methods.isUserFollowed = function(profilePageUrl, callback) {
 SW.methods.followUser = function(profilePageUrl, callback) {
   var urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
     userDetailsObject = SW.methods.getUserDetails(urlInfo.userId, urlInfo.domain),
+    userTags = SW.methods.fetchUserTags([urlInfo.userId], urlInfo.domain) || [],
     objectKey;
 
   callback = callback || function() {};
 
+  var tags = [];
+  userTags.forEach(function(tagObject) {
+    tags.push(tagObject.name);
+  });
+
   if (userDetailsObject) {
     userDetailsObject['objectType'] = SW.OBJECT_TYPES.USER;
     userDetailsObject['domain'] = urlInfo.domain;
+    userDetailsObject['tags'] = tags.join(',');
 
     objectKey = 'user' + ':' + userDetailsObject['user_id'];
     SW.methods.saveObject(userDetailsObject, function() {
@@ -109,32 +116,6 @@ SW.methods.getUserObjectFromStore = function(objectKey) {
   return result;
 };
 
-SW.methods.updateUserTags = function() {
-  var usersInSite = SW.methods.createMapOfUsersInDomain(),
-    tagObjects;
-
-  for (var site in usersInSite) {
-    tagObjects = SW.methods.fetchUserTags(usersInSite[site], site) || [];
-    tagObjects.forEach(function(tagObject) {
-      var objectKey = SW.OBJECT_TYPES.USER + ':' + tagObject['user_id'],
-        userObject = SW.methods.getUserObjectFromStore(objectKey),
-        tags = userObject['tags'];
-
-      if (tags) {
-        tags = tags.split(',');
-      } else {
-        tags = [];
-      }
-
-      tags.push(tagObject.name);
-      tags = tags.join(',');
-      userObject['tags'] = tags;
-    });
-  }
-
-  SW.methods.updateStorageArea(SW.stores.userStore);
-};
-
 /**
  *
  * @returns {{}}
@@ -156,6 +137,5 @@ SW.methods.createMapOfUsersInDomain = function() {
   return usersInSite;
 };
 
-// Whenever extension is reloaded (browser reopened/extension re-enabled, fetch usernotifications
+// Whenever extension is reloaded (browser reopened/extension re-enabled, fetch userNotifications
 $(document).on('stores:created', SW.methods.fetchUserNotifications);
-$(document).on('stores:created', SW.methods.updateUserTags);

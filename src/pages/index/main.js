@@ -41,10 +41,19 @@ $(function() {
     return markup;
   };
 
-  NP.methods.getUserMarkup = function(object) {
+  NP.methods.getUserMarkup = function(object, rowIndex) {
     var markup,
       tags = object.tags,
-      userProfileLink = '<a class="link username" href="' + object['link'] + '">' + object['display_name'] + '</a>';
+      flairImageSource = 'http://' + object.domain + '/users/flair/' + object['user_id'] + '.png',
+      flairImage,
+      userProfileLink;
+
+    if (rowIndex % 2 == 0) {
+      flairImageSource += '?theme=dark';
+    }
+
+    flairImage = '<img src="' + flairImageSource + '" alt="' + object['display_name'] + '" />';
+    userProfileLink = '<a class="link username" target="_blank" href="' + object['link'] + '">' + flairImage + '</a>';
 
     if (tags) {
       tags = tags.split(',');
@@ -52,11 +61,9 @@ $(function() {
       tags = [];
     }
 
-    markup = '<div class="avatar-container left"><img src="' + object['profile_image'] + '"/></div>';
-
-    markup += '<div class="right content-container">';
-    markup += '<div class="upper-row">' + userProfileLink + '</div>';
-
+    markup = '<div class="flair-container left">' + userProfileLink + '</div>';
+    markup += '<div class="tag-container">';
+    if (tags.length > 0) markup += '<div class="upper-row"><span class="verb">likes</span></div>';
     markup += '<div class="lower-row">';
     tags.forEach(function(tag, index) {
       if (index < 5) markup += '<span class="tag">' + tag +'</span>'
@@ -76,7 +83,7 @@ $(function() {
     for (var i = 0; i < notificationListLength; i++) {
       var object = itemList[i];
       if (object) {
-        notificationToShow = getMarkupMethod(object);
+        notificationToShow = getMarkupMethod(object, i);
         $('<li></li>').attr('data-objectKey', object.objectKey)
           .html(notificationToShow).appendTo($list);
       }
