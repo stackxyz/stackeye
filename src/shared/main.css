@@ -35,6 +35,12 @@ button {
   color: #ccc;
 }
 
+.icon-stackoverflow {
+  height: 30px;
+  position: relative;
+  top: 5px;
+}
+
 .se-white {
   color: white;
   font-size: 18px;

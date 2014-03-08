@@ -2,12 +2,6 @@ body {
   width: 400px;
 }
 
-.icon-stackoverflow {
-  height: 30px;
-  position: relative;
-  top: 5px;
-}
-
 .content {
   margin-bottom: 40px;
 }
