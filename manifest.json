@@ -1,7 +1,7 @@
 {
   "name": "StackEye",
 
-  "version": "1.2",
+  "version": "2.0",
   "manifest_version": 2,
   "description": "Chrome Extension to get notifications for new answers and comments on StackOverflow and StackExchange sites",
 

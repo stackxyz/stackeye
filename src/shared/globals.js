@@ -60,7 +60,7 @@ SW.constants = {
   NEW_COMMENT     : 'comment',
   ANSWER          : 'answer',
   APP_KEY         : 'MKhHgtFFPM)vQAp2pvu)fw((',
-  VERSION         : '1.3'
+  VERSION         : '2.0'
 };
 
 SW.filters = {
