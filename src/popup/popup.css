@@ -47,6 +47,11 @@ body {
   width: 330px;
 }
 
+/* Just show only 5 items on popup */
+.se-list li:nth-of-type(n+6) {
+  display: none;
+}
+
 .footer {
   position: absolute;
   bottom: 0;
