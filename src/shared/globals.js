@@ -59,6 +59,7 @@ SW.constants = {
   ACCEPTED_ANSWER : 'accepted_answer',
   NEW_COMMENT     : 'comment',
   ANSWER          : 'answer',
+  URL_ROOT        : 'http://api.stackexchange.com/2.2/',
   APP_KEY         : 'MKhHgtFFPM)vQAp2pvu)fw((',
   VERSION         : '2.0.1'
 };

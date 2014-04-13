@@ -1,27 +1,27 @@
 SW.methods.getUrlForAllComments = function(idString, domain) {
   // e.g. https://api.stackexchange.com/posts/18829971;18830520;18830230/comments?site=stackoverflow
-  return 'https://api.stackexchange.com/posts/' + idString + '/comments' +
+  return SW.constants.URL_ROOT + 'posts/' + idString + '/comments' +
     '?site=' + domain +
     '&key=' + SW.constants.APP_KEY;
 };
 
 SW.methods.getUrlForQuestionUpdates = function(id, domain, lastFetchDate) {
   // https://api.stackexchange.com/questions/19570820/timeline?fromdate =1382486400&site=stackoverflow
-  return 'https://api.stackexchange.com/questions/' + id + '/timeline' +
+  return SW.constants.URL_ROOT + 'questions/' + id + '/timeline' +
     '?fromdate=' + lastFetchDate +
     '&site=' + domain +
     '&key=' + SW.constants.APP_KEY;
 };
 
 SW.methods.getUrlForAllAnswers = function(questionId, domain) {
-  return 'https://api.stackexchange.com/questions/' + questionId + '/answers' +
+  return SW.constants.URL_ROOT + 'questions/' + questionId + '/answers' +
     '?site=' + domain +
     '&key=' + SW.constants.APP_KEY;
 };
 
 SW.methods.getUrlForQuestionData = function(questionId, domain) {
   // https://api.stackexchange.com/questions/18829971?site=stackoverflow
-  return 'https://api.stackexchange.com/questions/' + questionId +
+  return SW.constants.URL_ROOT + 'questions/' + questionId +
     '?site=' + domain +
     '&key=' + SW.constants.APP_KEY;
 };
@@ -182,9 +182,11 @@ SW.methods.getQuestionUpdates = function(id, domain, lastFetchDate) {
  *
  * @param userId
  * Url: http://api.stackexchange.com/docs/posts-on-users#pagesize=10&order=desc&sort=activity&ids=1310070&filter=!)5Us_x-e1YSaW3xeb7fWp3sds7aR&site=stackoverflow&run=true
+ * @param domain
+ * @param fromDate
  */
 SW.methods.getUrlForUserPosts = function(userId, domain, fromDate) {
-  var url = 'http://api.stackexchange.com/2.2/users/' + userId + '/posts';
+  var url = SW.constants.URL_ROOT + 'users/' + userId + '/posts';
   url += '?key=' + SW.constants.APP_KEY;
   url += '&site=' + domain;
   url += '&fromDate=' + fromDate;
@@ -199,6 +201,7 @@ SW.methods.getUrlForUserPosts = function(userId, domain, fromDate) {
  * @param userIds Array of userIds
  * @param domain
  * @returns {Array}
+ * @param fromDate
  */
 SW.methods.getUserNotifications = function(userIds, domain, fromDate) {
   var idString = userIds.join(';'),
@@ -224,9 +227,10 @@ SW.methods.getUserNotifications = function(userIds, domain, fromDate) {
  *
  * @param userId
  * @returns {string}
+ * @param domain
  */
 SW.methods.getUrlForUserDetails = function(userId, domain) {
-  var url = 'http://api.stackexchange.com/2.2/users/' + userId;
+  var url = SW.constants.URL_ROOT + 'users/' + userId;
   url += '?key=' + SW.constants.APP_KEY;
   url += '&site=' + domain;
   url += '&filter=' + SW.filters.USER_DETAILS;
@@ -260,7 +264,7 @@ SW.methods.getUserDetails = function(userId, domain) {
 };
 
 SW.methods.getUrlForUserTags = function(userId, domain) {
-  var url = 'http://api.stackexchange.com/2.2/users/' + userId + '/tags';
+  var url = SW.constants.URL_ROOT + 'users/' + userId + '/tags';
   url += '?key=' + SW.constants.APP_KEY;
   url += '&site=' + domain;
   url += '&filter=' + SW.filters.USER_TAGS;
