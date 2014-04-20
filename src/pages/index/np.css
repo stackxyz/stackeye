@@ -59,6 +59,10 @@
   outline: 1px solid #ccc;
 }
 
+.se-list li {
+  cursor: pointer;
+}
+
 .user-list li {
   padding: 2px;
 }

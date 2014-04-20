@@ -79,6 +79,16 @@ $(function() {
     return false;
   };
 
+  Popup.methods.removeNotification = function() {
+    var $listItem = $(this).parents('li'),
+      objectKey = $listItem.attr('data-objectKey'),
+      objectType = $listItem.attr('data-objectType');
+
+    Shared.methods.removeItem(objectKey, objectType);
+    Popup.methods.updateCurrentPage();
+    return false;
+  };
+
   Popup.methods.viewAllNotificationsInTab = function(evt) {
     var url = 'src/pages/index/index.html';
 
@@ -102,6 +112,7 @@ $(function() {
 
   // All Event listeners go here
   $('a.link').click(Popup.methods.openQuestionInTab);
+  $('.trash-icon').click(Popup.methods.removeNotification);
   Popup.vars.$viewNotificationsButton.click(Popup.methods.viewAllNotificationsInTab);
   $('.se-tab').click(Popup.methods.updateTabContent);
 });

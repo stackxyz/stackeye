@@ -47,6 +47,17 @@ body {
   width: 330px;
 }
 
+.se-list li:hover .trash-icon {
+  display: inline;
+  position: absolute;
+  right: 10px;
+  top: 1rem;
+  background: #fff;
+  border-radius: 2px;
+  padding: 1px 1px 1px 0;
+  cursor: pointer;
+}
+
 /* Just show only 5 items on popup */
 .se-list li:nth-of-type(n+6) {
   display: none;

@@ -28,6 +28,9 @@ Shared.methods.getNotificationToShow = function(notificationObject) {
     '<a class="link" target="_blank" href="' + notificationObject.link + '">' + notificationObject.title + '</a>' +
     '</div>';
 
+  // Add trash icon from Font Awesome
+  markup += '<i class="fa fa-trash-o fa-fw display-none trash-icon" title="Delete Notification"></i>';
+
   return markup;
 };
 
@@ -56,6 +59,9 @@ Shared.methods.getUserNotificationMarkup = function(userNotificationItem) {
     '<a class="link" target="_blank" href="' + questionLink + '">' + questionTitle + '</a>' +
     '</div>';
   markup += '</div>';
+
+  // Add trash icon from Font Awesome
+  markup += '<i class="fa fa-trash-o fa-fw display-none trash-icon" title="Delete Notification"></i>';
 
   return markup;
 };
