@@ -112,7 +112,7 @@ $(function() {
 
   // All Event listeners go here
   $('a.link').click(Popup.methods.openQuestionInTab);
-  $('.trash-icon').click(Popup.methods.removeNotification);
+  $(document).on('click', '.trash-icon', Popup.methods.removeNotification);
   Popup.vars.$viewNotificationsButton.click(Popup.methods.viewAllNotificationsInTab);
   $('.se-tab').click(Popup.methods.updateTabContent);
 });
