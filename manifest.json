@@ -45,7 +45,7 @@
     "storage",
     "tabs",
     "*://*.stackexchange.com/*",
-    "http://stackoverflow.com/*"
+    "*://*.stackoverflow.com/*"
   ],
   
   "web_accessible_resources": [
