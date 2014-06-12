@@ -18,12 +18,18 @@
 
   "content_scripts": [
     {
-      "matches": ["*://*.stackexchange.com/questions/*", "http://stackoverflow.com/questions/*"],
+      "matches": [
+        "*://*.stackexchange.com/questions/*",
+        "*://*.stackoverflow.com/questions/*"
+      ],
       "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/questionPage.js"],
       "css": ["src/content_scripts/cs.css"]
     },
     {
-      "matches": ["*://*.stackexchange.com/users/*", "http://stackoverflow.com/users/*"],
+      "matches": [
+        "*://*.stackexchange.com/users/*",
+        "*://*.stackoverflow.com/users/*"
+      ],
       "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/profilePage.js"],
       "css": ["src/content_scripts/cs.css"]
     }
@@ -45,7 +51,7 @@
     "storage",
     "tabs",
     "*://*.stackexchange.com/*",
-    "http://stackoverflow.com/*"
+    "*://*.stackoverflow.com/*"
   ],
   
   "web_accessible_resources": [
