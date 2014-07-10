@@ -19,16 +19,24 @@
   "content_scripts": [
     {
       "matches": [
+        "*://*.askubuntu.com/questions/*",
+        "*://*.mathoverflow.net/questions/*",
+        "*://*.serverfault.com/questions/*",
         "*://*.stackexchange.com/questions/*",
-        "*://*.stackoverflow.com/questions/*"
+        "*://*.stackoverflow.com/questions/*",
+        "*://*.superuser.com/questions/*"
       ],
       "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/questionPage.js"],
       "css": ["src/content_scripts/cs.css"]
     },
     {
       "matches": [
+        "*://*.askubuntu.com/users/*",
+        "*://*.mathoverflow.net/users/*",
+        "*://*.serverfault.com/users/*",
         "*://*.stackexchange.com/users/*",
-        "*://*.stackoverflow.com/users/*"
+        "*://*.stackoverflow.com/users/*",
+        "*://*.superuser.com/users/*"
       ],
       "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/profilePage.js"],
       "css": ["src/content_scripts/cs.css"]
@@ -50,8 +58,12 @@
   "permissions": [
     "storage",
     "tabs",
+    "*://*.askubuntu.com/*",
+    "*://*.mathoverflow.net/*",
+    "*://*.serverfault.com/*",
     "*://*.stackexchange.com/*",
-    "*://*.stackoverflow.com/*"
+    "*://*.stackoverflow.com/*",
+    "*://*.superuser.com/*"
   ],
   
   "web_accessible_resources": [
