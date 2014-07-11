@@ -17,6 +17,7 @@
   font-weight: bolder;
   color: black;
   display: none;
+  z-index: 200;
 }
 
 #se_notifier.se_error {

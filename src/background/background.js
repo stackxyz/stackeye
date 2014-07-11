@@ -151,15 +151,9 @@ SW.methods.extractProfilePageUrlInfo = function(url) {
 };
 
 SW.methods.validateUrl = function(url) {
-  var isUrlValid = false;
-
-  $.each(SW.vars.ALLOWED_PAGES, function(index, allowedUrl) {
-    if (url.indexOf(allowedUrl) > -1) {
-      isUrlValid = true;
-    }
-  });
-
-  return isUrlValid;
+  // At the moment, we insert content scripts only on question pages
+  // So we can assume url is valid
+  return true;
 };
 
 SW.methods.updateBadgeText = function(changes, areaName) {
