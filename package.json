@@ -1,6 +1,6 @@
 {
   "name": "stackeye",
-  "version": "1.2",
+  "version": "2.2.1",
   "description": "StackEye is a chrome extension which lets user watch questions on stackoverflow and other stackexchange sites.",
   "main": "app.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/blunderboy/stackeye",
   "devDependencies": {
-    "grunt": "~0.4.2",
+    "grunt": "~0.4.5",
     "grunt-zipup": "~0.1.6"
   }
 }
