@@ -18,6 +18,7 @@
   color: black;
   display: none;
   z-index: 200;
+  text-align: center;
 }
 
 #se_notifier.se_error {
@@ -29,14 +30,15 @@
 }
 
 #se_follow_button {
-  margin-top: 0.5rem;
   margin-left: 1rem;
   border-radius: 2px;
   cursor: pointer;
-
   color: #fff;
-  padding: 0.25rem 1.5em;
   border: 0;
+  font-size: 0.8rem;
+  position: relative;
+  top: -0.4rem;
+  padding: 0.3rem 1rem;
 }
 
 .se_follow {

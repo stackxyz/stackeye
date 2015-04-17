@@ -15,7 +15,7 @@ function notifyBackgroundForPageLoad() {
 function createFollowButton() {
   var url = window.location.href,
     username = url.split('/')[5],
-    $target = $('#user-displayname'),
+    $target = $('#user-card').find('.user-card-name'),
     notificationText = '';
 
   username = username.split('-').join(' ');
@@ -45,7 +45,7 @@ function createFollowButton() {
     $(this).hide();
   });
 
-  $target.after($followButton);
+  $target.append($followButton);
   $(document.body).append($notificationDiv);
 }
 
