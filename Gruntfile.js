@@ -10,7 +10,7 @@ module.exports = function (grunt) {
     zipup: {
       package: {
         appName: 'StackEye',
-        version: '2.2.1',
+        version: '2.3',
         files: [
           { cwd: 'src', src: '**', expand: true, dest: 'src' },
           { cwd: 'resources', src: '**', expand: true, dest: 'resources' },
