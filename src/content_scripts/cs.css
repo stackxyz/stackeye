@@ -37,7 +37,6 @@
   border: 0;
   font-size: 0.8rem;
   position: relative;
-  top: -0.4rem;
   padding: 0.3rem 1rem;
 }
 
@@ -47,4 +46,8 @@
 
 .se_following {
   background-color: rgb(28, 184, 65);
+}
+
+.user-card-name #se_follow_button {
+  top: -0.4rem;
 }
