@@ -18,11 +18,37 @@ module.exports = function (grunt) {
         ],
         outDir: 'build'
       }
+    },
+
+    browserify: {
+      buildLibs: {
+        options: {
+          debug: true,
+          transform: [require('grunt-react').browserify]
+        },
+        files: {
+          'src/pages/index/bundle.js': 'src/pages/index/**/*.jsx'
+        }
+      }
+    },
+
+    watch: {
+      browserify: {
+        files: ['src/pages/index/**/*.jsx'],
+        tasks: ['browserify:buildLibs']
+      },
+      options: {
+        nospawn: true
+      }
     }
   });
 
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-zipup');
+  grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('default', ['zipup']);
+  grunt.registerTask('libs', ['browserify:buildLibs']);
+  grunt.registerTask('dev', ['watch']);
 };
 

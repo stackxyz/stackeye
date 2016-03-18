@@ -1,0 +1,82 @@
+.np-page .se-category {
+  margin-bottom: 1rem;
+  background: none;
+}
+
+.se-category li {
+  background: #eee;
+}
+
+.se-category li a {
+  padding: 5px 10px;
+}
+
+.tabContainer a > span {
+  background-color: #ccc;
+  padding: 2px 5px;
+  margin-left: 5px;
+  border-radius: 5px;
+  color: black;
+}
+
+.se-category li.pure-menu-selected {
+  background: #777;
+  border-radius: 3px;
+}
+
+.se-category li a:hover,
+.se-category li a:focus {
+  background-color: #777;
+  color: white;
+}
+
+.se-category li.pure-menu-selected a {
+  color: #ffffff;
+}
+
+.content-container {
+  width: 615px;
+}
+
+.tag {
+  color: #3E6D8E;
+  background-color: #E0EAF1;
+  border-bottom: 1px solid #b3cee1;
+  border-right: 1px solid #b3cee1;
+  padding: 1px 4px;
+  margin: 2px 5px 2px 0;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.se-list {
+  position: absolute;
+  bottom: 3.5rem;
+  top: 6.5rem;
+  overflow: auto;
+  width: 700px;
+  background: #eee;
+  outline: 1px solid #ccc;
+}
+
+.se-list li {
+  cursor: pointer;
+}
+
+.user-list li {
+  padding: 2px;
+}
+
+.tag-container {
+  display: inline-block;
+  padding-left: 10px;
+  padding-top: 6px;
+  max-width: 460px;
+}
+
+.deleter {
+  position: absolute;
+  bottom: 1rem;
+  margin-left: 600px;
+  width: 6rem;
+}
