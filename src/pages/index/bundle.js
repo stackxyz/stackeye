@@ -23909,17 +23909,19 @@ ReactDOM.render(Routes, document.querySelector('.page-content'));
 },{"./routes.jsx":218,"react":215,"react-dom":2}],217:[function(require,module,exports){
 var React = require('react');
 var TabHeader = require('./tab-header.jsx');
+var BG = chrome.extension.getBackgroundPage();
+var ItemStores = BG.SW.stores;
 
 module.exports = React.createClass({displayName: "exports",
   render: function() {
     return React.createElement("div", null, 
-      React.createElement(TabHeader, null), 
+      React.createElement(TabHeader, {stores: ItemStores}), 
       this.content()
     )
   },
 
   content: function() {
-    if(this.props.children) {
+    if (this.props.children) {
       return this.props.children
     } else {
       // return <TopicList />
@@ -23957,11 +23959,33 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("li", {className: "pure-menu-selected notification-list-option"}, 
           React.createElement("a", {href: "#", "data-targetid": "notification-area", className: "se-tab"}, 
             React.createElement("span", null, "Question Notifications"), 
-            React.createElement("span", {className: "count"})
+            React.createElement("span", {className: "count"}, this.props.stores.notificationStore.length)
+          )
+        ), 
+
+        React.createElement("li", {className: "user-notification-list-option"}, 
+          React.createElement("a", {href: "#", "data-targetid": "user-notification-area", className: "se-tab"}, 
+            React.createElement("span", null, "User Notifications"), 
+            React.createElement("span", {className: "count"}, this.props.stores.userNotificationStore.length)
+          )
+        ), 
+
+        React.createElement("li", {className: "question-list-option"}, 
+          React.createElement("a", {href: "#", "data-targetid": "question-area", className: "se-tab"}, 
+            React.createElement("span", null, "Questions"), 
+            React.createElement("span", {className: "count"}, this.props.stores.questionFeedStore.length)
+          )
+        ), 
+
+        React.createElement("li", {className: "user-list-option"}, 
+          React.createElement("a", {href: "#", "data-targetid": "users-area", className: "se-tab"}, 
+            React.createElement("span", null, "Users"), 
+            React.createElement("span", {className: "count"}, this.props.stores.userStore.length)
           )
         )
       )
     );
   }
 });
+
 },{"react":215}]},{},[216,217,218,219]);

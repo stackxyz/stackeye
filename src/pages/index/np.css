@@ -1,17 +1,24 @@
-.np-page .se-category {
+.page-content {
+  width: 700px;
+  margin: 0 auto;
+  padding-top: 1rem;
+}
+
+.page-content .se-category {
   margin-bottom: 1rem;
   background: none;
 }
 
 .se-category li {
   background: #eee;
+  margin-right: 5px;
 }
 
 .se-category li a {
   padding: 5px 10px;
 }
 
-.tabContainer a > span {
+.tabContainer a > span.count {
   background-color: #ccc;
   padding: 2px 5px;
   margin-left: 5px;
