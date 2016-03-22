@@ -2,23 +2,21 @@ var React = require('react');
 var TabHeader = require('./tab-header.jsx');
 var BG = chrome.extension.getBackgroundPage();
 var ItemStores = BG.SW.stores;
+var QuestionNotifications = require('./question-notifications.jsx');
 
 module.exports = React.createClass({
   render: function() {
     return <div>
       <TabHeader stores={ItemStores} />
-      {this.content()}
+      <div className="category-area">
+        {this.content()}
+      </div>
     </div>
   },
 
   content: function() {
-    if (this.props.children) {
-      return this.props.children
-    } else {
-      // return <TopicList />
-      return <div>
-        We will render more content here later!! Please stay tuned
-      </div>
-    }
+    return this.props.children
+      ? this.props.children
+      : <QuestionNotifications store={BG.SW.stores.notificationStore} />;
   }
 });

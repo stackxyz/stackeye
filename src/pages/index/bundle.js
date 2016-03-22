@@ -23906,32 +23906,92 @@ var Routes = require('./routes.jsx');
 
 ReactDOM.render(Routes, document.querySelector('.page-content'));
 
-},{"./routes.jsx":218,"react":215,"react-dom":2}],217:[function(require,module,exports){
+},{"./routes.jsx":219,"react":215,"react-dom":2}],217:[function(require,module,exports){
 var React = require('react');
 var TabHeader = require('./tab-header.jsx');
 var BG = chrome.extension.getBackgroundPage();
 var ItemStores = BG.SW.stores;
+var QuestionNotifications = require('./question-notifications.jsx');
 
 module.exports = React.createClass({displayName: "exports",
   render: function() {
     return React.createElement("div", null, 
       React.createElement(TabHeader, {stores: ItemStores}), 
-      this.content()
+      React.createElement("div", {className: "category-area"}, 
+        this.content()
+      )
     )
   },
 
   content: function() {
-    if (this.props.children) {
-      return this.props.children
-    } else {
-      // return <TopicList />
-      return React.createElement("div", null, 
-        "We will render more content here later!! Please stay tuned"
-      )
-    }
+    return this.props.children
+      ? this.props.children
+      : React.createElement(QuestionNotifications, {store: BG.SW.stores.notificationStore});
   }
 });
-},{"./tab-header.jsx":219,"react":215}],218:[function(require,module,exports){
+},{"./question-notifications.jsx":218,"./tab-header.jsx":220,"react":215}],218:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+module.exports = React.createClass({displayName: "exports",
+  getInitialState: function() {
+    return {
+      notifications: this.props.store
+    }
+  },
+
+  getDefaultTemplate: function() {
+    return React.createElement("div", {className: "default-template"}, "Hooray!! No Unread Notifications");
+  },
+
+  render: function() {
+    var that = this,
+      notificationsList = this.state.notifications.map(function(item) {
+      return that.renderItem(item);
+    });
+
+    return React.createElement("ul", {className: "se-list"}, 
+       notificationsList.length > 0 ? notificationsList : this.getDefaultTemplate()
+    );
+  },
+  
+  renderItem: function(item) {
+    return React.createElement("li", {
+      "data-objectkey": item.objectKey, 
+      key: item.objectKey, 
+      "data-objecttype": item.objectType}, 
+       this.getNotificationToShow(item) 
+    )
+  },
+
+  getNotificationToShow: function(notificationObject) {
+    var text = '',
+      markup,
+      numAnswers = notificationObject.numAnswers,
+      numComments = notificationObject.numComments;
+
+    if (numAnswers != 0 && numComments != 0) {
+      text = numAnswers + ' answers and ' + numComments + ' comments ';
+    } else if (numAnswers !=0 && numComments == 0) {
+      text = numAnswers + ' answers ';
+    } else if (numAnswers == 0 && numComments != 0) {
+      text = numComments + ' comments ';
+    }
+
+    return React.createElement("div", null, 
+      React.createElement("div", {className: "upper-row"}, 
+        React.createElement("span", {className: "bold"}, text), 
+        React.createElement("span", null, "on")
+      ), 
+      React.createElement("div", {className: "lower-row"}, 
+        React.createElement("a", {className: "link", target: "_blank", href: notificationObject.link}, notificationObject.title)
+      ), 
+      React.createElement("i", {className: "fa fa-trash-o fa-fw display-none trash-icon", title: "Delete Notification"})
+    );
+  }
+});
+
+},{"react":215,"react-dom":2}],219:[function(require,module,exports){
 var React = require('react');
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
@@ -23949,7 +24009,7 @@ var routeConfig = [
 module.exports = (
   React.createElement(Router, {history: HashHistory, routes: routeConfig})
 );
-},{"./main.jsx":217,"react":215,"react-router":30}],219:[function(require,module,exports){
+},{"./main.jsx":217,"react":215,"react-router":30}],220:[function(require,module,exports){
 var React = require('react');
 
 module.exports = React.createClass({displayName: "exports",
@@ -23988,4 +24048,4 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{"react":215}]},{},[216,217,218,219]);
+},{"react":215}]},{},[216,217,218,219,220]);
