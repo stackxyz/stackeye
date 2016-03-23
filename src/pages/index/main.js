@@ -26,47 +26,6 @@ $(function() {
   NP.vars.questionSelector = null;
   NP.vars.userNotificationSelector = null;
 
-  NP.methods.getQuestionMarkup = function(questionObject) {
-    var markup = '<div class="lower-row">' +
-      '<img src="https://www.google.com/s2/favicons?domain=' + questionObject.domain + '"/>' +
-      '<a class="link" target="_blank" href="' + questionObject.link + '">' + questionObject.title + '</a>' +
-    '</div>';
-
-    return markup;
-  };
-
-  NP.methods.getUserMarkup = function(object, rowIndex) {
-    var markup,
-      tags = object.tags,
-      flairImageSource = 'http://' + object.domain + '/users/flair/' + object['user_id'] + '.png',
-      flairImage,
-      userProfileLink;
-
-    if (rowIndex % 2 == 0) {
-      flairImageSource += '?theme=dark';
-    }
-
-    flairImage = '<img src="' + flairImageSource + '" alt="' + object['display_name'] + '" />';
-    userProfileLink = '<a class="link username" target="_blank" href="' + object['link'] + '">' + flairImage + '</a>';
-
-    if (tags) {
-      tags = tags.split(',');
-    } else {
-      tags = [];
-    }
-
-    markup = '<div class="flair-container left">' + userProfileLink + '</div>';
-    markup += '<div class="tag-container">';
-    if (tags.length > 0) markup += '<div class="upper-row"><span class="verb">likes</span></div>';
-    markup += '<div class="lower-row">';
-    tags.forEach(function(tag, index) {
-      if (index < 5) markup += '<span class="tag">' + tag +'</span>'
-    });
-    markup += '</div>';
-
-    return markup;
-  };
-
   NP.methods.updateDeleteButton = function($button, selectedItemsLength) {
     $button.attr('disabled', (selectedItemsLength == 0));
   };
@@ -101,49 +60,8 @@ $(function() {
     Shared.methods.removeItem(objectKey, objectType);
     $listItem.remove();
   };
-
-  NP.methods.showTab = function(event) {
-    var el = event.currentTarget,
-      targetId = el.getAttribute('data-targetId');
-
-    $('.tabContainer').find('li').removeClass('pure-menu-selected');
-    $(el).parent('li').addClass('pure-menu-selected');
-
-    $('.category-area').hide();
-    $('#' + targetId).show();
-
-    return false;
-  };
-
+  
   NP.methods.init = function() {
-    Shared.methods.renderItems(
-      NP.vars.notifications,
-      NP.vars.$notificationList,
-      Shared.methods.getNotificationToShow,
-      Shared.DEFAULT_TEMPLATES.QUESTION_NOTIFICATION
-    );
-
-    Shared.methods.renderItems(
-      NP.vars.userNotifications,
-      NP.vars.$userNotificationList,
-      Shared.methods.getUserNotificationMarkup,
-      Shared.DEFAULT_TEMPLATES.USER_NOTIFICATION
-    );
-
-    Shared.methods.renderItems(
-      NP.vars.questions,
-      NP.vars.$questionList,
-      NP.methods.getQuestionMarkup,
-      Shared.DEFAULT_TEMPLATES.QUESTION
-    );
-
-    Shared.methods.renderItems(
-      NP.vars.users,
-      NP.vars.$userList,
-      NP.methods.getUserMarkup,
-      Shared.DEFAULT_TEMPLATES.USER
-    );
-
     NP.vars.questionSelector = new ListItemSelector({
       multiSelectMode: true,
       el: '.question-list',
@@ -190,7 +108,6 @@ $(function() {
   };
 
   NP.methods.init();
-  $('.se-tab').click(NP.methods.showTab);
   $('.deleter').click(NP.methods.removeSelectedItems);
   $('a.link').click(NP.methods.removeNotificationItem);
 });

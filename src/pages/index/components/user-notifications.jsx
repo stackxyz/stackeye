@@ -6,12 +6,12 @@ var ItemStores = BG.SW.stores;
 module.exports = React.createClass({
   getInitialState: function() {
     return {
-      notifications: ItemStores.notificationStore
+      notifications: ItemStores.userNotificationStore
     }
   },
 
   getDefaultTemplate: function() {
-    return <div className="default-template">Hooray!! No Unread Notifications</div>;
+    return <div className="default-template">Start Following awesome users on StackExchange network</div>;
   },
 
   render: function() {
@@ -34,28 +34,33 @@ module.exports = React.createClass({
     </li>
   },
 
-  getNotificationToShow: function(notificationObject) {
+  getNotificationToShow: function(userNotificationItem) {
     var text,
-      numAnswers = notificationObject.numAnswers,
-      numComments = notificationObject.numComments;
+      owner = userNotificationItem.owner,
+      postType = userNotificationItem['post_type'],
+      userProfileLink = <a className="profile-link username" href={owner['link']}>{owner['display_name']}</a>;
 
-    if (numAnswers != 0 && numComments != 0) {
-      text = numAnswers + ' answers and ' + numComments + ' comments ';
-    } else if (numAnswers !=0 && numComments == 0) {
-      text = numAnswers + ' answers ';
-    } else if (numAnswers == 0 && numComments != 0) {
-      text = numComments + ' comments ';
+    if (postType == 'question') {
+      text = <span>{userProfileLink} has asked a question</span>;
+    }
+
+    if (postType == 'answer') {
+      text = <span>{userProfileLink} answered on</span>;
     }
 
     return <div>
-      <div className="upper-row">
-        <span className="bold">{text}</span>
-        <span>on</span>
+      <div className="avatar-container left">
+        <img src={owner['profile_image']} />
       </div>
-      <div className="lower-row">
-        <a className="link" target="_blank" href={notificationObject.link}>{notificationObject.title}</a>
+      <div className="right content-container">
+        <div className="upper-row">{text}</div>
+        <div className="lower-row">
+          <a className="link" target="_blank" href={userNotificationItem.link}>{userNotificationItem.title}</a>
+        </div>
       </div>
+
       <i className="fa fa-trash-o fa-fw display-none trash-icon" title="Delete Notification" />
     </div>;
   }
+
 });

@@ -23906,19 +23906,23 @@ var Routes = require('./routes.jsx');
 
 ReactDOM.render(Routes, document.querySelector('.page-content'));
 
-},{"./routes.jsx":219,"react":215,"react-dom":2}],217:[function(require,module,exports){
+},{"./routes.jsx":220,"react":215,"react-dom":2}],217:[function(require,module,exports){
 var React = require('react');
 var TabHeader = require('./tab-header.jsx');
-var BG = chrome.extension.getBackgroundPage();
-var ItemStores = BG.SW.stores;
-var QuestionNotifications = require('./question-notifications.jsx');
 
 module.exports = React.createClass({displayName: "exports",
   render: function() {
     return React.createElement("div", null, 
-      React.createElement(TabHeader, {stores: ItemStores}), 
+      React.createElement(TabHeader, null), 
       React.createElement("div", {className: "category-area"}, 
         this.content()
+      ), 
+      React.createElement("button", {
+        id: "notification-deleter", 
+        className: "pure-button pure-button-error deleter", 
+        disabled: true, 
+        "data-message": "Are you sure you want to clear selected items ?"}, 
+        "Clear"
       )
     )
   },
@@ -23926,17 +23930,19 @@ module.exports = React.createClass({displayName: "exports",
   content: function() {
     return this.props.children
       ? this.props.children
-      : React.createElement(QuestionNotifications, {store: BG.SW.stores.notificationStore});
+      : React.createElement("div", null, "Looks like something is wrong!! Please open an issue on Github describing this");
   }
 });
-},{"./question-notifications.jsx":218,"./tab-header.jsx":220,"react":215}],218:[function(require,module,exports){
+},{"./tab-header.jsx":221,"react":215}],218:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
+var BG = chrome.extension.getBackgroundPage();
+var ItemStores = BG.SW.stores;
 
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function() {
     return {
-      notifications: this.props.store
+      notifications: ItemStores.notificationStore
     }
   },
 
@@ -23965,8 +23971,7 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   getNotificationToShow: function(notificationObject) {
-    var text = '',
-      markup,
+    var text,
       numAnswers = notificationObject.numAnswers,
       numComments = notificationObject.numComments;
 
@@ -23993,54 +23998,125 @@ module.exports = React.createClass({displayName: "exports",
 
 },{"react":215,"react-dom":2}],219:[function(require,module,exports){
 var React = require('react');
+var ReactDOM = require('react-dom');
+var BG = chrome.extension.getBackgroundPage();
+var ItemStores = BG.SW.stores;
+
+module.exports = React.createClass({displayName: "exports",
+  getInitialState: function() {
+    return {
+      notifications: ItemStores.questionFeedStore
+    }
+  },
+
+  getDefaultTemplate: function() {
+    return React.createElement("div", {className: "default-template"}, "Too Bad!! You are not watching any question");
+  },
+
+  render: function() {
+    var that = this,
+      notificationsList = this.state.notifications.map(function(item) {
+      return that.renderItem(item);
+    });
+
+    return React.createElement("ul", {className: "se-list"}, 
+       notificationsList.length > 0 ? notificationsList : this.getDefaultTemplate()
+    );
+  },
+  
+  renderItem: function(item) {
+    return React.createElement("li", {
+      "data-objectkey": item.objectKey, 
+      key: item.objectKey, 
+      "data-objecttype": item.objectType}, 
+       this.getNotificationToShow(item) 
+    )
+  },
+
+  getNotificationToShow: function(questionObject) {
+    return React.createElement("div", {className: "lower-row"}, 
+      React.createElement("img", {src: "https://www.google.com/s2/favicons?domain=" + questionObject.domain}), 
+      React.createElement("a", {className: "link", target: "_blank", href: questionObject.link}, questionObject.title)
+    );
+  }
+});
+
+},{"react":215,"react-dom":2}],220:[function(require,module,exports){
+var React = require('react');
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var Main = require('./main.jsx');
 var HashHistory = ReactRouter.hashHistory;
 
+var QuestionNotifications = require('./question-notifications.jsx');
+var UserNotifications = require('./user-notifications.jsx');
+var QuestionsList = require('./questions-list.jsx');
+var UsersList = require('./users-list.jsx');
+
 var routeConfig = [
   {
     path: '/',
-    component: Main
+    component: Main,
+    indexRoute: {
+      onEnter: function (nextState, replace) {
+        replace('/questions/notifications');
+      }
+    },
+    childRoutes: [
+      { path: 'questions/notifications', component: QuestionNotifications },
+      { path: 'users/notifications', component: UserNotifications },
+      { path: 'questions/list', component: QuestionsList },
+      { path: 'users/list', component: UsersList }
+    ]
   }
 ];
 
 module.exports = (
   React.createElement(Router, {history: HashHistory, routes: routeConfig})
 );
-},{"./main.jsx":217,"react":215,"react-router":30}],220:[function(require,module,exports){
+},{"./main.jsx":217,"./question-notifications.jsx":218,"./questions-list.jsx":219,"./user-notifications.jsx":222,"./users-list.jsx":223,"react":215,"react-router":30}],221:[function(require,module,exports){
 var React = require('react');
+var ReactRouter = require('react-router');
+var Link = ReactRouter.Link;
+var BG = chrome.extension.getBackgroundPage();
+var ItemStores = BG.SW.stores;
 
 module.exports = React.createClass({displayName: "exports",
+  getInitialState: function() {
+    return {
+      stores: ItemStores
+    }
+  },
+
   render: function() {
     return React.createElement("div", {className: "se-category pure-menu pure-menu-open pure-menu-horizontal"}, 
       React.createElement("ul", {className: "tabContainer"}, 
         React.createElement("li", {className: "pure-menu-selected notification-list-option"}, 
-          React.createElement("a", {href: "#", "data-targetid": "notification-area", className: "se-tab"}, 
+          React.createElement(Link, {to: "/questions/notifications", className: "se-tab"}, 
             React.createElement("span", null, "Question Notifications"), 
-            React.createElement("span", {className: "count"}, this.props.stores.notificationStore.length)
+            React.createElement("span", {className: "count"}, this.state.stores.notificationStore.length)
           )
         ), 
 
         React.createElement("li", {className: "user-notification-list-option"}, 
-          React.createElement("a", {href: "#", "data-targetid": "user-notification-area", className: "se-tab"}, 
+          React.createElement(Link, {to: "/users/notifications", className: "se-tab"}, 
             React.createElement("span", null, "User Notifications"), 
-            React.createElement("span", {className: "count"}, this.props.stores.userNotificationStore.length)
+            React.createElement("span", {className: "count"}, this.state.stores.userNotificationStore.length)
           )
         ), 
 
         React.createElement("li", {className: "question-list-option"}, 
-          React.createElement("a", {href: "#", "data-targetid": "question-area", className: "se-tab"}, 
+          React.createElement(Link, {to: "/questions/list", "data-targetid": "question-area", className: "se-tab"}, 
             React.createElement("span", null, "Questions"), 
-            React.createElement("span", {className: "count"}, this.props.stores.questionFeedStore.length)
+            React.createElement("span", {className: "count"}, this.state.stores.questionFeedStore.length)
           )
         ), 
 
         React.createElement("li", {className: "user-list-option"}, 
-          React.createElement("a", {href: "#", "data-targetid": "users-area", className: "se-tab"}, 
+          React.createElement(Link, {to: "/users/list", "data-targetid": "users-area", className: "se-tab"}, 
             React.createElement("span", null, "Users"), 
-            React.createElement("span", {className: "count"}, this.props.stores.userStore.length)
+            React.createElement("span", {className: "count"}, this.state.stores.userStore.length)
           )
         )
       )
@@ -24048,4 +24124,146 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{"react":215}]},{},[216,217,218,219,220]);
+},{"react":215,"react-router":30}],222:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var BG = chrome.extension.getBackgroundPage();
+var ItemStores = BG.SW.stores;
+
+module.exports = React.createClass({displayName: "exports",
+  getInitialState: function() {
+    return {
+      notifications: ItemStores.userNotificationStore
+    }
+  },
+
+  getDefaultTemplate: function() {
+    return React.createElement("div", {className: "default-template"}, "Start Following awesome users on StackExchange network");
+  },
+
+  render: function() {
+    var that = this,
+      notificationsList = this.state.notifications.map(function(item) {
+      return that.renderItem(item);
+    });
+
+    return React.createElement("ul", {className: "se-list"}, 
+       notificationsList.length > 0 ? notificationsList : this.getDefaultTemplate()
+    );
+  },
+  
+  renderItem: function(item) {
+    return React.createElement("li", {
+      "data-objectkey": item.objectKey, 
+      key: item.objectKey, 
+      "data-objecttype": item.objectType}, 
+       this.getNotificationToShow(item) 
+    )
+  },
+
+  getNotificationToShow: function(userNotificationItem) {
+    var text,
+      owner = userNotificationItem.owner,
+      postType = userNotificationItem['post_type'],
+      userProfileLink = React.createElement("a", {className: "profile-link username", href: owner['link']}, owner['display_name']);
+
+    if (postType == 'question') {
+      text = React.createElement("span", null, userProfileLink, " has asked a question");
+    }
+
+    if (postType == 'answer') {
+      text = React.createElement("span", null, userProfileLink, " answered on");
+    }
+
+    return React.createElement("div", null, 
+      React.createElement("div", {className: "avatar-container left"}, 
+        React.createElement("img", {src: owner['profile_image']})
+      ), 
+      React.createElement("div", {className: "right content-container"}, 
+        React.createElement("div", {className: "upper-row"}, text), 
+        React.createElement("div", {className: "lower-row"}, 
+          React.createElement("a", {className: "link", target: "_blank", href: userNotificationItem.link}, userNotificationItem.title)
+        )
+      ), 
+
+      React.createElement("i", {className: "fa fa-trash-o fa-fw display-none trash-icon", title: "Delete Notification"})
+    );
+  }
+
+});
+
+},{"react":215,"react-dom":2}],223:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var BG = chrome.extension.getBackgroundPage();
+var ItemStores = BG.SW.stores;
+
+module.exports = React.createClass({displayName: "exports",
+  getInitialState: function() {
+    return {
+      notifications: ItemStores.userStore
+    }
+  },
+
+  getDefaultTemplate: function() {
+    return React.createElement("div", {className: "default-template"}, "Start Following awesome users on StackExchange network");
+  },
+
+  render: function() {
+    var that = this,
+      notificationsList = this.state.notifications.map(function(item, index) {
+        return that.renderItem(item, index);
+      });
+
+    return React.createElement("ul", {className: "se-list"}, 
+       notificationsList.length > 0 ? notificationsList : this.getDefaultTemplate()
+    );
+  },
+  
+  renderItem: function(item, index) {
+    return React.createElement("li", {
+      "data-objectkey": item.objectKey, 
+      key: item.objectKey, 
+      "data-objecttype": item.objectType}, 
+       this.getNotificationToShow(item, index) 
+    )
+  },
+
+  getNotificationToShow: function(object, rowIndex) {
+    var tagsMarkup,
+      tagList,
+      tags = object.tags,
+      flairImageSource = 'http://' + object.domain + '/users/flair/' + object['user_id'] + '.png',
+      flairImage,
+      userProfileLink;
+
+    if (rowIndex % 2 == 0) {
+      flairImageSource += '?theme=dark';
+    }
+
+    flairImage = React.createElement("img", {src: flairImageSource, alt: object['display_name']});
+    userProfileLink = React.createElement("a", {className: "link username", target: "_blank", href: object['link']}, flairImage);
+
+    tags = tags ? tags.split(',') : [];
+
+    if (tags.length > 0) {
+      tagList = tags.map(function(tag, index) {
+        if (index < 5) return React.createElement("span", {className: "tag", key: index}, tag)
+      });
+
+      tagsMarkup = React.createElement("div", {className: "tag-container"}, 
+        React.createElement("div", {className: "upper-row"}, 
+          React.createElement("span", {className: "verb"}, "likes")
+        ), 
+        React.createElement("div", {className: "lower-row"}, tagList)
+      );
+    }
+
+    return React.createElement("div", null, 
+      React.createElement("div", {className: "flair-container left"}, userProfileLink), 
+      tagsMarkup
+    );
+  }
+});
+
+},{"react":215,"react-dom":2}]},{},[216,217,218,219,220,221,222,223]);
