@@ -23,10 +23,10 @@ function createFollowButton() {
   username = username.split('?')[0];
 
   $(document).ready(function () {
-      if(window.location.href.indexOf("activity") > -1 || window.location.href.indexOf("story") > -1 || window.location.href.indexOf("edit") > -1) {
-         $followButton = $('<button></button>').attr({ id: 'se_follow_button' }).css("bottom", "5px");
-      } else {
+      if(window.location.href.indexOf("profile") > -1) {
         $followButton = $('<button></button>').attr({ id: 'se_follow_button' }).css("margin-top", "6px");
+      } else {
+        $followButton = $('<button></button>').attr({ id: 'se_follow_button' }).css("bottom", "5px");
       }
   });
 
