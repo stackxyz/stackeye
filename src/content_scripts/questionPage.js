@@ -18,10 +18,10 @@ function createWatchIcon() {
     notificationText = '',
     imageUrl = chrome.extension.getURL('resources/images/icon_grey_19.png');
 
-  $watchIcon = $('<img>').attr({ id: 'watchIcon', src: imageUrl })
+  $watchIcon = $('<img>').attr({ id: 'watchIcon', src: imageUrl, title: 'watch question' })
     .click(function() {
       var action = $(this).attr('data-action');
-  
+
       // Update the watch button state ASAP. In case watch/un-watch fails,
       // the same is handled when message is received from background script.
       updateWatchIcon(action == 'watchPage');
@@ -33,7 +33,7 @@ function createWatchIcon() {
       }
 
       showNotification({type: 'se_notice', message: notificationText});
-  
+
       sendMessageToBackground({ action: action, url: url }, function(){ } );
    });
 
