@@ -22,8 +22,15 @@ function createFollowButton() {
   username = username.split('#')[0];
   username = username.split('?')[0];
 
-  $followButton = $('<button></button>').attr({ id: 'se_follow_button' })
-    .click(function() {
+  $(document).ready(function () {
+      if(window.location.href.indexOf("profile") > -1) {
+        $followButton = $('<button></button>').attr({ id: 'se_follow_button' }).css("margin-top", "6px");
+      } else {
+        $followButton = $('<button></button>').attr({ id: 'se_follow_button' }).css("bottom", "5px");
+      }
+  });
+
+  $followButton.click(function() {
       var action = $(this).attr('data-action');
 
       // Update the follow button state ASAP. In case follow/un-follow fails,
