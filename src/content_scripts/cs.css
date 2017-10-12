@@ -34,7 +34,7 @@
   border-radius: 2px;
   cursor: pointer;
   color: #fff;
-  border: 0;
+  border: 1px solid rgb(0, 100, 201);
   font-size: 0.8rem;
   position: relative;
   padding: 0.3rem 1rem;
