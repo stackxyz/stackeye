@@ -10,7 +10,7 @@ SW.vars.ALLOWED_PAGES = [
   'stackoverflow.com/questions/',
   'stackexchange.com/questions/',
   'stackoverflow.com/users/',
-  'stackexchange.com/users/',
+  'stackexchange.com/users/'
 ];
 
 SW.modes.inDebugMode = false;
