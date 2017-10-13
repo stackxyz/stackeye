@@ -1,3 +1,10 @@
+SW.methods.isUserStoreFull = function() {
+  if(SW.stores.userStore.length > 25) {
+    return true;
+  }
+  return false;
+}
+
 SW.methods.isUserInStore = function(userId) {
   for (var i=0; i < SW.stores.userStore.length; i++) {
     if (SW.stores.userStore[i]['user_id'] == userId) {
