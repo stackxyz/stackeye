@@ -22,13 +22,16 @@ function createFollowButton() {
   username = username.split('#')[0];
   username = username.split('?')[0];
 
-  $(document).ready(function () {
-      if(window.location.href.indexOf("profile") > -1) {
-        $followButton = $('<button></button>').attr({ id: 'se_follow_button' }).css("margin-top", "6px");
-      } else {
-        $followButton = $('<button></button>').attr({ id: 'se_follow_button' }).css("bottom", "5px");
-      }
-  });
+  function makeStyledButton(profileElement, profileValue, generalElement, generalValue) {
+    if($('#tabs').find("a:first").hasClass("youarehere")) {
+      console.log($('#tabs').children("a:first").hasClass("youarehere"));
+      $followButton = $('<button></button>').attr({ id: 'se_follow_button' }).css(profileElement, profileValue);
+    } else {
+      $followButton = $('<button></button>').attr({ id: 'se_follow_button' }).css(generalElement, generalValue);
+    }
+  }
+
+  makeStyledButton("margin-top", "6px", "bottom", "5px");
 
   $followButton.click(function() {
       var action = $(this).attr('data-action');
