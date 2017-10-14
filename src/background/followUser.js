@@ -1,8 +1,5 @@
 SW.methods.isUserStoreFull = function() {
-  if(SW.stores.userStore.length > 25) {
-    return true;
-  }
-  return false;
+  return SW.stores.userStore.lenth > 25;
 }
 
 SW.methods.isUserInStore = function(userId) {
