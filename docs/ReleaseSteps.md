@@ -7,7 +7,6 @@ StackEye release steps:
  5. Update version in package.json
  6. Run the following command in the root directory of project
 
-
      grunt default
 
  7. Commit the changes and make release on [Github release page](https://github.com/blunderboy/stackeye/releases)
