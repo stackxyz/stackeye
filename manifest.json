@@ -67,7 +67,7 @@
   ],
   
   "web_accessible_resources": [
-    "resources/images/icon_color_19.png",
-    "resources/images/icon_grey_19.png"
+    "resources/icons/eye-open/128.png",
+    "resources/icons/eye-closed/128.png"
   ]
 }

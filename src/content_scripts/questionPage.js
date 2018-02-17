@@ -16,7 +16,7 @@ function createWatchIcon() {
   var url = window.location.href,
     $target,
     notificationText = '',
-    imageUrl = chrome.extension.getURL('resources/images/icon_grey_19.png');
+    imageUrl = chrome.extension.getURL('resources/icons/eye-closed/128.png');
 
   $watchIcon = $('<img>').attr({ id: 'watchIcon', src: imageUrl, title: 'watch question' })
     .click(function() {
@@ -47,7 +47,8 @@ function createWatchIcon() {
 }
 
 function updateWatchIcon(watchStatus) {
-  var imageUrl;
+  var imageUrl,
+    action;
 
   if (!$watchIcon) {
     createWatchIcon();
@@ -58,10 +59,10 @@ function updateWatchIcon(watchStatus) {
   }
 
   if (watchStatus) {
-    imageUrl = chrome.extension.getURL('resources/images/icon_color_19.png');
+    imageUrl = chrome.extension.getURL('resources/icons/eye-open/128.png');
     action = 'unwatchPage';
   } else {
-    imageUrl = chrome.extension.getURL('resources/images/icon_grey_19.png');
+    imageUrl = chrome.extension.getURL('resources/icons/eye-closed/128.png');
     action = 'watchPage';
   }
 

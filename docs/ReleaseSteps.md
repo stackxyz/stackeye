@@ -13,5 +13,7 @@ StackEye release steps:
  8. Update the change logs on [StackEye Official Page](http://blunderboy.github.io/stackeye/index.html#changelogs)
  9. Upload the zip in chrome store.
 
- Thats it!!
-
+## Resources
+- Closed Eye Icon - https://www.iconfinder.com/icons/1886933/blind_eye_hide_invisible_optical_see_unview_icon#size=256
+- Open Eye Icon
+    - https://www.iconfinder.com/icons/1886932/enable_eye_view_views_watch_icon#size=256

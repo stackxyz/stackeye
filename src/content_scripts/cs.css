@@ -1,5 +1,6 @@
 #watchIcon {
   cursor: pointer;
+  height: 32px;
 }
 
 #watchIcon:hover {
