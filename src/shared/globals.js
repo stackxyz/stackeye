@@ -61,7 +61,7 @@ SW.constants = {
   ANSWER          : 'answer',
   URL_ROOT        : 'http://api.stackexchange.com/2.2/',
   APP_KEY         : 'MKhHgtFFPM)vQAp2pvu)fw((',
-  VERSION         : '2.3.1'
+  VERSION         : '2.4.2'
 };
 
 SW.filters = {
