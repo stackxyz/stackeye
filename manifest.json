@@ -1,7 +1,7 @@
 {
   "name": "StackEye",
 
-  "version": "2.4.2",
+  "version": "19.1.1",
   "manifest_version": 2,
   "description": "Chrome Extension to get notifications about questions and from users in your watchlist",
 
