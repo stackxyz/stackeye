@@ -15,36 +15,29 @@ function notifyBackgroundForPageLoad() {
 function createFollowButton() {
   var url = window.location.href,
     username = url.split('/')[5],
-    $target = $('#user-card .user-card-name, #user-displayname, #mainbar-full .mini-avatar'),
+    $target = $('#user-card .profile-user--name, #user-displayname, #mainbar-full .mini-avatar'),
     notificationText = '';
 
   username = username.split('-').join(' ');
   username = username.split('#')[0];
   username = username.split('?')[0];
 
-  $(document).ready(function () {
-      if(window.location.href.indexOf("profile") > -1) {
-        $followButton = $('<button></button>').attr({ id: 'se_follow_button' }).css("margin-top", "6px");
-      } else {
-        $followButton = $('<button></button>').attr({ id: 'se_follow_button' }).css("bottom", "5px");
-      }
-  });
-
-  $followButton.click(function() {
-      var action = $(this).attr('data-action');
+  $followButton = $('<button></button>')
+    .attr({ id: 'se_follow_button' })
+    .click(function() {
+      const action = $(this).attr('data-action');
 
       // Update the follow button state ASAP. In case follow/un-follow fails,
       // the same is handled when message is received from background script.
-      updateFollowButton(action == 'followUser');
+      updateFollowButton(action === 'followUser');
 
-      if (action == 'followUser') {
+      if (action === 'followUser') {
         notificationText = 'You are now following ' + username;
       } else {
         notificationText = 'You are no longer following ' + username;
       }
 
       showNotification({type: 'se_notice', message: notificationText});
-
       sendMessageToBackground({ action: action, url: url }, function(){ } );
     });
 
@@ -57,6 +50,7 @@ function createFollowButton() {
 }
 
 function updateFollowButton(followStatus) {
+  var className, action, buttonName;
 
   if (!$followButton) {
     createFollowButton();
@@ -69,7 +63,7 @@ function updateFollowButton(followStatus) {
   if (followStatus) {
     className = 'se_following';
     action = 'unfollowUser';
-    buttonName = 'Following';
+    buttonName = 'Unfollow';
   } else {
     className = 'se_follow';
     action = 'followUser';
@@ -86,7 +80,7 @@ function showNotification(notification) {
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.messageType == 'followStatus') {
+  if (request.messageType === 'followStatus') {
     updateFollowButton(request.followStatus);
   }
 });

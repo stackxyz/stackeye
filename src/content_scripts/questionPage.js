@@ -18,22 +18,22 @@ function createWatchIcon() {
     notificationText = '',
     imageUrl = chrome.extension.getURL('resources/icons/eye-closed/128.png');
 
-  $watchIcon = $('<img>').attr({ id: 'watchIcon', src: imageUrl, title: 'watch question' })
+  $watchIcon = $('<img>')
+    .attr({ id: 'watchIcon', src: imageUrl })
     .click(function() {
-      var action = $(this).attr('data-action');
+      const action = $(this).attr('data-action');
 
       // Update the watch button state ASAP. In case watch/un-watch fails,
       // the same is handled when message is received from background script.
-      updateWatchIcon(action == 'watchPage');
+      updateWatchIcon(action === 'watchPage');
 
-      if (action == 'watchPage') {
+      if (action === 'watchPage') {
         notificationText = 'Question has been added to your watch list';
       } else {
         notificationText = 'Question has been removed from watch list';
       }
 
       showNotification({type: 'se_notice', message: notificationText});
-
       sendMessageToBackground({ action: action, url: url }, function(){ } );
    });
 
@@ -41,14 +41,15 @@ function createWatchIcon() {
     $(this).hide();
   });
 
-  $target = $('#question').find('div.vote').first();
+  $target = $('#question').find('div.votecell').first();
   $target.append($watchIcon);
   $(document.body).append($notificationDiv);
 }
 
 function updateWatchIcon(watchStatus) {
   var imageUrl,
-    action;
+    action,
+    title;
 
   if (!$watchIcon) {
     createWatchIcon();
@@ -61,12 +62,14 @@ function updateWatchIcon(watchStatus) {
   if (watchStatus) {
     imageUrl = chrome.extension.getURL('resources/icons/eye-open/128.png');
     action = 'unwatchPage';
+    title = 'Remove Question from your watchlist';
   } else {
     imageUrl = chrome.extension.getURL('resources/icons/eye-closed/128.png');
     action = 'watchPage';
+    title = 'Add Question to your watch list';
   }
 
-  $watchIcon.attr({ src: imageUrl, 'data-action': action });
+  $watchIcon.attr({ src: imageUrl, 'data-action': action, title: title });
 }
 
 function showNotification(notification) {
@@ -76,9 +79,9 @@ function showNotification(notification) {
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.messageType == 'watchStatus') {
+  if (request.messageType === 'watchStatus') {
     updateWatchIcon(request.watchStatus);
-  } else if (request.messageType == 'notification') {
+  } else if (request.messageType === 'notification') {
     showNotification({ type: request.type, message: request.message });
   }
 });

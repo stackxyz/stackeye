@@ -3,7 +3,7 @@
 
   "version": "2.4.2",
   "manifest_version": 2,
-  "description": "A Chrome Extension to follow users and watch questions on StackExchange sites",
+  "description": "Chrome Extension to get notifications about questions and from users in your watchlist",
 
   "background": {
     "scripts": [
@@ -19,24 +19,14 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.askubuntu.com/questions/*",
-        "*://*.mathoverflow.net/questions/*",
-        "*://*.serverfault.com/questions/*",
-        "*://*.stackexchange.com/questions/*",
-        "*://*.stackoverflow.com/questions/*",
-        "*://*.superuser.com/questions/*"
+        "*://*/questions/*"
       ],
       "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/questionPage.js"],
       "css": ["src/content_scripts/cs.css"]
     },
     {
       "matches": [
-        "*://*.askubuntu.com/users/*",
-        "*://*.mathoverflow.net/users/*",
-        "*://*.serverfault.com/users/*",
-        "*://*.stackexchange.com/users/*",
-        "*://*.stackoverflow.com/users/*",
-        "*://*.superuser.com/users/*"
+        "*://*/users/*"
       ],
       "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/profilePage.js"],
       "css": ["src/content_scripts/cs.css"]
@@ -44,9 +34,9 @@
   ],
   
   "browser_action": {
-    "default_icon"    : "resources/images/icon_so_48.png",
-    "default_title"   : "Get latest notifications on your favorite questions",
-    "default_popup"   : "src/popup/popup.html"
+    "default_icon": "resources/images/icon_so_48.png",
+    "default_title": "Get latest notifications on your favorite questions",
+    "default_popup": "src/popup/popup.html"
   },
   
   "icons": {
@@ -58,12 +48,8 @@
   "permissions": [
     "storage",
     "tabs",
-    "*://*.askubuntu.com/*",
-    "*://*.mathoverflow.net/*",
-    "*://*.serverfault.com/*",
-    "*://*.stackexchange.com/*",
-    "*://*.stackoverflow.com/*",
-    "*://*.superuser.com/*"
+    "http://*/*",
+    "https://*/*"
   ],
   
   "web_accessible_resources": [

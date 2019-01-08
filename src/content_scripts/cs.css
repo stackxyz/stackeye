@@ -41,14 +41,10 @@
   padding: 0.3rem 1rem;
 }
 
-.se_follow {
-  background-color: rgb(0, 120, 231);
+#se_follow_button.se_follow {
+  background-color: rgb(0, 120, 231) !important;
 }
 
-.se_following {
-  background-color: rgb(28, 184, 65);
-}
-
-.user-card-name #se_follow_button {
-  top: -0.4rem;
+#se_follow_button.se_following {
+  background-color: rgb(28, 184, 65) !important;
 }
