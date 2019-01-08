@@ -3,7 +3,7 @@ body {
 }
 
 .content {
-  margin-bottom: 40px;
+  margin-bottom: 80px;
 }
 
 .popup-page .divider {
@@ -68,7 +68,34 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+.app-footer-message {
   padding: 5px;
-  text-align: right;
   background: #ccc;
+}
+
+.message-text {
+  line-height: 30px;
+  font-size: 13px;
+  color: rgb(95,99,104);
+  padding: 0 5px;
+  box-sizing: border-box;
+}
+
+.feedback-section {
+  background: #535;
+  line-height: 25px;
+  text-align: center;
+  padding: 5px;
+  color: #ccc;
+}
+
+.donate-button-image {
+  margin-bottom: -9px;
+  margin-left: 3px;
+}
+
+.feedback-section .message-text {
+  color: #efefef;
 }
