@@ -48,8 +48,12 @@
   "permissions": [
     "storage",
     "tabs",
-    "http://*/*",
-    "https://*/*"
+    "*://*.askubuntu.com/*",
+    "*://*.mathoverflow.net/*",
+    "*://*.serverfault.com/*",
+    "*://*.stackexchange.com/*",
+    "*://*.stackoverflow.com/*",
+    "*://*.superuser.com/*"
   ],
   
   "web_accessible_resources": [
