@@ -93,7 +93,7 @@ SW.methods.fetchUserNotification = function(userIds, domain, fromDate) {
  */
 SW.methods.fetchUserNotifications = function() {
   var usersInSite = SW.methods.createMapOfUsersInDomain(),
-    currentTime = parseInt(Date.now()/1000),
+    currentTime = parseInt((Date.now()/1000).toString()),
     fromDate = currentTime - SW.vars.TIME.T_30_MIN;
 
   chrome.storage.local.get('userNotificationsLastFetchDate', function(o) {

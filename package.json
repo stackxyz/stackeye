@@ -4,7 +4,8 @@
   "description": "StackEye is a chrome extension which lets user watch questions on stackoverflow and other stackexchange sites.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "tsc --watch --pretty"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,10 @@
   },
   "homepage": "https://github.com/blunderboy/stackeye",
   "devDependencies": {
+    "@types/chrome": "0.0.79",
+    "@types/jquery": "^3.3.29",
     "grunt": "~0.4.5",
-    "grunt-zipup": "~0.1.6"
+    "grunt-zipup": "~0.1.6",
+    "typescript": "^3.3.3"
   }
 }

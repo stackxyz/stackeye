@@ -101,7 +101,7 @@ SW.methods.unwatchQuestion = function(questionUrl, sCallback) {
 
 SW.methods.addQuestionToStore = function(question, sCallback) {
   var currentTime = new Date().getTime();
-  currentTime = parseInt(currentTime/1000);
+  currentTime = parseInt((currentTime/1000).toString());
 
   question['lastFetchDate'] = currentTime;
   question['nextFetchDate'] = SW.methods.getNextFetchDate(question.lastFetchDate, question.creation_date);
@@ -223,7 +223,7 @@ SW.methods.updateNotificationStore = function(updates, questionInfo) {
 };
 
 SW.methods.fetchNewNotifications = function() {
-  var currentTime = parseInt(Date.now()/1000),
+  var currentTime = parseInt((Date.now()/1000).toString()),
     questionFeedStoreLength = SW.stores.questionFeedStore.length,
     question,
     questionUpdates,

@@ -157,6 +157,7 @@ SW.methods.validateUrl = function(url) {
 };
 
 SW.methods.updateBadgeText = function(changes, areaName) {
+  /** @type {string|number} */
   var numNotifications = SW.stores.notificationStore.length + SW.stores.userNotificationStore.length;
 
   if (numNotifications == 0) {

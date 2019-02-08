@@ -141,7 +141,7 @@ $(function() {
           break;
       }
 
-      $(tab).find('span').html(numItems);
+      $(tab).find('span').html(numItems.toString());
     });
   };
 
