@@ -189,11 +189,18 @@ $(function() {
         const json = (reader.result);
         const obj = JSON.parse(json);
         const itemsToImport = filterByKey(obj, sharedStorageKey);
-        sharedStorage.set(itemsToImport, () => {
-          const err = chrome.runtime.lastError;
-          if (err) console.log(err)
-          else console.log(`Imported ${Object.keys(itemsToImport).length} items.`)
-        });
+        if (!jQuery.isEmptyObject(itemsToImport)) {
+          sharedStorage.set(itemsToImport, () => {
+            const err = chrome.runtime.lastError;
+            if (err) {
+              console.log(err)
+            } else {
+              console.log(
+                `Imported ${Object.keys(itemsToImport).length} items.`)
+              chrome.runtime.reload();
+            }
+          });
+        }
       }
       reader.readAsText(file);
     })
@@ -206,11 +213,16 @@ $(function() {
       // Don't just call clear, in case storage contains other types of data
       sharedStorage.get(null, items => {
         const keysToDelete = Object.keys(items).filter(sharedStorageKey);
-        sharedStorage.remove(keysToDelete, () => {
-          const err = chrome.runtime.lastError;
-          if (err) console.log(err)
-          else console.log(`Deleted ${keysToDelete.length} items.`)
-        });
+        if (keysToDelete.length !== 0) {
+          sharedStorage.remove(keysToDelete, () => {
+            const err = chrome.runtime.lastError;
+            if (err) {
+              console.log(err)
+            } else {
+              console.log(`Deleted ${keysToDelete.length} items.`)
+              chrome.runtime.reload();
+            }
+          });}
       });
     }
   };
