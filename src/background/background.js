@@ -33,6 +33,10 @@ SW.methods.addObjectToStore = function(object) {
   store && store.push(object);
 };
 
+/**
+ * @param objectKey {string}
+ * @param storeItems {Array}
+ */
 SW.methods.removeObjectFromStore = function(objectKey, storeItems) {
   var isObjectRemoved = false;
 
@@ -190,7 +194,7 @@ SW.methods.sendMessageToContentScript = function(message, options) {
 
 SW.methods.sendWatchStatus = function(isPageWatched, url) {
   var message = { messageType: 'watchStatus', watchStatus: isPageWatched };
-  
+
   SW.methods.sendMessageToContentScript(message, {
     url: url /*Send message to all tabs with this URL */
   });

@@ -145,6 +145,76 @@ $(function() {
     });
   };
 
+  // TODO change to chrome.storage.sync in future (https://github.com/sachinjain024/stackeye/issues/33)
+  const sharedStorage = chrome.storage.local;
+
+  /**
+   * @param obj {Object}
+   * @param predicate {(s: string) => boolean}
+   */
+  // https://stackoverflow.com/a/48294085/14379
+  const filterByKey = (obj, predicate) =>
+    Object.keys(obj)
+      .filter(key => predicate(key))
+      .reduce((acc, k) => {
+        acc[k] = obj[k];
+        return acc;
+      }, {});
+
+  /** @param key {string} */
+  const sharedStorageKey = key =>
+    key.startsWith('question:') || key.startsWith('user:');
+
+  NP.methods.exportData = function() {
+    sharedStorage.get(null, items => {
+      const itemsToExport = filterByKey(items, sharedStorageKey);
+      const json = JSON.stringify(itemsToExport);
+      const mediaType = 'application/json';
+      const a = window.document.createElement('a');
+      a.download = 'stackeye-export.json';
+      const blob = new Blob([json], { type: mediaType })
+      a.href = URL.createObjectURL(blob);
+      a.click();
+    });
+  }
+
+  NP.methods.importData = function() {
+    const input = window.document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.addEventListener('change', _ev => {
+      const file = input.files[0];
+      const reader = new FileReader()
+      reader.onload = ev => {
+        /** @type {string} */
+        const json = (reader.result);
+        const obj = JSON.parse(json);
+        const itemsToImport = filterByKey(obj, sharedStorageKey);
+        sharedStorage.set(itemsToImport, () => {
+          const err = chrome.runtime.lastError;
+          if (err) console.log(err)
+          else console.log(`Imported ${Object.keys(itemsToImport).length} items.`)
+        });
+      }
+      reader.readAsText(file);
+    })
+    input.click();
+  };
+
+  NP.methods.deleteAll = function() {
+    const message = $(this).attr('data-message')
+    if (window.confirm(message)) {
+      // Don't just call clear, in case storage contains other types of data
+      sharedStorage.get(null, items => {
+        const keysToDelete = Object.keys(items).filter(sharedStorageKey);
+        sharedStorage.remove(keysToDelete, () => {
+          const err = chrome.runtime.lastError;
+          if (err) console.log(err)
+          else console.log(`Deleted ${keysToDelete.length} items.`)
+        });
+      });
+    }
+  };
+
   NP.methods.init = function() {
     Shared.methods.renderItems(
       NP.vars.notifications,
@@ -225,4 +295,7 @@ $(function() {
   $('.se-tab').click(NP.methods.showTab);
   $('.deleter').click(NP.methods.removeSelectedItems);
   $('a.link').click(NP.methods.removeNotificationItem);
+  $('#data-export').click(NP.methods.exportData);
+  $('#data-import').click(NP.methods.importData);
+  $('#data-delete').click(NP.methods.deleteAll);
 });

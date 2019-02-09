@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="/src/shared/main.css" />
     <link rel="stylesheet" type="text/css" href="/src/pages/index/np.css" />
   </head>
- 
+
   <body>
     <div class="header np-header">
       <img src="/resources/images/icon_so_48.png" class="icon-stackoverflow">
@@ -28,6 +28,9 @@
           </li>
           <li class="user-list-option">
             <a href="#" data-targetId="users-area" class="se-tab">Users<span></span></a>
+          </li>
+          <li class="system-list-option">
+            <a href="#" data-targetId="system-area" class="se-tab">System<span></span></a>
           </li>
         </ul>
       </div>
@@ -61,6 +64,21 @@
         <button id="user-deleter" class="pure-button pure-button-error deleter"
             disabled="true" data-objectType="user"
             data-message="Are you sure you want to unfollow selected users ?">Unfollow
+        </button>
+      </div>
+
+      <div id="system-area" class="category-area hidden">
+        <button id="data-export" class="pure-button pure-button-normal importexport"
+            data-objectType="data"
+            data-message="Are you sure you want to export data ?">Export
+        </button>
+        <button id="data-import" class="pure-button pure-button-normal importexport"
+            data-objectType="data"
+            data-message="Are you sure you want to import data ?">Import
+        </button>
+        <button id="data-delete" class="pure-button pure-button-normal importexport"
+            data-objectType="data"
+            data-message="Are you sure you want to clear all followed users and questions ?">DELETE
         </button>
       </div>
 
