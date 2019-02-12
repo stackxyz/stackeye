@@ -88,9 +88,20 @@ Shared.methods.renderItems = function(itemList, $listContainer, getMarkupMethod,
 };
 
 Shared.methods.removeItem = function(objectKey, objectType) {
-  var store = BG.SW.maps.ObjectTypeToStoreMap[objectType];
+  const store = BG.SW.maps.ObjectTypeToStoreMap[objectType];
 
   BG.SW.methods.removeObjectFromStore(objectKey, store);
   BG.SW.methods.deleteObject(objectKey);
   BG.SW.methods.updateBadgeText();
+};
+
+Shared.methods.getCurrentDate = function() {
+  const d = new Date();
+  let month = String(d.getMonth() + 1);
+  let date = String(d.getDate());
+
+  month = month.length < 2 ? '0' + month : month;
+  date = date.length < 2 ? '0' + date : date;
+
+  return [d.getFullYear(), month, date].join('-');
 };

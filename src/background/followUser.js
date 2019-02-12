@@ -93,14 +93,16 @@ SW.methods.fetchUserNotification = function(userIds, domain, fromDate) {
  */
 SW.methods.fetchUserNotifications = function() {
   var usersInSite = SW.methods.createMapOfUsersInDomain(),
-    currentTime = parseInt(Date.now()/1000),
+    currentTime = parseInt((Date.now()/1000).toString()),
     fromDate = currentTime - SW.vars.TIME.T_30_MIN;
 
   chrome.storage.local.get('userNotificationsLastFetchDate', function(o) {
-    var lastFetchDate = o['userNotificationsLastFetchDate'] || fromDate;
-    for (var site in usersInSite) {
+    const lastFetchDate = o['userNotificationsLastFetchDate'] || fromDate;
+
+    for (const site in usersInSite) {
       SW.methods.fetchUserNotification(usersInSite[site], site, lastFetchDate);
     }
+
     chrome.storage.local.set({ userNotificationsLastFetchDate: currentTime });
   });
 };
@@ -108,7 +110,7 @@ SW.methods.fetchUserNotifications = function() {
 SW.methods.getUserObjectFromStore = function(objectKey) {
   var result = {};
   SW.stores.userStore.forEach(function(userObject) {
-    if (userObject['objectKey'] == objectKey) {
+    if (userObject['objectKey'] === objectKey) {
       result = userObject;
     }
   });

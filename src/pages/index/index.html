@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="/src/shared/main.css" />
     <link rel="stylesheet" type="text/css" href="/src/pages/index/np.css" />
   </head>
- 
+
   <body>
     <div class="header np-header">
       <img src="/resources/images/icon_so_48.png" class="icon-stackoverflow">
@@ -28,6 +28,9 @@
           </li>
           <li class="user-list-option">
             <a href="#" data-targetId="users-area" class="se-tab">Users<span></span></a>
+          </li>
+          <li class="system-list-option">
+            <a href="#" data-targetId="settings-area" class="se-tab">System<span></span></a>
           </li>
         </ul>
       </div>
@@ -62,6 +65,91 @@
             disabled="true" data-objectType="user"
             data-message="Are you sure you want to unfollow selected users ?">Unfollow
         </button>
+      </div>
+
+      <div id="settings-area" class="category-area hidden">
+
+        <div class="settings-grid se-list">
+          <div class="pure-g">
+            <!-- Export Data Options -->
+            <div class="pure-u-1-2">
+              <div class="setting-item">
+                <div class="setting-header">
+                  <h2>Export Data</h2>
+                </div>
+                <p class="setting-description">
+                  Using this option, you can export list of followed questions and users.
+                  Please note for performance reasons we do not export/import notification data.
+                </p>
+                <div class="cta-container align-right">
+                  <button id="data-export" class="pure-button pure-button-normal setting-button"
+                          data-objectType="data"
+                          data-message="Are you sure you want to export data ?">Export
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="pure-u-1-2">
+              <div class="setting-item">
+                <div class="setting-header">
+                  <h2>Import Data</h2>
+                </div>
+                <p class="setting-description">
+                  Using this option, you can import list of questions and users.
+                  After importing, you will get notifications for the imported questions and users too.
+                </p>
+                <div class="cta-container align-right">
+                  <button id="data-import" class="pure-button pure-button-normal setting-button"
+                          data-objectType="data"
+                          data-message="Are you sure you want to import data ?">Import
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pure-g">
+            <!-- Clear Questions & Users list -->
+            <div class="pure-u-1-2">
+              <div class="setting-item">
+                <div class="setting-header">
+                  <h2>Clear Questions & Users</h2>
+                </div>
+                <p class="setting-description">
+                  Using this option, you can clear list of followed questions & users.
+                  Please note that once data is deleted, it cannot be reverted!
+                  We recommend you to take backup using export before doing this operation.
+                </p>
+                <div class="cta-container align-right">
+                  <button id="questions-users-clear-button" class="pure-button pure-button-normal setting-button"
+                          data-objectType="data"
+                          data-message="Are you sure you want to clear all followed users and questions ?">Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Clear Questions & Users Notifications -->
+            <div class="pure-u-1-2">
+              <div class="setting-item">
+                <div class="setting-header">
+                  <h2>Clear Notifications</h2>
+                </div>
+                <p class="setting-description">
+                  Using this option, you can clear all notifications.
+                  Please note that once data is deleted, it cannot be reverted!
+                </p>
+                <div class="cta-container align-right">
+                  <button id="notifications-clear-button" class="pure-button pure-button-normal setting-button"
+                          data-objectType="data"
+                          data-message="Are you sure you want to clear all notifications?">Clear Notifications
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>

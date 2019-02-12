@@ -141,8 +141,121 @@ $(function() {
           break;
       }
 
-      $(tab).find('span').html(numItems);
+      $(tab).find('span').html(numItems.toString());
     });
+  };
+
+  // TODO change to chrome.storage.sync in future (https://github.com/sachinjain024/stackeye/issues/33)
+  const sharedStorage = chrome.storage.local;
+
+  /**
+   * @param obj {Object}
+   * @param predicate {(s: string) => boolean}
+   */
+  // https://stackoverflow.com/a/48294085/14379
+  const filterByKey = (obj, predicate) =>
+    Object.keys(obj)
+      .filter(key => predicate(key))
+      .reduce((acc, k) => {
+        acc[k] = obj[k];
+        return acc;
+      }, {});
+
+  /** @param key {string} */
+  const sharedStorageKey = key => key.startsWith('question:') || key.startsWith('user:');
+
+  /** @param key {String} */
+  const notificationKeyFilter = key => key.indexOf('notification') > -1;
+
+  NP.methods.exportData = function() {
+    sharedStorage.get(null, items => {
+      const itemsToExport = filterByKey(items, sharedStorageKey);
+      const json = JSON.stringify(itemsToExport, null, 2);
+      const mediaType = 'application/json';
+      const blob = new Blob([json], { type: mediaType });
+
+      // Trigger Click on anchor element so file starts downloading
+      const a = window.document.createElement('a');
+      a.download = `stackeye-export-${Shared.methods.getCurrentDate()}.json`;
+      a.href = URL.createObjectURL(blob);
+      a.click();
+    });
+  };
+
+  NP.methods.importData = function() {
+    const input = window.document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.addEventListener('change', _ev => {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = ev => {
+        /** @type {string} */
+        const json = (reader.result);
+        const obj = JSON.parse(json);
+        const itemsToImport = filterByKey(obj, sharedStorageKey);
+        if (!jQuery.isEmptyObject(itemsToImport)) {
+          sharedStorage.set(itemsToImport, () => {
+            const err = chrome.runtime.lastError;
+            if (err) {
+              console.log(err)
+            } else {
+              // Reload the new information in all stores
+              BG.SW.methods.createStores();
+              alert(`Imported ${Object.keys(itemsToImport).length} objects successfully!`);
+              window.location.reload();
+            }
+          });
+        }
+      };
+      reader.readAsText(file);
+    });
+    input.click();
+  };
+
+  NP.methods.deleteAllQuestionsAndUsers = function() {
+    const message = $(this).attr('data-message');
+
+    if (window.confirm(message)) {
+      // Don't just call clear, in case storage contains other types of data
+      sharedStorage.get(null, items => {
+        const keysToDelete = Object.keys(items).filter(sharedStorageKey);
+        if (keysToDelete.length !== 0) {
+          sharedStorage.remove(keysToDelete, () => {
+            const err = chrome.runtime.lastError;
+            if (err) {
+              console.log(err);
+            } else {
+              BG.SW.methods.createStores();
+              alert(`Deleted ${keysToDelete.length} items.`);
+              window.location.reload();
+            }
+          });
+        }
+      });
+    }
+  };
+
+  NP.methods.deleteAllNotifications = function() {
+    const message = $(this).attr('data-message');
+
+    if (window.confirm(message)) {
+      // Don't just call clear, in case storage contains other types of data
+      sharedStorage.get(null, items => {
+        const keysToDelete = Object.keys(items).filter(notificationKeyFilter);
+        if (keysToDelete.length !== 0) {
+          sharedStorage.remove(keysToDelete, () => {
+            const err = chrome.runtime.lastError;
+            if (err) {
+              console.log(err);
+            } else {
+              BG.SW.methods.createStores();
+              alert(`Deleted ${keysToDelete.length} items.`);
+              window.location.reload();
+            }
+          });
+        }
+      });
+    }
   };
 
   NP.methods.init = function() {
@@ -225,4 +338,8 @@ $(function() {
   $('.se-tab').click(NP.methods.showTab);
   $('.deleter').click(NP.methods.removeSelectedItems);
   $('a.link').click(NP.methods.removeNotificationItem);
+  $('#data-export').click(NP.methods.exportData);
+  $('#data-import').click(NP.methods.importData);
+  $('#questions-users-clear-button').click(NP.methods.deleteAllQuestionsAndUsers);
+  $('#notifications-clear-button').click(NP.methods.deleteAllNotifications);
 });
