@@ -81,7 +81,29 @@
   width: 6rem;
 }
 
-.importexport {
-  bottom: 1rem;
-  width: 6rem;
+.settings-grid {
+  padding: 10px;
+}
+
+.setting-item {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  background: rgba(253,253,253,0.8);
+  margin: 5px;
+}
+
+.setting-item .setting-name {
+  text-transform: uppercase;
+}
+
+.setting-item .setting-description {
+  font-size: 90%;
+  margin: 0.4em 0;
+}
+
+.setting-button {
+  color: #fff;
+  background: #1b98f8;
+  margin: 0.5em 0;
 }

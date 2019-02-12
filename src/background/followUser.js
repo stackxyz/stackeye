@@ -97,10 +97,12 @@ SW.methods.fetchUserNotifications = function() {
     fromDate = currentTime - SW.vars.TIME.T_30_MIN;
 
   chrome.storage.local.get('userNotificationsLastFetchDate', function(o) {
-    var lastFetchDate = o['userNotificationsLastFetchDate'] || fromDate;
-    for (var site in usersInSite) {
+    const lastFetchDate = o['userNotificationsLastFetchDate'] || fromDate;
+
+    for (const site in usersInSite) {
       SW.methods.fetchUserNotification(usersInSite[site], site, lastFetchDate);
     }
+
     chrome.storage.local.set({ userNotificationsLastFetchDate: currentTime });
   });
 };
@@ -108,7 +110,7 @@ SW.methods.fetchUserNotifications = function() {
 SW.methods.getUserObjectFromStore = function(objectKey) {
   var result = {};
   SW.stores.userStore.forEach(function(userObject) {
-    if (userObject['objectKey'] == objectKey) {
+    if (userObject['objectKey'] === objectKey) {
       result = userObject;
     }
   });

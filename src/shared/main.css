@@ -22,6 +22,10 @@ button {
   float: right;
 }
 
+.align-right {
+  text-align: right;
+}
+
 .bold {
   font-weight: bold;
 }

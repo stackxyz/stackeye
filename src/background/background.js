@@ -29,7 +29,7 @@ SW.methods.deleteObject = function(objectKey, callback) {
 SW.methods.addObjectToStore = function(object) {
   if (object == null) return;
 
-  var store = SW.maps.ObjectTypeToStoreMap[object.objectType];
+  const store = SW.maps.ObjectTypeToStoreMap[object.objectType];
   store && store.push(object);
 };
 
@@ -38,10 +38,10 @@ SW.methods.addObjectToStore = function(object) {
  * @param storeItems {Array}
  */
 SW.methods.removeObjectFromStore = function(objectKey, storeItems) {
-  var isObjectRemoved = false;
+  const isObjectRemoved = false;
 
-  for (var i = storeItems.length - 1; i >= 0; i--) {
-    if (typeof storeItems[i] == 'object' && storeItems[i]['objectKey'] == objectKey) {
+  for (const i = storeItems.length - 1; i >= 0; i--) {
+    if (typeof storeItems[i] === 'object' && storeItems[i]['objectKey'] === objectKey) {
       storeItems.splice(i, 1);
       isObjectRemoved = true;
     }
@@ -57,42 +57,15 @@ SW.methods.updateStorageArea = function(store) {
   });
 };
 
-/* @deprecated
-* Used for version <= 1.3
-* Use createStores > 1.3
-* TODO: Remove notificationStore and questionFeedStore from localStorage later in 1.4/1.5
-* */
-SW.methods.loadNotificationStore = function() {
-  chrome.storage.local.get('notificationStore', function(items) {
-    var notifications = items.notificationStore || [];
-
-    notifications.forEach(function(notification) {
-      notification.objectType = SW.OBJECT_TYPES.NEW_ACTIVITY_NOTIFICATION;
-      SW.methods.saveObject(notification, function() {
-        SW.methods.addObjectToStore(notification);
-        SW.methods.updateBadgeText();
-      });
-    });
-  });
-};
-
-SW.methods.loadQuestionFeedStore = function() {
-  chrome.storage.local.get('questionFeedStore', function(items) {
-    var questions = items.questionFeedStore || [];
-
-    questions.forEach(function(question) {
-      question.objectType = SW.OBJECT_TYPES.QUESTION;
-      SW.methods.saveObject(question, function() {
-        SW.methods.addObjectToStore(question);
-      });
-    });
-  });
-};
-
-// Will be used after data is migrated
 SW.methods.createStores = function() {
+  // Reset all stores
+  SW.stores.questionFeedStore.length = 0;
+  SW.stores.notificationStore.length = 0;
+  SW.stores.userStore.length = 0;
+  SW.stores.userNotificationStore.length = 0;
+
   chrome.storage.local.get(null, function(superObject) {
-    for (var key in superObject) {
+    for (const key in superObject) {
       SW.methods.addObjectToStore(superObject[key]);
       SW.methods.updateBadgeText();
     }
@@ -206,32 +179,32 @@ SW.methods.sendFollowStatus = function(isUserFollowed, url) {
 };
 
 SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
-  if (request.event == 'pageLoaded' && request.pageType == 'questionPage') {
+  if (request.event === 'pageLoaded' && request.pageType === 'questionPage') {
     SW.methods.clearNotification(request.url);
     SW.methods.isPageBeingWatched(request.url, SW.methods.sendWatchStatus /* callback */);
   }
 
-  if (request.event == 'pageLoaded' && request.pageType == 'profilePage') {
+  if (request.event === 'pageLoaded' && request.pageType === 'profilePage') {
     SW.methods.isUserFollowed(request.url, SW.methods.sendFollowStatus);
   }
 
-  if (request.action == 'watchPage') {
+  if (request.action === 'watchPage') {
     SW.methods.startWatchingQuestion(request.url, function() {
       SW.methods.sendWatchStatus(true, request.url);
     });
   }
 
-  if (request.action == 'unwatchPage') {
+  if (request.action === 'unwatchPage') {
     SW.methods.unwatchQuestion(request.url, SW.methods.sendWatchStatus);
   }
 
-  if (request.action == 'followUser') {
+  if (request.action === 'followUser') {
     SW.methods.followUser(request.url, function() {
       SW.methods.sendFollowStatus(true, request.url);
     });
   }
 
-  if (request.action == 'unfollowUser') {
+  if (request.action === 'unfollowUser') {
     SW.methods.unfollowUser(request.url, function() {
       SW.methods.sendFollowStatus(false, request.url);
     });
@@ -239,16 +212,8 @@ SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
 };
 
 SW.methods.init = function() {
-  // If data is migrated, then create stores from migrated data
-  chrome.storage.local.get('isDataMigrated', function(o) {
-    if (o.isDataMigrated) {
-      SW.methods.createStores();
-    } else {
-      SW.methods.loadQuestionFeedStore();
-      SW.methods.loadNotificationStore();
-      chrome.storage.local.set({'isDataMigrated': true}, null);
-    }
-  });
+  // Change with StorageService later
+  SW.methods.createStores();
 
   chrome.storage.onChanged.addListener(SW.methods.updateBadgeText);
 
