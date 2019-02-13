@@ -38,9 +38,9 @@ SW.methods.addObjectToStore = function(object) {
  * @param storeItems {Array}
  */
 SW.methods.removeObjectFromStore = function(objectKey, storeItems) {
-  const isObjectRemoved = false;
+  let isObjectRemoved = false;
 
-  for (const i = storeItems.length - 1; i >= 0; i--) {
+  for (let i = storeItems.length - 1; i >= 0; i--) {
     if (typeof storeItems[i] === 'object' && storeItems[i]['objectKey'] === objectKey) {
       storeItems.splice(i, 1);
       isObjectRemoved = true;
@@ -65,7 +65,7 @@ SW.methods.createStores = function() {
   SW.stores.userNotificationStore.length = 0;
 
   chrome.storage.local.get(null, function(superObject) {
-    for (const key in superObject) {
+    for (let key in superObject) {
       SW.methods.addObjectToStore(superObject[key]);
       SW.methods.updateBadgeText();
     }
