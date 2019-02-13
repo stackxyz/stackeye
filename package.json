@@ -1,6 +1,6 @@
 {
   "name": "stackeye",
-  "version": "19.2.12",
+  "version": "19.2.13",
   "description": "StackEye is a chrome extension which lets user watch questions on stackoverflow and other stackexchange sites.",
   "main": "app.js",
   "scripts": {
