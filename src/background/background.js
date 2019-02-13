@@ -191,7 +191,7 @@ SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
   if (request.action === 'watchPage') {
     SW.methods.startWatchingQuestion(request.url, function() {
       SW.methods.sendWatchStatus(true, request.url);
-    });
+    }).then();
   }
 
   if (request.action === 'unwatchPage') {
@@ -201,7 +201,7 @@ SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
   if (request.action === 'followUser') {
     SW.methods.followUser(request.url, function() {
       SW.methods.sendFollowStatus(true, request.url);
-    });
+    }).then();
   }
 
   if (request.action === 'unfollowUser') {
@@ -220,7 +220,7 @@ SW.methods.init = function() {
   // Add Listener for events from content scripts
   chrome.runtime.onMessage.addListener(SW.methods.contentScriptCommunicator);
 
-  setInterval(SW.methods.fetchNewNotifications, SW.vars.FETCH_NOTIFICATION_INTERVAL);
+  setInterval(SW.methods.fetchNewNotificationsAsync, SW.vars.FETCH_NOTIFICATION_INTERVAL);
   setInterval(SW.methods.fetchUserNotifications, SW.vars.USER_NOTIFICATION_FETCH_INTERVAL);
 };
 

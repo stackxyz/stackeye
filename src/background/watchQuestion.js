@@ -63,7 +63,7 @@ SW.methods.isQuestionWatchAllowed = function(questionUrl) {
   return { allowed: true };
 };
 
-SW.methods.startWatchingQuestion = function(questionUrl, sCallback) {
+SW.methods.startWatchingQuestion = async function(questionUrl, sCallback) {
   var QUESTION_WATCH_CRITERIA = SW.methods.isQuestionWatchAllowed(questionUrl),
     questionData,
     urlInfo;
@@ -78,7 +78,7 @@ SW.methods.startWatchingQuestion = function(questionUrl, sCallback) {
   }
 
   urlInfo = SW.methods.extractQuestionPageUrlInfo(questionUrl);
-  questionData = SW.methods.getQuestionData(urlInfo.questionId, urlInfo.domain);
+  questionData = await SW.methods.getQuestionDataAsync(urlInfo.questionId, urlInfo.domain);
   SW.methods.addQuestionToStore(questionData, sCallback);
 };
 
@@ -222,7 +222,7 @@ SW.methods.updateNotificationStore = function(updates, questionInfo) {
   }
 };
 
-SW.methods.fetchNewNotifications = function() {
+SW.methods.fetchNewNotificationsAsync = async function() {
   var currentTime = parseInt((Date.now()/1000).toString()),
     questionFeedStoreLength = SW.stores.questionFeedStore.length,
     question,
@@ -233,7 +233,9 @@ SW.methods.fetchNewNotifications = function() {
     question = SW.stores.questionFeedStore[i];
 
     if (currentTime >= question.nextFetchDate) {
-      questionUpdates = SW.methods.getQuestionUpdates(
+      // This might be slow (await in a loop), but if we fire them all off at once,
+      // we might trip the rate limiter.
+      questionUpdates = await SW.methods.getQuestionUpdatesAsync(
         question.questionId, question.domain, question.lastFetchDate);
 
       SW.modes.inDebugMode && console.log(question.title, questionUpdates);

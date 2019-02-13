@@ -26,54 +26,48 @@ SW.methods.getUrlForQuestionData = function(questionId, domain) {
     '&key=' + SW.constants.APP_KEY;
 };
 
-SW.methods.getQuestionData = function(questionId, domain) {
+SW.methods.getQuestionDataAsync = async function(questionId, domain) {
   var url = SW.methods.getUrlForQuestionData(questionId, domain),
     questionData = {};
 
   questionData['domain'] = domain;
   questionData['questionId'] = questionId;
 
-  $.ajax({
-    method: 'GET',
-    url: url,
-    async: false,
-    success: function(response) {
-      var qInfo = response.items[0];
+  try {
+    const response = await $.ajax({
+      method: 'GET',
+      url: url,
+    });
+    var qInfo = response.items[0];
 
-      questionData['last_edit_date'] = qInfo.last_edit_date;
-      questionData['creation_date'] = qInfo.creation_date;
-      questionData['title'] = qInfo.title;
-      questionData['link'] = qInfo.link;
-      questionData['owner'] = {};
-      questionData['owner']['display_name'] = qInfo.owner.display_name;
-      questionData['owner']['link'] = qInfo.owner.link;
-    },
-    error: function(e) {
-      console.error(SW.messages.ERROR_FETCH_QUESTION_DATA + ':' + url);
-      console.error(e);
-    }
-  });
+    questionData['last_edit_date'] = qInfo.last_edit_date;
+    questionData['creation_date'] = qInfo.creation_date;
+    questionData['title'] = qInfo.title;
+    questionData['link'] = qInfo.link;
+    questionData['owner'] = {};
+    questionData['owner']['display_name'] = qInfo.owner.display_name;
+    questionData['owner']['link'] = qInfo.owner.link;
+  } catch (e) {
+    console.error(SW.messages.ERROR_FETCH_QUESTION_DATA + ':' + url);
+    console.error(JSON.stringify(e));
+  }
 
   return questionData;
 };
 
-SW.methods.getAllAnswers = function(questionId, domain) {
+SW.methods.getAllAnswersAsync = async function(questionId, domain) {
   var url = SW.methods.getUrlForAllAnswers(questionId, domain),
     answerList = [];
 
-  $.ajax({
-    method: 'GET',
-    url: url,
-    async: false,
-    success: function(response) {
-      answerList = response.items;
-    },
-    error: function(e) {
-      console.error(SW.messages.ERROR_FETCH_ANSWER_LIST + ':' + url);
-      console.error(e);
-    }
-  });
-
+  try {
+    answerList = (await $.ajax({
+      method: 'GET',
+      url: url,
+    })).items;
+  } catch (e) {
+    console.error(SW.messages.ERROR_FETCH_ANSWER_LIST + ':' + url);
+    console.error(JSON.stringify(e));
+  }
   return answerList;
 };
 
@@ -87,7 +81,7 @@ SW.methods.getAllAnswerIds = function(answerList) {
   return answerIds;
 };
 
-SW.methods.getAllComments = function(ids, domain) {
+SW.methods.getAllCommentsAsync = async function (ids, domain) {
   var idString,
     url,
     commentList = [];
@@ -95,19 +89,16 @@ SW.methods.getAllComments = function(ids, domain) {
   idString = ids.join(';');
   url = SW.methods.getUrlForAllComments(idString, domain);
 
-  $.ajax({
-    method: 'GET',
-    url: url,
-    async: false,
-    success: function(response) {
-      commentList = response.items;
-    },
-    error: function(e) {
-      console.error(SW.messages.ERROR_FETCH_COMMENT_LIST + ':' + url);
-      console.error(e);
-    }
-  });
-
+  try {
+    const response = await $.ajax({
+      method: 'GET',
+      url: url,
+    });
+    commentList = response.items;
+  } catch (e) {
+    console.error(SW.messages.ERROR_FETCH_COMMENT_LIST + ':' + url);
+    console.error(JSON.stringify(e));
+  }
   return commentList;
 };
 
@@ -116,19 +107,18 @@ SW.methods.getAllComments = function(ids, domain) {
 */
 
 /*
-SW.methods.getQuestionUpdates = function(id, domain, lastFetchDate) {
+SW.methods.getQuestionUpdatesAsync = async function(id, domain, lastFetchDate) {
   var url = SW.methods.getUrlForQuestionUpdates(id, domain, lastFetchDate),
     questionUpdates = [];
 
-  $.ajax({
+  await $.ajax({
     method: 'GET',
     url: url,
-    async: false,
     success: function(response) {
       questionUpdates = response.items;
     },
     error: function(e) {
-      console.error(e);
+      console.error(JSON.stringify(e));
     }
   });
 
@@ -155,20 +145,20 @@ SW.methods.filterByCreationDate = function(list, lastFetchDate, timeline_type) {
   return filteredList;
 };
 
-SW.methods.getQuestionUpdates = function(id, domain, lastFetchDate) {
+SW.methods.getQuestionUpdatesAsync = async function(id, domain, lastFetchDate) {
   var answerList,
     answerIds,
     commentList,
     questionUpdates;
 
-  answerList = SW.methods.getAllAnswers(id, domain);
+  answerList = await SW.methods.getAllAnswersAsync(id, domain);
   answerIds = SW.methods.getAllAnswerIds(answerList);
 
   // Add questionId to answerIds as well because we want to get comments on question as well
   answerIds.push(id);
 
   // Fetch all comments on all answers and on question 
-  commentList = SW.methods.getAllComments(answerIds, domain);
+  commentList = await SW.methods.getAllCommentsAsync(answerIds, domain);
 
   answerList = SW.methods.filterByCreationDate(answerList, lastFetchDate, SW.constants.ANSWER);
   commentList = SW.methods.filterByCreationDate(commentList, lastFetchDate, SW.constants.NEW_COMMENT);
@@ -200,26 +190,23 @@ SW.methods.getUrlForUserPosts = function(userId, domain, fromDate) {
  *
  * @param userIds Array of userIds
  * @param domain
- * @returns {Array}
+ * @returns {Promise<Array>}
  * @param fromDate
  */
-SW.methods.getUserNotifications = function(userIds, domain, fromDate) {
+SW.methods.getUserNotificationsAsync = async function (userIds, domain, fromDate) {
   var idString = userIds.join(';'),
     url = SW.methods.getUrlForUserPosts(idString, domain, fromDate),
     userNotifications = [];
 
-  $.ajax({
-    method: 'GET',
-    url: url,
-    async: false,
-    success: function(response) {
-      userNotifications = response.items;
-    },
-    error: function(e) {
-      console.error(e);
-    }
-  });
-
+  try {
+    const response = await $.ajax({
+      method: 'GET',
+      url: url,
+    });
+    userNotifications = response.items;
+  } catch (e) {
+    console.error(JSON.stringify(e));
+  }
   return userNotifications;
 };
 
@@ -242,23 +229,21 @@ SW.methods.getUrlForUserDetails = function(userId, domain) {
  *
  * @param userId
  * @param domain
- * @returns {*}
+ * @returns {Promise<*>}
  */
-SW.methods.getUserDetails = function(userId, domain) {
+SW.methods.getUserDetailsAsync = async function(userId, domain) {
   var url = SW.methods.getUrlForUserDetails(userId, domain);
   var userInfo = null;
 
-  $.ajax({
-    method: 'GET',
-    url: url,
-    async: false,
-    success: function(response) {
-      userInfo = response.items[0];
-    },
-    error: function(e) {
-      console.error(e);
-    }
-  });
+  try {
+    const response = await $.ajax({
+      method: 'GET',
+      url: url,
+    });
+    userInfo = response.items[0];
+  } catch (e) {
+    console.error(JSON.stringify(e));
+  }
 
   return userInfo;
 };
@@ -273,22 +258,20 @@ SW.methods.getUrlForUserTags = function(userId, domain) {
   return url;
 };
 
-SW.methods.fetchUserTags = function(userIds, domain) {
+SW.methods.fetchUserTagsAsync = async function(userIds, domain) {
   var idString = userIds.join(';'),
     url = SW.methods.getUrlForUserTags(idString, domain),
     userTags = [];
 
-  $.ajax({
-    method: 'GET',
-    url: url,
-    async: false,
-    success: function(response) {
-      userTags = response.items;
-    },
-    error: function(e) {
-      console.error(e);
-    }
-  });
+  try {
+    const response = await $.ajax({
+      method: 'GET',
+      url: url,
+    });
+    userTags = response.items;
+  } catch (e) {
+    console.error(JSON.stringify(e));
+  }
 
   return userTags;
 };

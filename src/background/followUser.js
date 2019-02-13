@@ -25,10 +25,10 @@ SW.methods.isUserFollowed = function(profilePageUrl, callback) {
  * @param profilePageUrl
  * @param callback
  */
-SW.methods.followUser = function(profilePageUrl, callback) {
+SW.methods.followUser = async function(profilePageUrl, callback) {
   var urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
-    userDetailsObject = SW.methods.getUserDetails(urlInfo.userId, urlInfo.domain),
-    userTags = SW.methods.fetchUserTags([urlInfo.userId], urlInfo.domain) || [],
+    userDetailsObject = await SW.methods.getUserDetailsAsync(urlInfo.userId, urlInfo.domain),
+    userTags = await SW.methods.fetchUserTagsAsync([urlInfo.userId], urlInfo.domain) || [],
     objectKey;
 
   callback = callback || function() {};
@@ -72,10 +72,10 @@ SW.methods.unfollowUser = function(profilePageUrl, callback) {
  * @param domain
  * @param fromDate
  */
-SW.methods.fetchUserNotification = function(userIds, domain, fromDate) {
+SW.methods.fetchUserNotificationAsync = async function(userIds, domain, fromDate) {
   var notificationItem,
     objectKey,
-    notifications = SW.methods.getUserNotifications(userIds, domain, fromDate);
+    notifications = await SW.methods.getUserNotificationsAsync(userIds, domain, fromDate);
 
   for (var i = 0; i < notifications.length; i++) {
     notificationItem = notifications[i];
@@ -96,11 +96,14 @@ SW.methods.fetchUserNotifications = function() {
     currentTime = parseInt((Date.now()/1000).toString()),
     fromDate = currentTime - SW.vars.TIME.T_30_MIN;
 
-  chrome.storage.local.get('userNotificationsLastFetchDate', function(o) {
+  chrome.storage.local.get('userNotificationsLastFetchDate', async function (o) {
     const lastFetchDate = o['userNotificationsLastFetchDate'] || fromDate;
 
     for (const site in usersInSite) {
-      SW.methods.fetchUserNotification(usersInSite[site], site, lastFetchDate);
+      // This might be slow (await in a loop), but if we fire them all off at once,
+      // we might trip the rate limiter.
+      await SW.methods.fetchUserNotificationAsync(usersInSite[site], site,
+        lastFetchDate);
     }
 
     chrome.storage.local.set({ userNotificationsLastFetchDate: currentTime });
