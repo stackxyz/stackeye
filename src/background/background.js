@@ -38,9 +38,9 @@ SW.methods.addObjectToStore = function(object) {
  * @param storeItems {Array}
  */
 SW.methods.removeObjectFromStore = function(objectKey, storeItems) {
-  const isObjectRemoved = false;
+  var isObjectRemoved = false;
 
-  for (const i = storeItems.length - 1; i >= 0; i--) {
+  for (var i = storeItems.length - 1; i >= 0; i--) {
     if (typeof storeItems[i] === 'object' && storeItems[i]['objectKey'] === objectKey) {
       storeItems.splice(i, 1);
       isObjectRemoved = true;
