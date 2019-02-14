@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <link rel="stylesheet" type="text/css" href="../libs/pure-0.3.0.css" />
+    <link rel="stylesheet" type="text/css" href="../libs/font-awesome-4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="../shared/main.css" />
+    <link rel="stylesheet" type="text/css" href="popup.css" />
+  </head>
+
+  <body class="popup-page">
+    <!-- Empty A tag to hide focus on 1st anchor tag -->
+    <a href="#"></a>
+
+    <div class="header">
+      <img src="/resources/images/icon_so_48.png" class="icon-stackoverflow"/>
+      <span class="se-white">Stack</span>
+      <span class="se-blue">Eye</span>
+      <span class="se-dash"> - </span>
+      <span class="se-line">Keep Watching Keep Learning</span>
+    </div>
+
+    <div class="content">
+
+      <div class="ribbon">
+        <a href="https://github.com/sachinjain024/stackeye" target="_blank"><img width="119" height="119" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_green_007200.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
+      </div>
+
+      <div class="divider tabContainer">
+        <span class="heading">Notifications</span>
+        <a href="#" data-targetId="notification-area" class="se-tab selected">Questions<span></span></a>
+        <a href="#" data-targetId="user-notification-area" class="se-tab">Users<span></span></a>
+      </div>
+
+      <div id="notification-area" class="se-category">
+        <ul class="notification-list se-list">
+          <li class="default-template">Hooray!! No Unread Notifications</li>
+        </ul>
+      </div>
+
+      <div id="user-notification-area" class="se-category hidden">
+        <ul class="user-notification-list se-list">
+          <li class="default-template">Hooray!! No Unread Notifications</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      <div class="app-footer-message pure-g">
+        <div class="message-text pure-u-3-4">Only Top 5 notifications are available in popup.</div>
+        <div class="pure-u-1-4">
+          <button id="swo_view_notifications" class="pure-button pure-button-primary">View all</button>
+        </div>
+      </div>
+
+      <div class="feedback-section">
+        <span class="message-text">Love StackEye</span>
+        <a href="https://paypal.me/sachinjain024/9" target="_blank">
+          <img class="donate-button-image" src="/resources/images/donate_button.gif">
+        </a>
+      </div>
+    </div>
+
+    <!-- Script area -->
+    <script type="text/javascript" src="../libs/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="/src/shared/shared.js"></script>
+    <script type="text/javascript" src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,107 @@
+body {
+  width: 400px;
+}
+
+.content {
+  margin-bottom: 80px;
+}
+
+.popup-page .divider {
+  background-color: #ccc;
+  margin: 0;
+  padding: 5px 0.5rem;
+  font-size: 12px;
+}
+
+.popup-page a {
+  text-decoration: none;
+}
+
+.tabContainer .heading {
+  margin-right: 1rem;
+  color: #000000;
+}
+
+.se-tab {
+  margin-right: 0.5rem;
+  background-color: #999;
+  color: white;
+  padding: 3px 0.5rem;
+  border-radius: 10px;
+}
+
+.se-tab.selected {
+  background-color: #4b4b4b;
+}
+
+.tabContainer > a > span {
+  background-color: #ccc;
+  padding: 0 5px;
+  margin-left: 5px;
+  border-radius: 5px;
+  color: black;
+  transition: 0.1s linear box-shadow;
+}
+
+.content-container {
+  width: 330px;
+}
+
+.se-list li:hover .trash-icon {
+  display: inline;
+  position: absolute;
+  right: 10px;
+  top: 1rem;
+  background: #fff;
+  border-radius: 2px;
+  padding: 1px 1px 1px 0;
+  cursor: pointer;
+}
+
+/* Just show only 5 items on popup */
+.se-list li:nth-of-type(n+6) {
+  display: none;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.app-footer-message {
+  padding: 5px;
+  background: #ccc;
+}
+
+.message-text {
+  line-height: 30px;
+  font-size: 13px;
+  color: rgb(95,99,104);
+  padding: 0 5px;
+  box-sizing: border-box;
+}
+
+.feedback-section {
+  background: #535;
+  line-height: 25px;
+  text-align: center;
+  padding: 5px;
+  color: #ccc;
+}
+
+.donate-button-image {
+  margin-bottom: -9px;
+  margin-left: 3px;
+}
+
+.feedback-section .message-text {
+  color: #efefef;
+}
+
+.ribbon {
+  position: absolute;
+  right: 0;
+  float: right;
+}
