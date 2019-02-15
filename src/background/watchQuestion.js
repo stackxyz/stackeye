@@ -9,16 +9,13 @@ SW.methods.isQuestionInStore = function(questionId, domain) {
 };
 
 /* This method is being called whenever question page is loaded */
-SW.methods.isPageBeingWatched = function(questionPageUrl, watchSuccessCallback) {
-  var urlInfo = SW.methods.extractQuestionPageUrlInfo(questionPageUrl),
-    isUrlValid,
-    watchStatus = false;
+SW.methods.isPageBeingWatched = function(questionPageUrl) {
+  const urlInfo = SW.methods.extractQuestionPageUrlInfo(questionPageUrl),
+    isUrlValid = SW.methods.validateUrl(questionPageUrl);
 
-  isUrlValid = SW.methods.validateUrl(questionPageUrl);
-  if (isUrlValid) {
-    watchStatus = SW.methods.isQuestionInStore(urlInfo.questionId, urlInfo.domain);
-    watchSuccessCallback(watchStatus, questionPageUrl);
-  }
+  return isUrlValid
+    ? SW.methods.isQuestionInStore(urlInfo.questionId, urlInfo.domain)
+    : null;
 };
 
 SW.methods.removeQuestionFromStore = function(questionId, domain) {
@@ -30,7 +27,7 @@ SW.methods.removeQuestionFromStore = function(questionId, domain) {
   for (index = questionList.length - 1; index >= 0; index--) {
     question = questionList[index];
 
-    if (question.domain == domain && question.questionId == questionId) {
+    if (question.domain === domain && question.questionId === questionId) {
       questionList.splice(index, 1);
       IS_QUESTION_REMOVED = true;
       break;
@@ -42,7 +39,7 @@ SW.methods.removeQuestionFromStore = function(questionId, domain) {
 
 SW.methods.removeBulkQuestions = function(urls) {
   $.each(urls, function(index, url) {
-    var urlInfo = SW.methods.extractQuestionPageUrlInfo(url);
+    const urlInfo = SW.methods.extractQuestionPageUrlInfo(url);
     SW.methods.removeQuestionFromStore(urlInfo.questionId, urlInfo.domain);
     SW.methods.deleteObject(SW.OBJECT_TYPES.QUESTION + ':' + urlInfo.questionId);
   });
@@ -63,8 +60,8 @@ SW.methods.isQuestionWatchAllowed = function(questionUrl) {
   return { allowed: true };
 };
 
-SW.methods.startWatchingQuestion = async function(questionUrl, sCallback) {
-  var QUESTION_WATCH_CRITERIA = SW.methods.isQuestionWatchAllowed(questionUrl),
+SW.methods.startWatchingQuestionAsync = async function(questionUrl) {
+  let QUESTION_WATCH_CRITERIA = SW.methods.isQuestionWatchAllowed(questionUrl),
     questionData,
     urlInfo;
 
@@ -79,40 +76,37 @@ SW.methods.startWatchingQuestion = async function(questionUrl, sCallback) {
 
   urlInfo = SW.methods.extractQuestionPageUrlInfo(questionUrl);
   questionData = await SW.methods.getQuestionDataAsync(urlInfo.questionId, urlInfo.domain);
-  SW.methods.addQuestionToStore(questionData, sCallback);
+  await SW.methods.addQuestionToStoreAsync(questionData);
 };
 
-SW.methods.unwatchQuestion = function(questionUrl, sCallback) {
-  var isQuestionRemoved = false,
-    urlInfo = SW.methods.extractQuestionPageUrlInfo(questionUrl),
-    isUrlValid = SW.methods.validateUrl(questionUrl),
-    objectKey;
+SW.methods.unwatchQuestionAsync = async function(questionUrl) {
+  const urlInfo = SW.methods.extractQuestionPageUrlInfo(questionUrl),
+    isUrlValid = SW.methods.validateUrl(questionUrl);
 
   if (isUrlValid) {
-    isQuestionRemoved = SW.methods.removeQuestionFromStore(urlInfo.questionId, urlInfo.domain);
-    objectKey = SW.OBJECT_TYPES.QUESTION + ':' + urlInfo.questionId;
-    isQuestionRemoved && SW.methods.deleteObject(objectKey,
-      function() { sCallback(false /* watchStatus */);
-      });
+    const objectKey = SW.OBJECT_TYPES.QUESTION + ':' + urlInfo.questionId;
+    await SW.methods.deleteObject(objectKey);
+    SW.methods.removeQuestionFromStore(urlInfo.questionId, urlInfo.domain);
   } else {
     console.error(SW.messages.WARN_INVALID_URL);
   }
 };
 
-SW.methods.addQuestionToStore = function(question, sCallback) {
-  var currentTime = new Date().getTime();
+SW.methods.addQuestionToStoreAsync = async function(question) {
+  let currentTime = new Date().getTime();
   currentTime = parseInt((currentTime/1000).toString());
 
   question['lastFetchDate'] = currentTime;
   question['nextFetchDate'] = SW.methods.getNextFetchDate(question.lastFetchDate, question.creation_date);
   question['objectType'] = SW.OBJECT_TYPES.QUESTION;
 
-  SW.methods.saveObject(question, function() {
-    SW.stores.questionFeedStore.push(question);
-    SW.stores.questionFeedStore.sort(function(a,b) {
-      return a.nextFetchDate - b.nextFetchDate;
-    });
-    sCallback();
+  await SW.methods.saveObject(question);
+
+  // Add Question to In-Memory Queue.
+  // TODO: Ideally, stores should be a separate class which listens on chrome storage and update the store itself
+  SW.stores.questionFeedStore.push(question);
+  SW.stores.questionFeedStore.sort(function(a,b) {
+    return a.nextFetchDate - b.nextFetchDate;
   });
 };
 
@@ -136,17 +130,15 @@ SW.methods.removeNotificationFromStore = function(questionId, domain) {
 };
 
 SW.methods.clearNotification = function(url) {
-  var urlInfo,
-    IS_NOTIFICATION_REMOVED,
-    objectKey;
-
   if (SW.methods.validateUrl(url)) {
-    urlInfo = SW.methods.extractQuestionPageUrlInfo(url);
+    const urlInfo = SW.methods.extractQuestionPageUrlInfo(url),
+      isNotificationRemoved = SW.methods.removeNotificationFromStore(urlInfo.questionId, urlInfo.domain);
 
-    IS_NOTIFICATION_REMOVED = SW.methods.removeNotificationFromStore(urlInfo.questionId, urlInfo.domain);
-    if (IS_NOTIFICATION_REMOVED) {
-      objectKey = SW.OBJECT_TYPES.NEW_ACTIVITY_NOTIFICATION + ':' + urlInfo.questionId;
-      SW.methods.deleteObject(objectKey, SW.methods.updateBadgeText);
+    if (isNotificationRemoved) {
+      const objectKey = SW.OBJECT_TYPES.NEW_ACTIVITY_NOTIFICATION + ':' + urlInfo.questionId;
+      SW.methods
+        .deleteObject(objectKey)
+        .then(SW.methods.updateBadgeText);
     }
   }
 };
@@ -223,13 +215,13 @@ SW.methods.updateNotificationStore = function(updates, questionInfo) {
 };
 
 SW.methods.fetchNewNotificationsAsync = async function() {
-  var currentTime = parseInt((Date.now()/1000).toString()),
+  let currentTime = parseInt((Date.now()/1000).toString()),
     questionFeedStoreLength = SW.stores.questionFeedStore.length,
     question,
     questionUpdates,
     isQuestionUpdated = false;
 
-  for (var i = 0; i < questionFeedStoreLength; i++) {
+  for (let i = 0; i < questionFeedStoreLength; i++) {
     question = SW.stores.questionFeedStore[i];
 
     if (currentTime >= question.nextFetchDate) {
@@ -250,15 +242,12 @@ SW.methods.fetchNewNotificationsAsync = async function() {
       question.nextFetchDate = SW.methods.getNextFetchDate(
         question.lastFetchDate, question.creation_date);
 
-      SW.methods.saveObject(question, function() {
-        SW.stores.questionFeedStore.sort(function(a,b) {
-          return a.nextFetchDate - b.nextFetchDate;
-        });
-      });
+      await SW.methods.saveObject(question);
+      Shared.methods.sortArray(SW.stores.questionFeedStore, 'nextFetchDate');
 
       // Since we have fetched notifications for a question,
       // we will fetch notification for next question after 5mins
-      // to prevent throtlling of StackExchange API (so break here)
+      // to prevent throttling of StackExchange API (so break here)
       break;
     }
   }

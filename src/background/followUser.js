@@ -8,32 +8,26 @@ SW.methods.isUserInStore = function(userId) {
   return false;
 };
 
-SW.methods.isUserFollowed = function(profilePageUrl, callback) {
-  var urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
-    isUrlValid,
-    followStatus = false;
+SW.methods.isUserFollowed = function(profilePageUrl) {
+  const urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
+    isUrlValid = SW.methods.validateUrl(profilePageUrl);
 
-  isUrlValid = SW.methods.validateUrl(profilePageUrl);
-  if (isUrlValid) {
-    followStatus = SW.methods.isUserInStore(urlInfo.userId);
-    callback(followStatus, profilePageUrl);
-  }
+  return isUrlValid
+    ? SW.methods.isUserInStore(urlInfo.userId)
+    : null;
 };
 
 /**
  *
  * @param profilePageUrl
- * @param callback
  */
-SW.methods.followUser = async function(profilePageUrl, callback) {
+SW.methods.followUserAsync = async function(profilePageUrl) {
   var urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
     userDetailsObject = await SW.methods.getUserDetailsAsync(urlInfo.userId, urlInfo.domain),
     userTags = await SW.methods.fetchUserTagsAsync([urlInfo.userId], urlInfo.domain) || [],
     objectKey;
 
-  callback = callback || function() {};
-
-  var tags = [];
+  const tags = [];
   userTags.forEach(function(tagObject) {
     tags.push(tagObject.name);
   });
@@ -44,26 +38,21 @@ SW.methods.followUser = async function(profilePageUrl, callback) {
     userDetailsObject['tags'] = tags.join(',');
 
     objectKey = 'user' + ':' + userDetailsObject['user_id'];
-    SW.methods.saveObject(userDetailsObject, function() {
-      callback();
-      SW.methods.addObjectToStore(userDetailsObject);
-    }, objectKey);
+    await SW.methods.saveObject(userDetailsObject, objectKey);
+    SW.methods.addObjectToStore(userDetailsObject);
   }
 };
 
 /**
- *
+ * Unfollow user
  * @param profilePageUrl
- * @param callback Success Callback
  */
-SW.methods.unfollowUser = function(profilePageUrl, callback) {
-  var urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
+SW.methods.unfollowUserAsync = async function(profilePageUrl) {
+  const urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
     objectKey = SW.OBJECT_TYPES.USER + ':' + urlInfo.userId;
 
-  callback = callback || function() {};
-
   SW.methods.removeObjectFromStore(objectKey, SW.stores.userStore);
-  SW.methods.deleteObject(objectKey, callback);
+  await SW.methods.deleteObject(objectKey);
 };
 
 /**
@@ -84,7 +73,7 @@ SW.methods.fetchUserNotificationAsync = async function(userIds, domain, fromDate
     notificationItem['domain'] = domain;
 
     SW.methods.addObjectToStore(notificationItem);
-    SW.methods.saveObject(notificationItem, null, objectKey);
+    SW.methods.saveObject(notificationItem, objectKey).then();
   }
 };
 
