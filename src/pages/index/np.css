@@ -74,11 +74,16 @@
   max-width: 460px;
 }
 
-.deleter {
+.deleter, .report {
   position: absolute;
   bottom: 1rem;
   margin-left: 600px;
   width: 6rem;
+}
+
+.report a {
+  color: white;
+  text-decoration: none;
 }
 
 .settings-grid {
