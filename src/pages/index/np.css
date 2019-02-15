@@ -74,16 +74,34 @@
   max-width: 460px;
 }
 
-.deleter, .report {
+.deleter {
   position: absolute;
   bottom: 1rem;
   margin-left: 600px;
   width: 6rem;
 }
 
-.report a {
+.report-option {
+  float: right;
+  position: relative;
+  top: 2.5px;
+  left: 2.5px;
+}
+
+.report-option a {
+  font-size: 0.70rem;
+  background-color: rgba(250, 20, 20, 0.8);
   color: white;
-  text-decoration: none;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.report-option a:hover{
+  background-color: rgba(250, 20, 20, 0.8) !important;
+}
+
+.report-option a:focus{
+  background-color: rgba(250, 20, 20, 0.8) !important;
 }
 
 .settings-grid {
@@ -111,4 +129,8 @@
   color: #fff;
   background: #1b98f8;
   margin: 0.5em 0;
+}
+
+.ribbon {
+  position: absolute;
 }
