@@ -99,9 +99,3 @@ body {
 .feedback-section .message-text {
   color: #efefef;
 }
-
-.ribbon {
-  position: absolute;
-  right: 0;
-  float: right;
-}
