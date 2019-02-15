@@ -8,32 +8,26 @@ SW.methods.isUserInStore = function(userId) {
   return false;
 };
 
-SW.methods.isUserFollowed = function(profilePageUrl, callback) {
-  var urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
-    isUrlValid,
-    followStatus = false;
+SW.methods.isUserFollowed = function(profilePageUrl) {
+  const urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
+    isUrlValid = SW.methods.validateUrl(profilePageUrl);
 
-  isUrlValid = SW.methods.validateUrl(profilePageUrl);
-  if (isUrlValid) {
-    followStatus = SW.methods.isUserInStore(urlInfo.userId);
-    callback(followStatus, profilePageUrl);
-  }
+  return isUrlValid
+    ? SW.methods.isUserInStore(urlInfo.userId)
+    : null;
 };
 
 /**
  *
  * @param profilePageUrl
- * @param callback
  */
-SW.methods.followUser = function(profilePageUrl, callback) {
+SW.methods.followUserAsync = async function(profilePageUrl) {
   var urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
-    userDetailsObject = SW.methods.getUserDetails(urlInfo.userId, urlInfo.domain),
-    userTags = SW.methods.fetchUserTags([urlInfo.userId], urlInfo.domain) || [],
+    userDetailsObject = await SW.methods.getUserDetailsAsync(urlInfo.userId, urlInfo.domain),
+    userTags = await SW.methods.fetchUserTagsAsync([urlInfo.userId], urlInfo.domain) || [],
     objectKey;
 
-  callback = callback || function() {};
-
-  var tags = [];
+  const tags = [];
   userTags.forEach(function(tagObject) {
     tags.push(tagObject.name);
   });
@@ -44,26 +38,21 @@ SW.methods.followUser = function(profilePageUrl, callback) {
     userDetailsObject['tags'] = tags.join(',');
 
     objectKey = 'user' + ':' + userDetailsObject['user_id'];
-    SW.methods.saveObject(userDetailsObject, function() {
-      callback();
-      SW.methods.addObjectToStore(userDetailsObject);
-    }, objectKey);
+    await SW.methods.saveObject(userDetailsObject, objectKey);
+    SW.methods.addObjectToStore(userDetailsObject);
   }
 };
 
 /**
- *
+ * Unfollow user
  * @param profilePageUrl
- * @param callback Success Callback
  */
-SW.methods.unfollowUser = function(profilePageUrl, callback) {
-  var urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
+SW.methods.unfollowUserAsync = async function(profilePageUrl) {
+  const urlInfo = SW.methods.extractProfilePageUrlInfo(profilePageUrl),
     objectKey = SW.OBJECT_TYPES.USER + ':' + urlInfo.userId;
 
-  callback = callback || function() {};
-
   SW.methods.removeObjectFromStore(objectKey, SW.stores.userStore);
-  SW.methods.deleteObject(objectKey, callback);
+  await SW.methods.deleteObject(objectKey);
 };
 
 /**
@@ -72,10 +61,10 @@ SW.methods.unfollowUser = function(profilePageUrl, callback) {
  * @param domain
  * @param fromDate
  */
-SW.methods.fetchUserNotification = function(userIds, domain, fromDate) {
+SW.methods.fetchUserNotificationAsync = async function(userIds, domain, fromDate) {
   var notificationItem,
     objectKey,
-    notifications = SW.methods.getUserNotifications(userIds, domain, fromDate);
+    notifications = await SW.methods.getUserNotificationsAsync(userIds, domain, fromDate);
 
   for (var i = 0; i < notifications.length; i++) {
     notificationItem = notifications[i];
@@ -84,7 +73,7 @@ SW.methods.fetchUserNotification = function(userIds, domain, fromDate) {
     notificationItem['domain'] = domain;
 
     SW.methods.addObjectToStore(notificationItem);
-    SW.methods.saveObject(notificationItem, null, objectKey);
+    SW.methods.saveObject(notificationItem, objectKey).then();
   }
 };
 
@@ -96,11 +85,14 @@ SW.methods.fetchUserNotifications = function() {
     currentTime = parseInt((Date.now()/1000).toString()),
     fromDate = currentTime - SW.vars.TIME.T_30_MIN;
 
-  chrome.storage.local.get('userNotificationsLastFetchDate', function(o) {
+  chrome.storage.local.get('userNotificationsLastFetchDate', async function (o) {
     const lastFetchDate = o['userNotificationsLastFetchDate'] || fromDate;
 
     for (const site in usersInSite) {
-      SW.methods.fetchUserNotification(usersInSite[site], site, lastFetchDate);
+      // This might be slow (await in a loop), but if we fire them all off at once,
+      // we might trip the rate limiter.
+      await SW.methods.fetchUserNotificationAsync(usersInSite[site], site,
+        lastFetchDate);
     }
 
     chrome.storage.local.set({ userNotificationsLastFetchDate: currentTime });

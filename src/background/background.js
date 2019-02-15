@@ -4,9 +4,15 @@ SW.methods.printStorageItems = function() {
   })
 };
 
-SW.methods.saveObject = function(object, callback, objectKey) {
-  var storageObject = {};
-
+/**
+ * Saves object in chrome storage and returns a promise. Encapsulates error handling snad passes the error back to callee
+ * Callee can call .then()/.catch() on this to perform post save operation
+ * If saveObject is called from async method, callee can also call await on it
+ * @param object
+ * @param objectKey
+ * @returns {Promise<any>}
+ */
+SW.methods.saveObject = function(object, objectKey=undefined) {
   // By default questionId is used for creating objectKey
   if (!objectKey) {
     objectKey = object.objectType + ':' + object.questionId;
@@ -15,15 +21,40 @@ SW.methods.saveObject = function(object, callback, objectKey) {
   // Will be used at the time of deleting/updating this object
   object['objectKey'] = objectKey;
 
-  storageObject[objectKey] = object;
+  const storageObject = {
+    [objectKey]: object
+  };
 
-  callback = callback || function() {};
-  chrome.storage.local.set(storageObject, callback);
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.set(storageObject, (data) => {
+      const err = chrome.runtime.lastError;
+      if (err) {
+        console.error(err);
+        reject(err)
+      } else {
+        resolve(data);
+      }
+    });
+  });
 };
 
-SW.methods.deleteObject = function(objectKey, callback) {
-  callback = callback || function() {};
-  chrome.storage.local.remove(objectKey, callback);
+/**
+ * Wrapper over chrome.storage.remove. Deletes object (or multiple objects) from storage and returns a promise
+ * @param objectKey
+ * @returns {Promise<any>}
+ */
+SW.methods.deleteObject = function(objectKey) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.remove(objectKey, (data) => {
+      const err = chrome.runtime.lastError;
+      if (err) {
+        console.error(err);
+        reject(err)
+      } else {
+        resolve(data);
+      }
+    });
+  });
 };
 
 SW.methods.addObjectToStore = function(object) {
@@ -38,9 +69,9 @@ SW.methods.addObjectToStore = function(object) {
  * @param storeItems {Array}
  */
 SW.methods.removeObjectFromStore = function(objectKey, storeItems) {
-  var isObjectRemoved = false;
+  let isObjectRemoved = false;
 
-  for (var i = storeItems.length - 1; i >= 0; i--) {
+  for (let i = storeItems.length - 1; i >= 0; i--) {
     if (typeof storeItems[i] === 'object' && storeItems[i]['objectKey'] === objectKey) {
       storeItems.splice(i, 1);
       isObjectRemoved = true;
@@ -52,8 +83,13 @@ SW.methods.removeObjectFromStore = function(objectKey, storeItems) {
 
 SW.methods.updateStorageArea = function(store) {
   store = store || [];
-  store.forEach(function(object) {
-    SW.methods.saveObject(object, null, object['objectKey']);
+  const promiseArr = [];
+  store.forEach(object => {
+    promiseArr.push(SW.methods.saveObject(object, object['objectKey']));
+  });
+
+  Promise.all(promiseArr).then(() => {
+    console.log('Storage Area updates');
   });
 };
 
@@ -65,7 +101,7 @@ SW.methods.createStores = function() {
   SW.stores.userNotificationStore.length = 0;
 
   chrome.storage.local.get(null, function(superObject) {
-    for (const key in superObject) {
+    for (let key in superObject) {
       SW.methods.addObjectToStore(superObject[key]);
       SW.methods.updateBadgeText();
     }
@@ -133,11 +169,11 @@ SW.methods.validateUrl = function(url) {
   return true;
 };
 
-SW.methods.updateBadgeText = function(changes, areaName) {
+SW.methods.updateBadgeText = function() {
   /** @type {string|number} */
-  var numNotifications = SW.stores.notificationStore.length + SW.stores.userNotificationStore.length;
+  let numNotifications = SW.stores.notificationStore.length + SW.stores.userNotificationStore.length;
 
-  if (numNotifications == 0) {
+  if (numNotifications === 0) {
     numNotifications = '';
   } else if (numNotifications > 99) {
     numNotifications = '99+';
@@ -154,7 +190,7 @@ SW.methods.sendMessageToContentScript = function(message, options) {
   var hashPosition = (options.url ? options.url.indexOf('#') : -1);
 
   // Remove # if it is present in the URL
-  if (hashPosition != -1) {
+  if (hashPosition !== -1) {
     options.url = options.url.substr(0, hashPosition);
   }
 
@@ -165,54 +201,66 @@ SW.methods.sendMessageToContentScript = function(message, options) {
   });
 };
 
-SW.methods.sendWatchStatus = function(isPageWatched, url) {
-  var message = { messageType: 'watchStatus', watchStatus: isPageWatched };
+/**
+ * Sends WatchStatus to content script so that content script can update eye icon
+ * @param watchStatus true, false or null. Null when page url is invalid
+ * @param url Page URL to which watchStatus should be sent
+ */
+SW.methods.sendWatchStatus = function(watchStatus, url) {
+  if (watchStatus == null) return;
 
+  const message = { messageType: 'watchStatus', watchStatus: watchStatus };
   SW.methods.sendMessageToContentScript(message, {
     url: url /*Send message to all tabs with this URL */
   });
 };
 
-SW.methods.sendFollowStatus = function(isUserFollowed, url) {
-  var message = { messageType: 'followStatus', followStatus: isUserFollowed };
+SW.methods.sendFollowStatus = function(followStatus, url) {
+  if (followStatus == null) return;
+
+  const message = { messageType: 'followStatus', followStatus: followStatus };
   SW.methods.sendMessageToContentScript(message, { url: url } );
 };
 
-SW.methods.contentScriptCommunicator = function(request, sender, sendResponse) {
+SW.methods.contentScriptCommunicator = async function(request, sender, sendResponse) {
   if (request.event === 'pageLoaded' && request.pageType === 'questionPage') {
     SW.methods.clearNotification(request.url);
-    SW.methods.isPageBeingWatched(request.url, SW.methods.sendWatchStatus /* callback */);
+    const watchStatus = SW.methods.isPageBeingWatched(request.url);
+    SW.methods.sendWatchStatus(watchStatus, request.url);
   }
 
   if (request.event === 'pageLoaded' && request.pageType === 'profilePage') {
-    SW.methods.isUserFollowed(request.url, SW.methods.sendFollowStatus);
+    const followStatus = SW.methods.isUserFollowed(request.url);
+    SW.methods.sendFollowStatus(followStatus, request.url);
   }
 
   if (request.action === 'watchPage') {
-    SW.methods.startWatchingQuestion(request.url, function() {
-      SW.methods.sendWatchStatus(true, request.url);
-    });
+    await SW.methods.startWatchingQuestionAsync(request.url);
+    const watchStatus = SW.methods.isPageBeingWatched(request.url);
+    SW.methods.sendWatchStatus(watchStatus, request.url);
   }
 
   if (request.action === 'unwatchPage') {
-    SW.methods.unwatchQuestion(request.url, SW.methods.sendWatchStatus);
+    await SW.methods.unwatchQuestionAsync(request.url);
+    const watchStatus = SW.methods.isPageBeingWatched(request.url);
+    SW.methods.sendWatchStatus(watchStatus, request.url);
   }
 
-  if (request.action === 'followUser') {
-    SW.methods.followUser(request.url, function() {
-      SW.methods.sendFollowStatus(true, request.url);
-    });
+  if (request.action === 'followUserAsync') {
+    await SW.methods.followUserAsync(request.url);
+    const followStatus = SW.methods.isUserFollowed(request.url);
+    SW.methods.sendFollowStatus(followStatus, request.url);
   }
 
-  if (request.action === 'unfollowUser') {
-    SW.methods.unfollowUser(request.url, function() {
-      SW.methods.sendFollowStatus(false, request.url);
-    });
+  if (request.action === 'unfollowUserAsync') {
+    await SW.methods.unfollowUserAsync(request.url);
+    const followStatus = SW.methods.isUserFollowed(request.url);
+    SW.methods.sendFollowStatus(followStatus, request.url);
   }
 };
 
 SW.methods.init = function() {
-  // Change with StorageService later
+  // TODO: Change with StorageService later
   SW.methods.createStores();
 
   chrome.storage.onChanged.addListener(SW.methods.updateBadgeText);
@@ -220,7 +268,7 @@ SW.methods.init = function() {
   // Add Listener for events from content scripts
   chrome.runtime.onMessage.addListener(SW.methods.contentScriptCommunicator);
 
-  setInterval(SW.methods.fetchNewNotifications, SW.vars.FETCH_NOTIFICATION_INTERVAL);
+  setInterval(SW.methods.fetchNewNotificationsAsync, SW.vars.FETCH_NOTIFICATION_INTERVAL);
   setInterval(SW.methods.fetchUserNotifications, SW.vars.USER_NOTIFICATION_FETCH_INTERVAL);
 };
 

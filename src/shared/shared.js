@@ -45,11 +45,11 @@ Shared.methods.getUserNotificationMarkup = function(userNotificationItem) {
 
   markup = '<div class="avatar-container left"><img src="' + owner['profile_image'] + '"/></div>';
 
-  if (postType == 'question') {
+  if (postType === 'question') {
     text = '<span>' + userProfileLink + ' has asked a question' + '</span>';
   }
 
-  if (postType == 'answer') {
+  if (postType === 'answer') {
     text = '<span>' + userProfileLink + ' answered on' + '</span>';
   }
 
@@ -104,4 +104,8 @@ Shared.methods.getCurrentDate = function() {
   date = date.length < 2 ? '0' + date : date;
 
   return [d.getFullYear(), month, date].join('-');
+};
+
+Shared.methods.sortArray = function(arr, field) {
+  arr.sort((a,b) => a[field] - b[field]);
 };
