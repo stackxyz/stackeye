@@ -82,26 +82,16 @@
 }
 
 .report-option {
-  float: right;
-  position: relative;
-  top: 2.5px;
-  left: 2.5px;
+  position: absolute;
+  right: 4px;
+  top: 8px;
 }
 
 .report-option a {
-  font-size: 0.70rem;
-  background-color: rgba(250, 20, 20, 0.8);
   color: white;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
-}
-
-.report-option a:hover{
-  background-color: rgba(250, 20, 20, 0.8) !important;
-}
-
-.report-option a:focus{
-  background-color: rgba(250, 20, 20, 0.8) !important;
+  text-decoration: none;
 }
 
 .settings-grid {
