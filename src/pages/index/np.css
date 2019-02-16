@@ -81,6 +81,19 @@
   width: 6rem;
 }
 
+.report-option {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+}
+
+.report-option a {
+  color: white;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  text-decoration: none;
+}
+
 .settings-grid {
   padding: 10px;
 }
@@ -106,4 +119,8 @@
   color: #fff;
   background: #1b98f8;
   margin: 0.5em 0;
+}
+
+.ribbon {
+  position: absolute;
 }

@@ -10,6 +10,7 @@
       "src/libs/jquery-1.9.1.js",
       "src/shared/globals.js",
       "src/shared/api_methods.js",
+      "src/shared/shared.js",
       "src/background/watchQuestion.js",
       "src/background/followUser.js",
       "src/background/background.js"
