@@ -1,17 +1,17 @@
-$(function() {
+$(function () {
   var BG = chrome.extension.getBackgroundPage();
   var Popup = {};
   Popup.methods = {};
   Popup.vars = {};
 
-  Popup.vars.numNotificationsToShow = 5;
+  const numNotificationsToShow = 5;
   Popup.vars.$notificationList = $('#notification-area').find('.notification-list');
   Popup.vars.$userNotificationList = $('#user-notification-area').find('.user-notification-list');
-  Popup.vars.notifications = BG.SW.stores.notificationStore;
-  Popup.vars.userNotifications = BG.SW.stores.userNotificationStore;
+  Popup.vars.notifications = BG.SW.stores.notificationStore.slice(0, numNotificationsToShow);
+  Popup.vars.userNotifications = BG.SW.stores.userNotificationStore.slice(0, numNotificationsToShow);
   Popup.vars.$viewNotificationsButton = $("#swo_view_notifications");
 
-  Popup.methods.updateCurrentPage = function() {
+  Popup.methods.updateCurrentPage = function () {
     Shared.methods.renderItems(
       Popup.vars.notifications,
       Popup.vars.$notificationList,
@@ -25,7 +25,7 @@ $(function() {
       Shared.DEFAULT_TEMPLATES.USER_NOTIFICATION);
 
     // Show the number along side with tab names like Questions[3] and Users[5]
-    $('.tabContainer').find('a').each(function(index, tab) {
+    $('.tabContainer').find('a').each(function (index, tab) {
       var area = tab.getAttribute('data-targetId'),
         numItems = 0;
 
@@ -51,11 +51,11 @@ $(function() {
     });
   };
 
-  Popup.methods.init = function() {
+  Popup.methods.init = function () {
     Popup.methods.updateCurrentPage();
   };
 
-  Popup.methods.createNewTab = function(options) {
+  Popup.methods.createNewTab = function (options) {
     if (!options.url) {
       return false;
     }
@@ -67,7 +67,7 @@ $(function() {
     }, null);
   };
 
-  Popup.methods.openQuestionInTab = function(evt) {
+  Popup.methods.openQuestionInTab = function (evt) {
     var href = evt.target.href,
       $listItem = $(this).parents('li'),
       objectKey = $listItem.attr('data-objectKey'),
@@ -79,7 +79,7 @@ $(function() {
     return false;
   };
 
-  Popup.methods.removeNotification = function() {
+  Popup.methods.removeNotification = function () {
     var $listItem = $(this).parents('li'),
       objectKey = $listItem.attr('data-objectKey'),
       objectType = $listItem.attr('data-objectType');
@@ -89,14 +89,14 @@ $(function() {
     return false;
   };
 
-  Popup.methods.viewAllNotificationsInTab = function(evt) {
+  Popup.methods.viewAllNotificationsInTab = function (evt) {
     var url = 'src/pages/index/index.html';
 
     Popup.methods.createNewTab({ active: true, url: url });
     return false;
   };
 
-  Popup.methods.updateTabContent = function() {
+  Popup.methods.updateTabContent = function () {
     var $this = $(this),
       $tabContainer = $this.parents('.tabContainer'),
       targetContainerId = $this.attr('data-targetId');
