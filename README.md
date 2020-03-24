@@ -38,3 +38,5 @@ MIT: http://sachinjain.mit-license.org
 
 StackEye uses another awesome open source project "Font Awesome by Dave Gandy - http://fontawesome.io"
 for the icons in the app.
+
+Stackeye has more than 1000 active users on Chrome.
