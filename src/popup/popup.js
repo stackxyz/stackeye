@@ -13,13 +13,13 @@ $(function() {
 
   Popup.methods.updateCurrentPage = function() {
     Shared.methods.renderItems(
-      Popup.vars.notifications,
+      Popup.vars.notifications.slice(0, Popup.vars.numNotificationsToShow),
       Popup.vars.$notificationList,
       Shared.methods.getNotificationToShow,
       Shared.DEFAULT_TEMPLATES.QUESTION_NOTIFICATION);
 
     Shared.methods.renderItems(
-      Popup.vars.userNotifications,
+      Popup.vars.userNotifications.slice(0, Popup.vars.numNotificationsToShow),
       Popup.vars.$userNotificationList,
       Shared.methods.getUserNotificationMarkup,
       Shared.DEFAULT_TEMPLATES.USER_NOTIFICATION);
