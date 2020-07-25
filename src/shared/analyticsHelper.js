@@ -24,10 +24,9 @@ class AnalyticsHelper {
 
         const category = elementClicked.getAttribute('data-category'),
             action = elementClicked.getAttribute('data-action') || 'clicked',
-            label = elementClicked.getAttribute('data-label'),
-            value = elementClicked.getAttribute('data-value');
+            label = elementClicked.getAttribute('data-label');
 
-        this.trackEvent(category, action, label, value);
+        AnalyticsHelper.trackEvent(category, action, label);
     }
 
     static trackTabChangedOnNotificationsPage(area, itemsCount) {

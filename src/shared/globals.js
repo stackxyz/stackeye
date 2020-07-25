@@ -92,11 +92,12 @@ SW.maps.ObjectTypeToStoreMap = {
 SW.TRACKING_INFO = {
   CATEGORIES: {
     QUESTION: 'question',
+    NOTIFICATION: 'notification',
     QUESTIONS: 'questions',
     USERS: 'users',
     USER: 'user',
     QUESTION_NOTIFS: 'question_notifications',
-    USER_NOTIFS: 'users_notifications',
+    USER_NOTIFS: 'user_notifications',
     SETTINGS: 'settings'
   },
   ACTIONS: {

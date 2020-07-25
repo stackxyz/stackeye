@@ -52,6 +52,7 @@ $(function() {
   };
 
   Popup.methods.init = function() {
+    AnalyticsHelper.enableDataAttributesTracking();
     Popup.methods.updateCurrentPage();
   };
 
@@ -75,6 +76,12 @@ $(function() {
 
     Shared.methods.removeItem(objectKey, objectType);
 
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.NOTIFICATION,
+      SW.TRACKING_INFO.ACTIONS.CLICKED,
+      'notification clicked in popup'
+    );
+
     Popup.methods.createNewTab({ active: true, url: href });
     return false;
   };
@@ -86,6 +93,18 @@ $(function() {
 
     Shared.methods.removeItem(objectKey, objectType);
     Popup.methods.updateCurrentPage();
+
+    const category = $listItem.parents('.se-tab').attr('notification-area')
+      ? SW.TRACKING_INFO.CATEGORIES.QUESTION_NOTIFS
+      : SW.TRACKING_INFO.CATEGORIES.USER_NOTIFS;
+
+    AnalyticsHelper.trackEvent(
+      category,
+      SW.TRACKING_INFO.ACTIONS.DELETED,
+      `${category} deleted in popup`,
+      1
+    );
+
     return false;
   };
 
