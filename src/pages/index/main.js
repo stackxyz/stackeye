@@ -114,6 +114,8 @@ $(function() {
     $('.category-area').hide();
     $('#' + targetId).show();
 
+    AnalyticsHelper.trackTabChangedOnNotificationsPage(targetId, $(el).find('span').html());
+
     return false;
   };
 
@@ -342,4 +344,6 @@ $(function() {
   $('#data-import').click(NP.methods.importData);
   $('#questions-users-clear-button').click(NP.methods.deleteAllQuestionsAndUsers);
   $('#notifications-clear-button').click(NP.methods.deleteAllNotifications);
+
+  AnalyticsHelper.enableDataAttributesTracking();
 });

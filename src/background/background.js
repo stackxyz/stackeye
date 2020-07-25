@@ -260,6 +260,8 @@ SW.methods.contentScriptCommunicator = async function(request, sender, sendRespo
 };
 
 SW.methods.init = function() {
+  AnalyticsHelper.enableDataAttributesTracking();
+
   // TODO: Change with StorageService later
   SW.methods.createStores();
 

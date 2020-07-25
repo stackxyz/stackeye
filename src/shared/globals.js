@@ -88,3 +88,24 @@ SW.maps.ObjectTypeToStoreMap = {
   'user': SW.stores.userStore,
   'user_notification': SW.stores.userNotificationStore
 };
+
+SW.TRACKING_INFO = {
+  CATEGORIES: {
+    QUESTIONS: 'questions',
+    USERS: 'users',
+    QUESTION_NOTIFS: 'questions_notifications',
+    USER_NOTIFS: 'users_notifications',
+    SETTINGS: 'settings'
+  },
+  ACTIONS: {
+    CLICKED: 'clicked',
+    VIEWED: 'viewed'
+  },
+  LABELS: {
+    NP_Q_VIEWED: 'questions viewed on notifications page',
+    NP_QN_VIEWED: 'questions notifications viewed on notifications page',
+    NP_U_VIEWED: 'users viewed on notifications page',
+    NP_UN_VIEWED: 'users notifications viewed on notifications page',
+    NP_SETTINGS_VIEWED: 'settings viewed on notifications page'
+  }
+};
