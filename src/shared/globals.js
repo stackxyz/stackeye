@@ -91,15 +91,20 @@ SW.maps.ObjectTypeToStoreMap = {
 
 SW.TRACKING_INFO = {
   CATEGORIES: {
+    QUESTION: 'question',
     QUESTIONS: 'questions',
     USERS: 'users',
-    QUESTION_NOTIFS: 'questions_notifications',
+    USER: 'user',
+    QUESTION_NOTIFS: 'question_notifications',
     USER_NOTIFS: 'users_notifications',
     SETTINGS: 'settings'
   },
   ACTIONS: {
     CLICKED: 'clicked',
-    VIEWED: 'viewed'
+    VIEWED: 'viewed',
+    DELETED: 'deleted',
+    FOLLOWED: 'followed',
+    UNFOLLOWED: 'unfollowed'
   },
   LABELS: {
     NP_Q_VIEWED: 'questions viewed on notifications page',

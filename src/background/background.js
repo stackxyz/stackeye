@@ -224,44 +224,68 @@ SW.methods.sendFollowStatus = function(followStatus, url) {
 
 SW.methods.contentScriptCommunicator = async function(request, sender, sendResponse) {
   if (request.event === 'pageLoaded' && request.pageType === 'questionPage') {
-    SW.methods.clearNotification(request.url);
+    let isNotificationRemoved = SW.methods.clearNotification(request.url);
     const watchStatus = SW.methods.isPageBeingWatched(request.url);
     SW.methods.sendWatchStatus(watchStatus, request.url);
+
+    if (isNotificationRemoved) {
+      AnalyticsHelper.trackEvent(
+        SW.TRACKING_INFO.CATEGORIES.QUESTION_NOTIFS,
+        SW.TRACKING_INFO.ACTIONS.DELETED,
+        'question notification removed by opening question page'
+      )
+    }
   }
 
   if (request.event === 'pageLoaded' && request.pageType === 'profilePage') {
     const followStatus = SW.methods.isUserFollowed(request.url);
     SW.methods.sendFollowStatus(followStatus, request.url);
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.USER, SW.TRACKING_INFO.ACTIONS.VIEWED
+    );
   }
 
   if (request.action === 'watchPage') {
     await SW.methods.startWatchingQuestionAsync(request.url);
     const watchStatus = SW.methods.isPageBeingWatched(request.url);
     SW.methods.sendWatchStatus(watchStatus, request.url);
+
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.QUESTION, SW.TRACKING_INFO.ACTIONS.FOLLOWED
+    );
   }
 
   if (request.action === 'unwatchPage') {
     await SW.methods.unwatchQuestionAsync(request.url);
     const watchStatus = SW.methods.isPageBeingWatched(request.url);
     SW.methods.sendWatchStatus(watchStatus, request.url);
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.QUESTION, SW.TRACKING_INFO.ACTIONS.UNFOLLOWED
+    );
   }
 
   if (request.action === 'followUserAsync') {
     await SW.methods.followUserAsync(request.url);
     const followStatus = SW.methods.isUserFollowed(request.url);
     SW.methods.sendFollowStatus(followStatus, request.url);
+    
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.USER, SW.TRACKING_INFO.ACTIONS.FOLLOWED
+    );
   }
 
   if (request.action === 'unfollowUserAsync') {
     await SW.methods.unfollowUserAsync(request.url);
     const followStatus = SW.methods.isUserFollowed(request.url);
     SW.methods.sendFollowStatus(followStatus, request.url);
+
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.USER, SW.TRACKING_INFO.ACTIONS.UNFOLLOWED
+    );
   }
 };
 
 SW.methods.init = function() {
-  AnalyticsHelper.enableDataAttributesTracking();
-
   // TODO: Change with StorageService later
   SW.methods.createStores();
 

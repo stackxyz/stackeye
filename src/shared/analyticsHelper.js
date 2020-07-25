@@ -3,6 +3,11 @@ class AnalyticsHelper {
 
     static trackEvent(category, action, label, value) {
         label = label || category + ' ' + action;
+
+        if (typeof value !== 'undefined') {
+            value = parseInt(value);
+        }
+
         _gaq.push(['_trackEvent', category, action, label, parseInt(value)]);
     }
 

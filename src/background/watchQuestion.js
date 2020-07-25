@@ -130,9 +130,12 @@ SW.methods.removeNotificationFromStore = function(questionId, domain) {
 };
 
 SW.methods.clearNotification = function(url) {
+  let isNotificationRemoved = false;
+  
   if (SW.methods.validateUrl(url)) {
-    const urlInfo = SW.methods.extractQuestionPageUrlInfo(url),
-      isNotificationRemoved = SW.methods.removeNotificationFromStore(urlInfo.questionId, urlInfo.domain);
+    const urlInfo = SW.methods.extractQuestionPageUrlInfo(url);
+    
+    isNotificationRemoved = SW.methods.removeNotificationFromStore(urlInfo.questionId, urlInfo.domain);
 
     if (isNotificationRemoved) {
       const objectKey = SW.OBJECT_TYPES.NEW_ACTIVITY_NOTIFICATION + ':' + urlInfo.questionId;
@@ -141,6 +144,8 @@ SW.methods.clearNotification = function(url) {
         .then(SW.methods.updateBadgeText);
     }
   }
+
+  return isNotificationRemoved;
 };
 
 SW.methods.removeBulkNotifications = function(urls) {
