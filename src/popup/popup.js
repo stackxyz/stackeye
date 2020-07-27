@@ -95,8 +95,8 @@ $(function() {
     Popup.methods.updateCurrentPage();
 
     const category = $listItem.parents('.se-tab').attr('notification-area')
-      ? SW.TRACKING_INFO.CATEGORIES.QUESTION_NOTIFS
-      : SW.TRACKING_INFO.CATEGORIES.USER_NOTIFS;
+      ? SW.TRACKING_INFO.CATEGORIES.QUESTION_NOTIF
+      : SW.TRACKING_INFO.CATEGORIES.USER_NOTIF;
 
     AnalyticsHelper.trackEvent(
       category,

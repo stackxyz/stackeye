@@ -83,6 +83,13 @@ $(function() {
         Shared.methods.removeItem(objectKey, objectType);
         $(selectedItem).remove();
       });
+
+      AnalyticsHelper.trackEvent(
+        objectType,
+        SW.TRACKING_INFO.ACTIONS.DELETED,
+        objectType + ' deleted from settings page',
+        $selectedItems.length   
+      );
     }
 
     NP.methods.updateDeleteButton($(this), $list.find('li.se-selected').length);
@@ -182,6 +189,12 @@ $(function() {
       a.href = URL.createObjectURL(blob);
       a.click();
     });
+
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.SETTINGS,
+      SW.TRACKING_INFO.ACTIONS.EXPORTED,
+      'All data exported'
+    );
   };
 
   NP.methods.importData = function() {
@@ -212,6 +225,12 @@ $(function() {
       reader.readAsText(file);
     });
     input.click();
+
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.SETTINGS,
+      SW.TRACKING_INFO.ACTIONS.IMPORTED,
+      'All data imported'
+    );
   };
 
   NP.methods.deleteAllQuestionsAndUsers = function() {

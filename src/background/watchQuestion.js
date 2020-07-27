@@ -50,10 +50,20 @@ SW.methods.isQuestionWatchAllowed = function(questionUrl) {
     isUrlValid = SW.methods.validateUrl(questionUrl);
 
   if (questionStore.length >= SW.vars.WATCH_QUESTION_LIMIT) {
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.QUESTION,
+      SW.TRACKING_INFO.ACTIONS.LIMIT_REACHED,
+      `${SW.vars.WATCH_QUESTION_LIMIT} questions limit reached`
+    );
     return { allowed: false, reason: SW.messages.WARN_WATCH_LIMIT };
   }
 
   if (!isUrlValid) {
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.QUESTION,
+      SW.TRACKING_INFO.ACTIONS.INVALID_ACTION,
+      `Unable to follow question with invalid URL`
+    );
     return { allowed: false, reason: SW.messages.WARN_INVALID_URL };
   }
 
@@ -71,6 +81,7 @@ SW.methods.startWatchingQuestionAsync = async function(questionUrl) {
       type: 'se_error',
       message: QUESTION_WATCH_CRITERIA.reason
     });
+
     return;
   }
 

@@ -1,14 +1,13 @@
 class AnalyticsHelper {
-    dataAttributesClickListener = null;
-
     static trackEvent(category, action, label, value) {
         label = label || category + ' ' + action;
 
         if (typeof value !== 'undefined') {
             value = parseInt(value);
+            _gaq.push(['_trackEvent', category, action, label, parseInt(value)]);
+        } else {
+            _gaq.push(['_trackEvent', category, action, label]);
         }
-
-        _gaq.push(['_trackEvent', category, action, label, parseInt(value)]);
     }
 
     static hasTrackingDataDefined(element) {
@@ -38,7 +37,7 @@ class AnalyticsHelper {
             // Question Notifications
             case 'notification-area':
                 this.trackEvent(
-                    categories.QUESTION_NOTIFS,
+                    categories.QUESTION_NOTIF,
                     viewedAction,
                     labels.NP_QN_VIEWED,
                     itemsCount
@@ -47,7 +46,7 @@ class AnalyticsHelper {
     
             case 'user-notification-area':
                 this.trackEvent(
-                    categories.USER_NOTIFS,
+                    categories.USER_NOTIF,
                     viewedAction,
                     labels.NP_UN_VIEWED,
                     itemsCount

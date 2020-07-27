@@ -230,7 +230,7 @@ SW.methods.contentScriptCommunicator = async function(request, sender, sendRespo
 
     if (isNotificationRemoved) {
       AnalyticsHelper.trackEvent(
-        SW.TRACKING_INFO.CATEGORIES.QUESTION_NOTIFS,
+        SW.TRACKING_INFO.CATEGORIES.QUESTION_NOTIF,
         SW.TRACKING_INFO.ACTIONS.DELETED,
         'question notification removed by opening question page'
       )
@@ -250,7 +250,7 @@ SW.methods.contentScriptCommunicator = async function(request, sender, sendRespo
     const watchStatus = SW.methods.isPageBeingWatched(request.url);
     SW.methods.sendWatchStatus(watchStatus, request.url);
 
-    AnalyticsHelper.trackEvent(
+    watchStatus && AnalyticsHelper.trackEvent(
       SW.TRACKING_INFO.CATEGORIES.QUESTION, SW.TRACKING_INFO.ACTIONS.FOLLOWED
     );
   }
@@ -269,7 +269,7 @@ SW.methods.contentScriptCommunicator = async function(request, sender, sendRespo
     const followStatus = SW.methods.isUserFollowed(request.url);
     SW.methods.sendFollowStatus(followStatus, request.url);
     
-    AnalyticsHelper.trackEvent(
+    followStatus && AnalyticsHelper.trackEvent(
       SW.TRACKING_INFO.CATEGORIES.USER, SW.TRACKING_INFO.ACTIONS.FOLLOWED
     );
   }
@@ -285,9 +285,45 @@ SW.methods.contentScriptCommunicator = async function(request, sender, sendRespo
   }
 };
 
+SW.methods.submitEvent = function() {
+  chrome.runtime.onInstalled.addListener((details) => {
+    const currentVersion = chrome.runtime.getManifest().version
+    const previousVersion = details.previousVersion
+    const reason = details.reason
+ 
+    switch (reason) {
+      case 'install':
+        AnalyticsHelper.trackEvent(
+          SW.TRACKING_INFO.CATEGORIES.EXTENSION,
+          SW.TRACKING_INFO.ACTIONS.INSTALLED,
+          `${currentVersion} extension installed`
+        )
+        break;
+       
+        case 'update':
+          AnalyticsHelper.trackEvent(
+            SW.TRACKING_INFO.CATEGORIES.EXTENSION,
+            SW.TRACKING_INFO.ACTIONS.UPDATED,
+            `${currentVersion} extension updated`
+          );
+          break;
+       
+        case 'chrome_update':
+          AnalyticsHelper.trackEvent(
+            'browser',
+            SW.TRACKING_INFO.ACTIONS.UPDATED,
+            `Chrome updated with ${currentVersion} extension`
+          );
+          break;
+    }
+ 
+ })
+};
+
 SW.methods.init = function() {
   // TODO: Change with StorageService later
   SW.methods.createStores();
+  SW.methods.submitEvent();
 
   chrome.storage.onChanged.addListener(SW.methods.updateBadgeText);
 
