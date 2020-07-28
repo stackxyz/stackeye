@@ -224,44 +224,106 @@ SW.methods.sendFollowStatus = function(followStatus, url) {
 
 SW.methods.contentScriptCommunicator = async function(request, sender, sendResponse) {
   if (request.event === 'pageLoaded' && request.pageType === 'questionPage') {
-    SW.methods.clearNotification(request.url);
+    let isNotificationRemoved = SW.methods.clearNotification(request.url);
     const watchStatus = SW.methods.isPageBeingWatched(request.url);
     SW.methods.sendWatchStatus(watchStatus, request.url);
+
+    if (isNotificationRemoved) {
+      AnalyticsHelper.trackEvent(
+        SW.TRACKING_INFO.CATEGORIES.QUESTION_NOTIF,
+        SW.TRACKING_INFO.ACTIONS.DELETED,
+        'question notification removed by opening question page'
+      )
+    }
   }
 
   if (request.event === 'pageLoaded' && request.pageType === 'profilePage') {
     const followStatus = SW.methods.isUserFollowed(request.url);
     SW.methods.sendFollowStatus(followStatus, request.url);
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.USER, SW.TRACKING_INFO.ACTIONS.VIEWED
+    );
   }
 
   if (request.action === 'watchPage') {
     await SW.methods.startWatchingQuestionAsync(request.url);
     const watchStatus = SW.methods.isPageBeingWatched(request.url);
     SW.methods.sendWatchStatus(watchStatus, request.url);
+
+    watchStatus && AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.QUESTION, SW.TRACKING_INFO.ACTIONS.FOLLOWED
+    );
   }
 
   if (request.action === 'unwatchPage') {
     await SW.methods.unwatchQuestionAsync(request.url);
     const watchStatus = SW.methods.isPageBeingWatched(request.url);
     SW.methods.sendWatchStatus(watchStatus, request.url);
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.QUESTION, SW.TRACKING_INFO.ACTIONS.UNFOLLOWED
+    );
   }
 
-  if (request.action === 'followUserAsync') {
+  if (request.action === 'followUser') {
     await SW.methods.followUserAsync(request.url);
     const followStatus = SW.methods.isUserFollowed(request.url);
     SW.methods.sendFollowStatus(followStatus, request.url);
+    
+    followStatus && AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.USER, SW.TRACKING_INFO.ACTIONS.FOLLOWED
+    );
   }
 
-  if (request.action === 'unfollowUserAsync') {
+  if (request.action === 'unfollowUser') {
     await SW.methods.unfollowUserAsync(request.url);
     const followStatus = SW.methods.isUserFollowed(request.url);
     SW.methods.sendFollowStatus(followStatus, request.url);
+
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.USER, SW.TRACKING_INFO.ACTIONS.UNFOLLOWED
+    );
   }
+};
+
+SW.methods.submitEvent = function() {
+  chrome.runtime.onInstalled.addListener((details) => {
+    const currentVersion = chrome.runtime.getManifest().version
+    const previousVersion = details.previousVersion
+    const reason = details.reason
+ 
+    switch (reason) {
+      case 'install':
+        AnalyticsHelper.trackEvent(
+          SW.TRACKING_INFO.CATEGORIES.EXTENSION,
+          SW.TRACKING_INFO.ACTIONS.INSTALLED,
+          `${currentVersion} extension installed`
+        )
+        break;
+       
+        case 'update':
+          AnalyticsHelper.trackEvent(
+            SW.TRACKING_INFO.CATEGORIES.EXTENSION,
+            SW.TRACKING_INFO.ACTIONS.UPDATED,
+            `${currentVersion} extension updated`
+          );
+          break;
+       
+        case 'chrome_update':
+          AnalyticsHelper.trackEvent(
+            'browser',
+            SW.TRACKING_INFO.ACTIONS.UPDATED,
+            `Chrome updated with ${currentVersion} extension`
+          );
+          break;
+    }
+ 
+ })
 };
 
 SW.methods.init = function() {
   // TODO: Change with StorageService later
   SW.methods.createStores();
+  SW.methods.submitEvent();
 
   chrome.storage.onChanged.addListener(SW.methods.updateBadgeText);
 

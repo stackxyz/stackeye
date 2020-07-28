@@ -7,8 +7,10 @@
 
   "background": {
     "scripts": [
+      "src/shared/analytics.js",
       "src/libs/jquery-1.9.1.js",
       "src/shared/globals.js",
+      "src/shared/analyticsHelper.js",
       "src/shared/api_methods.js",
       "src/shared/shared.js",
       "src/background/watchQuestion.js",
@@ -22,17 +24,25 @@
       "matches": [
         "*://*/questions/*"
       ],
-      "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/questionPage.js"],
+      "js": [
+        "src/libs/jquery-1.9.1.js", 
+        "src/content_scripts/questionPage.js"
+      ],
       "css": ["src/content_scripts/cs.css"]
     },
     {
       "matches": [
         "*://*/users/*"
       ],
-      "js": ["src/libs/jquery-1.9.1.js", "src/content_scripts/profilePage.js"],
+      "js": [
+        "src/libs/jquery-1.9.1.js", 
+        "src/content_scripts/profilePage.js"
+      ],
       "css": ["src/content_scripts/cs.css"]
     }
   ],
+
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
   
   "browser_action": {
     "default_icon": "resources/images/icon_so_48.png",

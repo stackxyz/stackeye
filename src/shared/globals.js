@@ -47,7 +47,7 @@ SW.messages = {
   CONFIRM_SELECTED_NOTIFICATIONS_DELETE: 'Selected notifications will be removed. Proceed ?',
   CONFIRM_SELECTED_QUESTIONS_DELETE: 'Selected questions will be removed from watchlist. Proceed ?',
 
-  ERROR_UNABLE_TO_GET_URL_CURRENT_TAB: 'Unable to get the url of current tab.Please file a bug',
+  ERROR_UNABLE_TO_GET_URL_CURRENT_TAB: 'Unable to get the url of current tab. Please file a bug',
   ERROR_FETCH_ANSWER_LIST: 'Error in fetching answer list',
   ERROR_FETCH_COMMENT_LIST: 'Error in fetching comment list',
   ERROR_FETCH_QUESTION_DATA: 'Error in fetching question data',
@@ -87,4 +87,38 @@ SW.maps.ObjectTypeToStoreMap = {
   'question_notification': SW.stores.notificationStore,
   'user': SW.stores.userStore,
   'user_notification': SW.stores.userNotificationStore
+};
+
+SW.TRACKING_INFO = {
+  CATEGORIES: {
+    QUESTION: SW.OBJECT_TYPES.QUESTION,
+    NOTIFICATION: 'notification',
+    QUESTIONS: 'questions',
+    USERS: 'users',
+    USER: SW.OBJECT_TYPES.USER,
+    QUESTION_NOTIF: 'question_notification',
+    USER_NOTIF: SW.OBJECT_TYPES.USER_NOTIFICATION,
+    SETTINGS: 'settings',
+    EXTENSION: 'extension'
+  },
+  ACTIONS: {
+    CLICKED: 'clicked',
+    VIEWED: 'viewed',
+    DELETED: 'deleted',
+    FOLLOWED: 'followed',
+    UNFOLLOWED: 'unfollowed',
+    EXPORTED: 'exported',
+    IMPORTED: 'imported',
+    LIMIT_REACHED: 'limit_reached',
+    INVALID_ACTION: 'invalid_action_taken',
+    INSTALLED: 'installed',
+    UPDATED: 'updated'
+  },
+  LABELS: {
+    NP_Q_VIEWED: 'questions viewed on notifications page',
+    NP_QN_VIEWED: 'questions notifications viewed on notifications page',
+    NP_U_VIEWED: 'users viewed on notifications page',
+    NP_UN_VIEWED: 'users notifications viewed on notifications page',
+    NP_SETTINGS_VIEWED: 'settings viewed on notifications page'
+  }
 };

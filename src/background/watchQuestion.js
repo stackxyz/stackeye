@@ -50,10 +50,20 @@ SW.methods.isQuestionWatchAllowed = function(questionUrl) {
     isUrlValid = SW.methods.validateUrl(questionUrl);
 
   if (questionStore.length >= SW.vars.WATCH_QUESTION_LIMIT) {
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.QUESTION,
+      SW.TRACKING_INFO.ACTIONS.LIMIT_REACHED,
+      `${SW.vars.WATCH_QUESTION_LIMIT} questions limit reached`
+    );
     return { allowed: false, reason: SW.messages.WARN_WATCH_LIMIT };
   }
 
   if (!isUrlValid) {
+    AnalyticsHelper.trackEvent(
+      SW.TRACKING_INFO.CATEGORIES.QUESTION,
+      SW.TRACKING_INFO.ACTIONS.INVALID_ACTION,
+      `Unable to follow question with invalid URL`
+    );
     return { allowed: false, reason: SW.messages.WARN_INVALID_URL };
   }
 
@@ -71,6 +81,7 @@ SW.methods.startWatchingQuestionAsync = async function(questionUrl) {
       type: 'se_error',
       message: QUESTION_WATCH_CRITERIA.reason
     });
+
     return;
   }
 
@@ -130,9 +141,12 @@ SW.methods.removeNotificationFromStore = function(questionId, domain) {
 };
 
 SW.methods.clearNotification = function(url) {
+  let isNotificationRemoved = false;
+  
   if (SW.methods.validateUrl(url)) {
-    const urlInfo = SW.methods.extractQuestionPageUrlInfo(url),
-      isNotificationRemoved = SW.methods.removeNotificationFromStore(urlInfo.questionId, urlInfo.domain);
+    const urlInfo = SW.methods.extractQuestionPageUrlInfo(url);
+    
+    isNotificationRemoved = SW.methods.removeNotificationFromStore(urlInfo.questionId, urlInfo.domain);
 
     if (isNotificationRemoved) {
       const objectKey = SW.OBJECT_TYPES.NEW_ACTIVITY_NOTIFICATION + ':' + urlInfo.questionId;
@@ -141,6 +155,8 @@ SW.methods.clearNotification = function(url) {
         .then(SW.methods.updateBadgeText);
     }
   }
+
+  return isNotificationRemoved;
 };
 
 SW.methods.removeBulkNotifications = function(urls) {

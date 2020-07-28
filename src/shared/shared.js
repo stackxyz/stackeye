@@ -54,7 +54,7 @@ Shared.methods.getUserNotificationMarkup = function(userNotificationItem) {
   }
 
   markup += '<div class="right content-container">';
-  markup += '<div class="upper-row">' + text + '</div>';
+  markup += `<div class="upper-row">${text}</div>`;
   markup += '<div class="lower-row">' +
     '<a class="link" target="_blank" href="' + questionLink + '">' + questionTitle + '</a>' +
     '</div>';
@@ -62,6 +62,8 @@ Shared.methods.getUserNotificationMarkup = function(userNotificationItem) {
 
   // Add trash icon from Font Awesome
   markup += '<i class="fa fa-trash-o fa-fw display-none trash-icon" title="Delete Notification"></i>';
+
+
 
   return markup;
 };

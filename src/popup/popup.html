@@ -1,5 +1,6 @@
 <html>
   <head>
+    <title>StackEye Popup Page</title>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <link rel="stylesheet" type="text/css" href="../libs/pure-0.3.0.css" />
     <link rel="stylesheet" type="text/css" href="../libs/font-awesome-4.0.3/css/font-awesome.css">
@@ -23,8 +24,21 @@
 
       <div class="divider tabContainer">
         <span class="heading">Notifications</span>
-        <a href="#" data-targetId="notification-area" class="se-tab selected">Questions<span></span></a>
-        <a href="#" data-targetId="user-notification-area" class="se-tab">Users<span></span></a>
+        <a 
+          data-category="question_notification"
+          data-action="viewed"
+          data-label="question notifications viewed in popup"
+          href="#" 
+          data-targetId="notification-area" 
+          class="se-tab selected">Questions<span></span></a>
+        
+          <a 
+            data-category="user_notification"
+            data-action="viewed"
+            data-label="user notifications viewed in popup"
+            href="#" 
+            data-targetId="user-notification-area" 
+            class="se-tab">Users<span></span></a>
       </div>
 
       <div id="notification-area" class="se-category">
@@ -45,21 +59,34 @@
       <div class="app-footer-message pure-g">
         <div class="message-text pure-u-3-4">Only Top 5 notifications are available in popup.</div>
         <div class="pure-u-1-4">
-          <button id="swo_view_notifications" class="pure-button pure-button-primary">View all</button>
+          <button 
+            data-category="ViewAll"
+            data-action="clicked"
+            data-label="View All Button Clicked in popup"
+            id="swo_view_notifications" 
+            class="pure-button pure-button-primary">View all</button>
         </div>
       </div>
 
       <div class="feedback-section">
         <span class="message-text">Love StackEye</span>
-        <a href="https://paypal.me/sachinjain024/9" target="_blank">
+        <a 
+          href="https://paypal.me/sachinjain024/9" 
+          target="_blank"
+          data-category="donate-button"
+          data-action="clicked"
+          data-label="donate button clicked in popup">
           <img class="donate-button-image" src="/resources/images/donate_button.gif">
         </a>
       </div>
     </div>
 
     <!-- Script area -->
+    <script type="text/javascript" src="/src/shared/analytics.js"></script>
     <script type="text/javascript" src="../libs/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="/src/shared/globals.js"></script>
     <script type="text/javascript" src="/src/shared/shared.js"></script>
+    <script type="text/javascript" src="/src/shared/analyticsHelper.js"></script>
     <script type="text/javascript" src="popup.js"></script>
   </body>
 </html>
