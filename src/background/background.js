@@ -264,7 +264,7 @@ SW.methods.contentScriptCommunicator = async function(request, sender, sendRespo
     );
   }
 
-  if (request.action === 'followUserAsync') {
+  if (request.action === 'followUser') {
     await SW.methods.followUserAsync(request.url);
     const followStatus = SW.methods.isUserFollowed(request.url);
     SW.methods.sendFollowStatus(followStatus, request.url);
@@ -274,7 +274,7 @@ SW.methods.contentScriptCommunicator = async function(request, sender, sendRespo
     );
   }
 
-  if (request.action === 'unfollowUserAsync') {
+  if (request.action === 'unfollowUser') {
     await SW.methods.unfollowUserAsync(request.url);
     const followStatus = SW.methods.isUserFollowed(request.url);
     SW.methods.sendFollowStatus(followStatus, request.url);
