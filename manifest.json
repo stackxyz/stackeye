@@ -1,9 +1,9 @@
 {
   "name": "StackEye",
 
-  "version": "20.7.28",
+  "version": "21.8.24",
   "manifest_version": 2,
-  "description": "Chrome Extension to get notifications about questions and from users in your watchlist",
+  "description": "Follow Questions & Users on StackOverflow & All StackExchange Sites. Get notifications for new answers/comments. Learn from experts",
 
   "background": {
     "scripts": [
