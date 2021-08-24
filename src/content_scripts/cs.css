@@ -42,9 +42,26 @@
 }
 
 #se_follow_button.se_follow {
-  background-color: rgb(0, 120, 231) !important;
+  background: #f48024 !important;
 }
 
 #se_follow_button.se_following {
   background-color: rgb(28, 184, 65) !important;
+}
+
+/* Define Styles of follow button when it appears at different places */
+.profile-avatar #se_follow_button {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 1rem 0 0 0;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.js-user-header #se_follow_button {
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    border-radius: 100px;
+    align-items: center;
 }
