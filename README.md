@@ -39,7 +39,15 @@ View all Questions & Users List in app with an option to bulk unfollow. Just in 
 
 ### Settings Control
 
-You control the settings. All the data readily available. Easily export and import data in case you need to switch computer.
+You control the settings. All the data readily available. Easily export and import data in case you need to switch computer. 
+
+Note that user data does not sync using Chrome Profile; see [#33](https://github.com/stackxyz/stackeye/issues/33), [#41](https://github.com/stackxyz/stackeye/issues/41)), and the import function does not merge settings.
+
+To open settings: 
+
+- click the extension icon
+- click "View All"
+- click the "System" tab
 
 ![settings](https://stackxyz.com/static/settings-bbe529ab238dba53cafb9e9809472bb8.png)
 
