@@ -27,7 +27,7 @@
   "devDependencies": {
     "@types/chrome": "0.0.80",
     "@types/jquery": "^3.3.29",
-    "grunt": "~1.0.3",
+    "grunt": "~1.5.3",
     "grunt-zipup": "~0.1.6",
     "typescript": "^3.3.3"
   }
